@@ -10,60 +10,46 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 /**
  * Simple bar drawer to draw our scroll bar
  * Note that the bar was carried over from a horizontal oriented bar, so
- * width and height are reversed.
+ * width and height are swapped.
  */
 public class Bar{
 
     private Texture bar, outline;
 
-    private boolean vertical=false;
-
     private int x,y,width, maxWidth, height, border;
 
 
 
-    public Bar(int x, int y, Color color, int height){
+    public Bar(Color color,Config c, int width){
 
-        this.vertical=true;
 
-        this.x=x;
-        width=10;
-        border=5;
-        this.y=y;
+        this.x=c.window.width;
+        this.y=c.window.height;
+        this.width=(int)(width*(1/c.global.scale));
+        if(this.width<1)
+            this.width=1;
+        border=(int)(this.width*.2f);
+        if(border<1)
+            border=1;
 
-        this.height=height;
+        this.height=y-border*2;
         maxWidth=height;
-        this.y-=height;
+        this.y-=(height);
+        this.x-=(this.width+border*2);
 
         color.a=.7f;
-        bar= DrawShape.rect(color,width,height);
-        outline=DrawShape.rect(new Color(0,0,0,.5f),width+border*2,height+border*2);
+        bar= DrawShape.rect(color,this.width,height);
+        outline=DrawShape.rect(new Color(0,0,0,.5f),this.width+border*2,c.window.height);
     }
 
     public boolean draw(SpriteBatch batch) {
         batch.draw(outline, x, y);
-        batch.draw(bar, x+border, y+border, width, height);
+        batch.draw(bar, x+border, y-border, width, height);
         return true;
     }
 
-    public boolean setWidth(float current, float full){
-        if(vertical){
-            return setHeight(current,full);
-        }
-        else {
-            width = (int) ((current / full) * maxWidth);
-            if (width < 0) {
-                width = 0;
-                return false;
-            }
-            else if (width > maxWidth) {
-                width = maxWidth;
-            }
-            return true;
-        }
-    }
-
-    private boolean setHeight(float current, float full){
+    public boolean setHeight(float current, float full){
+        MainViewer.println("current "+current,Constants.d);
         height=(int)((current/full)*maxWidth);
         if(height<0) {
             height = 0;

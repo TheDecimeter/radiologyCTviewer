@@ -16,14 +16,16 @@ import java.util.Dictionary;
 public class ClickFollower {
     private int radius,depth;
     private ArrayList<ArrayList<ClickNode>> clicks; //each slide has its own list of clicks
-    private Texture click;
+    private ArrayList<ArrayList<ClickNode>> highlights; //each slide has its own list of clicks
+    private Texture click, highlight;
     private boolean markClicks;
     private Config c;
 
-    public ClickFollower(int slices, int radius, int depth, boolean markClicks, Texture click, Config c){
+    public ClickFollower(int slices, int radius, int depth, boolean markClicks, Texture click, Texture highlight, Config c){
         createClickList(slices);
         updateRadius(radius,depth);
         this.click=click;
+        this.highlight=highlight;
         this.markClicks=markClicks;
         this.c=c;
     }
@@ -32,11 +34,17 @@ public class ClickFollower {
         clicks=new ArrayList<ArrayList<ClickNode>>(slices);
         for(int i=0; i<slices; ++i)
             clicks.add(new ArrayList<ClickNode>());
+
+
+        highlights=new ArrayList<ArrayList<ClickNode>>(slices);
+        for(int i=0; i<slices; ++i)
+            highlights.add(new ArrayList<ClickNode>());
     }
 
     /**
      * Warning, this will clear all the previous clicks, make sure they are
      * saved if you wish to retain them somehow.
+     * It also clears highlights, so those will have to be re added if desired.
      */
     public void reset(){
         createClickList(clicks.size());
@@ -74,6 +82,22 @@ public class ClickFollower {
     }
 
     /**
+     * Add or remove a click
+     * @param x The position of the click
+     * @param y The position of the click
+     * @param slide The slide on which the click occured
+     */
+    public void addHighlight(int x, int y, int slide){
+        x-=radius;
+        y-=radius;
+        if(slide<0||slide>=highlights.size()){
+            MainViewer.println("Highlight index out of range "+slide+", max size "+highlights.size(),Constants.e);
+            return;
+        }
+        highlights.get(slide).add(new ClickNode(x,y,0));
+    }
+
+    /**
      * See if two clicks overlap
      * @param x the location of one click
      * @param y The location of one click
@@ -102,6 +126,10 @@ public class ClickFollower {
      * @return
      */
     public boolean draw(SpriteBatch batch, int slide) {
+        for(int i=lo(slide); i<hi(slide); ++i){
+            for(ClickNode n : highlights.get(i))
+                batch.draw(highlight, n.p.x, n.p.y);
+        }
         if(!markClicks)
             return true;
         for(int i=lo(slide); i<hi(slide); ++i){

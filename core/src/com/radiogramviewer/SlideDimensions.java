@@ -30,7 +30,7 @@ public class SlideDimensions {
                 continue;
 
             String [] num=line.split(",");
-            if(num.length!=6)
+            if(num.length!=7)
             {
                 MainViewer.println("slidedim.txt: line "+lineNum+" with "+num.length+" elements. "+line, Constants.e);
                 continue;
@@ -38,14 +38,20 @@ public class SlideDimensions {
 
             try {
                 int i = Integer.parseInt(num[0].trim());
-                int w = Integer.parseInt(num[1].trim());
-                int h = Integer.parseInt(num[2].trim());
-                int t = Integer.parseInt(num[3].trim());
-                boolean monitorClicks= Config.getBoolean(num[4]);
-                String ext=num[5].trim();
+                int f = Integer.parseInt(num[1].trim());
+                int w = Integer.parseInt(num[2].trim());
+                int h = Integer.parseInt(num[3].trim());
+                int t = Integer.parseInt(num[4].trim());
+                boolean monitorClicks= Config.getBoolean(num[5]);
+                String ext=num[6].trim();
                 if(i<1||i>20)
                 {
                     MainViewer.println("slidedim.txt: line "+lineNum+" invalid index "+num[0]+" parsed as "+i+". "+line, Constants.e);
+                    continue;
+                }
+                if(f<1||f>20)
+                {
+                    MainViewer.println("slidedim.txt: line "+lineNum+" invalid filenum "+num[1]+" parsed as "+f+". "+line, Constants.e);
                     continue;
                 }
                 if(t<1){
@@ -57,7 +63,7 @@ public class SlideDimensions {
                     continue;
                 }
 
-                dims.set(i-1,new Node(i,w,h,t,monitorClicks, ext));
+                dims.set(i-1,new Node(i,f,w,h,t,monitorClicks, ext));
             }
             catch (Exception e){
                 MainViewer.println("slidedim.txt: line "+lineNum+" could not parse "+line, Constants.e);
@@ -92,20 +98,20 @@ public class SlideDimensions {
         public final boolean markClicks, necessary;
         public final String file;
 
-        private Node(int index, int width, int height, int total, boolean markClicks, String extension, boolean necessary){
+        private Node(int index, int fileNum, int width, int height, int total, boolean markClicks, String extension, boolean necessary){
             this.width=width;
             this.height=height;
             this.total=total;
             this.markClicks=markClicks;
-            this.file=fileName(index,extension);
+            this.file=fileName(fileNum,extension);
             this.necessary=necessary;
         }
         Node(int index){
-            this(index,1,1,1, false, ".png",false);
+            this(index,index,1,1,1, false, ".png",false);
         }
 
-        Node(int index, int width, int height, int total, boolean markClicks, String extension){
-            this(index,width,height,total, markClicks, extension,true);
+        Node(int index, int fileNum, int width, int height, int total, boolean markClicks, String extension){
+            this(index,fileNum,width,height,total, markClicks, extension,true);
         }
 
         private String fileName(int index,String ext){

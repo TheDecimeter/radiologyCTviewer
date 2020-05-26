@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class MainViewer extends ApplicationAdapter {
 
-	public static final int none=0, dont=-1; //flags for when no slide is shown, and when scrollpos shouldn't be set
+	public static final int none=0, dont=-1, ready=1,error=-1,pending=0,play=2; //flags for when no slide is shown, and when scrollpos shouldn't be set
 	private static int SlideMode, SlideIndex, LastSlideMode; //state keeping variables
 	private static boolean updateSlides; //triggering variable
 	private static int viewWidth, viewHeight; //keep track of width and height, it's not always constant
@@ -26,14 +26,14 @@ public class MainViewer extends ApplicationAdapter {
 	private Controls controller;
 	private Bar scroll;
 
-	private static int loadingState=0; //informs external javascript of loading state when it changes
+	private static int loadingState=pending; //informs external javascript of loading state when it changes
 
 	private static Constants constants; //used to interface with javascript (or a dummy if compiled for PC)
 
 	private static Config c; //the config file state
 	public static Config getConfig(){return c;}
 
-	private static Texture clickImg; //the circle to be drawn when the slide is clicked
+	private Texture clickImg, clickHighlightImg; //the circle to be drawn when the slide is clicked, and a highlight option
 	private static ArrayList<ClickFollower> click; //all click trackers for each slide
 	private static ClickFollower slideClick; //the current slide's click follower
 
@@ -68,7 +68,7 @@ public class MainViewer extends ApplicationAdapter {
 	@Override
 	public void create () {
 		try {
-			loadingState = 0;
+			loadingState = pending;
 			Gdx.graphics.setContinuousRendering(false); //this keeps the processor from constantly cycling on PC, does nothing in HTML
 			SlideIndex = dont;
 
@@ -91,7 +91,8 @@ public class MainViewer extends ApplicationAdapter {
 
 			//Generate the ring for indicating clicks and scroll bar
 			clickImg = DrawShape.ring(c.click.color, c.click.radius, c.click.thickness);
-			scroll = new Bar(width - 15, height - 5, Color.LIGHT_GRAY, height - 10);
+			clickHighlightImg = DrawShape.ring(c.click.highlightColor, c.click.radius, c.click.thickness);
+			scroll = new Bar(Color.LIGHT_GRAY, c, 10);
 
 			slideManagers = new ArrayList<SlideManager>(20);
 			setupSlideManagers(c);
@@ -99,10 +100,10 @@ public class MainViewer extends ApplicationAdapter {
 			LastSlideMode = SlideMode = constants.getMode();
 			updateSlides = true;
 			updateSlideMode();
-			loadingState = 1;
+			loadingState = ready;
 		}
 		catch (Exception e){
-			loadingState=-1;
+			loadingState=error;
 			println(e.getMessage(),Constants.e);
 		}
 		constants.loadingStateChanged(loadingState);
@@ -138,6 +139,12 @@ public class MainViewer extends ApplicationAdapter {
 	public static void resetScrollsFor(int at){
 		scrollTimes.get(at).reset();
 	}
+	public static void addClick(int at, int x, int y, int slide){
+		click.get(at).updateClick(x,y,slide);
+	}
+	public static void addHighlight(int at, int x, int y, int slide){
+		click.get(at).addHighlight(x,y,slide);
+	}
 
 	/**
 	 * Link slide managers to their respective scroll and click trackers
@@ -152,7 +159,7 @@ public class MainViewer extends ApplicationAdapter {
 			ScrollFollower sf= new ScrollFollower(c,n.total);
 			scrollTimes.add(sf);
 			slideManagers.add(new SlideManager(n, sf, c));
-			click.add(new ClickFollower(n.total,c.click.radius,c.click.depth,n.markClicks,clickImg, c));
+			click.add(new ClickFollower(n.total,c.click.radius,c.click.depth,n.markClicks,clickImg,clickHighlightImg, c));
 		}
 	}
 
@@ -175,7 +182,7 @@ public class MainViewer extends ApplicationAdapter {
 			//set scroll bar to correct position
 			int currentSlide=slideManager.getSlide();
 			int totalSlides=slideManager.getTotal();
-			scroll.setWidth(totalSlides - currentSlide, totalSlides);
+			scroll.setHeight(totalSlides - currentSlide, totalSlides);
 
 			batch.begin();
 			slideManager.draw(batch);				//draw slide
@@ -226,6 +233,19 @@ public class MainViewer extends ApplicationAdapter {
 			m.dispose();
 
 		clickImg.dispose();
+		clickHighlightImg.dispose();
+	}
+	@Override
+	protected void finalize() throws Throwable
+	{
+		try
+		{
+			dispose();
+		}
+		finally
+		{
+			super.finalize();
+		}
 	}
 
 	public static int getWidth(){

@@ -41,6 +41,10 @@ public class Controls implements InputProcessor {
         dragDist=c.input.dragDist;
     }
 
+    public int getCurrentSlide(){
+        return slides.getSlide();
+    }
+
     public void setSlideManager(SlideManager man,ClickFollower click){
         slides=man;
         this.click=click;

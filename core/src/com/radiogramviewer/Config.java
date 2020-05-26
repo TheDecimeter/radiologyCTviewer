@@ -37,7 +37,7 @@ public class Config {
 
 
         vp=getProperties("click",vals);
-        click=new ClickClass(getInt("radius",vp),getInt("thickness",vp),getInt("depth",vp),getColor("color",vp),getBool("overwritelastclick",vp));
+        click=new ClickClass(getInt("radius",vp),getInt("thickness",vp),getInt("depth",vp),getColor("color",vp),getColor("highlight",vp),getBool("overwritelastclick",vp));
 
         vp=getProperties("controls",vals);
         input=new ControlClass(getBool("wheel",vp),getBool("arrows",vp),getBool("wasd",vp),getFloat("holdTime",vp),getBool("drag",vp),getInt("dragDist",vp));
@@ -166,12 +166,13 @@ public class Config {
     public class ClickClass{
         final boolean overwriteLastClick;
         final int radius,thickness, depth;
-        final Color color;
-        ClickClass(int radius,int thickness, int depth, Color color, boolean overwriteLastClick){
+        final Color color,highlightColor;
+        ClickClass(int radius,int thickness, int depth, Color color, Color highlightColor, boolean overwriteLastClick){
             this.radius=(int)(radius*scale);
             this.thickness=(int)(thickness*scale);
             this.depth=depth;
             this.color=color;
+            this.highlightColor=highlightColor;
             this.overwriteLastClick=overwriteLastClick;
         }
     }

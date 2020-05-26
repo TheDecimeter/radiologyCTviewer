@@ -1,8 +1,6 @@
 package com.radiogramviewer.client;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Vector2;
 import com.radiogramviewer.ClickNode;
 import com.radiogramviewer.Config;
 import com.radiogramviewer.Constants;
@@ -15,10 +13,12 @@ public class HTMLconstants implements Constants {
     private final static int keyDown=0, keyUp=1;
     private static int mode=MainViewer.none;
     private static Controls controller;
+    private static float scale;
 
     public HTMLconstants(){
         mode=MainViewer.none;
         exportStaticMethods();
+        scale=1/MainViewer.getConfig().global.scale;
     }
 
     @Override
@@ -43,6 +43,12 @@ public class HTMLconstants implements Constants {
     }
     public static void resetScrollsFor(int slideSet){
         MainViewer.resetScrollsFor(slideSet-1);
+    }
+    public static void addClick(int slideSet, int x, int y, int slide){
+        MainViewer.addClick(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
+    }
+    public static void addHighlight(int slideSet, int x, int y, int slide){
+        MainViewer.addHighlight(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
     }
 
     @Override
@@ -110,7 +116,7 @@ public class HTMLconstants implements Constants {
         return Controls.lastClick.toString(Controls.z);
     }
     public static int getCurrentSlide(){
-        return Controls.z;
+        return controller.getCurrentSlide();
     }
     public static int getCurrentMode(){
         return MainViewer.getSlideMode();
@@ -169,10 +175,10 @@ public class HTMLconstants implements Constants {
             }-*/;
 
     public static native boolean nativeWindowSizeSpecified()/*-{
-            return (typeof $wnd.viewerStatsWidth === "function") && (typeof $wnd.viewerStatsHeight === "function");
+            return (typeof $wnd.viewerStatsWidth === "function");
             }-*/;
 
-    public static native int nativeWindowWidth()/*-{
+    public static native float nativeWindowWidth()/*-{
             return $wnd.viewerStatsWidth();
             }-*/;
 
@@ -226,6 +232,7 @@ public class HTMLconstants implements Constants {
        $wnd.viewerGetScrollTimesFor = $entry(@com.radiogramviewer.client.HTMLconstants::getScrollTimesFor(ILjava/lang/String;Ljava/lang/String;));
        $wnd.viewerResetScrolls = $entry(@com.radiogramviewer.client.HTMLconstants::resetScrollsFor(I));
        $wnd.viewerResetClicks = $entry(@com.radiogramviewer.client.HTMLconstants::resetClicksFor(I));
-
+       $wnd.viewerAddClick = $entry(@com.radiogramviewer.client.HTMLconstants::addClick(IIII));
+       $wnd.viewerAddHighlight = $entry(@com.radiogramviewer.client.HTMLconstants::addHighlight(IIII));
     }-*/;
 }

@@ -158,6 +158,18 @@ public class SlideManager implements Disposable{
     public void dispose() {
         drawer.dispose();
     }
+    @Override
+    protected void finalize() throws Throwable
+    {
+        try
+        {
+            dispose();
+        }
+        finally
+        {
+            super.finalize();
+        }
+    }
 
 
     //simple helper for dividing up a slide set if it can fit in the GPU as a single texture.
