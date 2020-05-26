@@ -13,12 +13,11 @@ public class HTMLconstants implements Constants {
     private final static int keyDown=0, keyUp=1;
     private static int mode=MainViewer.none;
     private static Controls controller;
-    private static float scale;
 
     public HTMLconstants(){
         mode=MainViewer.none;
         exportStaticMethods();
-        scale=1/MainViewer.getConfig().global.scale;
+
     }
 
     @Override
@@ -45,9 +44,11 @@ public class HTMLconstants implements Constants {
         MainViewer.resetScrollsFor(slideSet-1);
     }
     public static void addClick(int slideSet, int x, int y, int slide){
+        float scale=1/MainViewer.getConfig().global.scale;
         MainViewer.addClick(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
     }
     public static void addHighlight(int slideSet, int x, int y, int slide){
+        float scale=1/MainViewer.getConfig().global.scale;
         MainViewer.addHighlight(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
     }
 

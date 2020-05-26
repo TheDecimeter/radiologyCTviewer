@@ -49,7 +49,6 @@ public class Bar{
     }
 
     public boolean setHeight(float current, float full){
-        MainViewer.println("current "+current,Constants.d);
         height=(int)((current/full)*maxWidth);
         if(height<0) {
             height = 0;
