@@ -88,8 +88,8 @@ public class ClickFollower {
      * @param slide The slide on which the click occured
      */
     public void addHighlight(int x, int y, int slide){
-        x-=radius;
-        y-=radius;
+        x-=c.click.highlightRadius;
+        y-=c.click.highlightRadius;
         if(slide<0||slide>=highlights.size()){
             MainViewer.println("Highlight index out of range "+slide+", max size "+highlights.size(),Constants.e);
             return;
@@ -125,16 +125,25 @@ public class ClickFollower {
      * @param slide the currently focused slide
      * @return
      */
-    public boolean draw(SpriteBatch batch, int slide) {
-        for(int i=lo(slide); i<hi(slide); ++i){
-            for(ClickNode n : highlights.get(i))
-                batch.draw(highlight, n.p.x, n.p.y);
-        }
+    public boolean drawClicks(SpriteBatch batch, int slide) {
         if(!markClicks)
             return true;
         for(int i=lo(slide); i<hi(slide); ++i){
             for(ClickNode n : clicks.get(i))
                 batch.draw(click, n.p.x, n.p.y);
+        }
+        return true;
+    }
+    /**
+     * Draw highlights on, above, and below current slide
+     * @param batch the batch to group all the sprites onto (for efficiency)
+     * @param slide the currently focused slide
+     * @return
+     */
+    public boolean drawHighlights(SpriteBatch batch, int slide) {
+        for(int i=lo(slide); i<hi(slide); ++i){
+            for(ClickNode n : highlights.get(i))
+                batch.draw(highlight, n.p.x, n.p.y);
         }
         return true;
     }

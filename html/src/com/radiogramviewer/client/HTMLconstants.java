@@ -227,8 +227,8 @@ public class HTMLconstants implements Constants {
        $wnd.viewerGetCurrentMode = $entry(@com.radiogramviewer.client.HTMLconstants::getCurrentMode());
        $wnd.viewerGetUpTime = $entry(@com.radiogramviewer.client.HTMLconstants::getUpTime());
        $wnd.viewerGetStartTime = $entry(@com.radiogramviewer.client.HTMLconstants::getStartTime());
-       $wnd.viewerSetMode = $entry(@com.radiogramviewer.client.HTMLconstants::setMode(I));
-       $wnd.viewerSetModeAt = $entry(@com.radiogramviewer.client.HTMLconstants::setModeAt(II));
+       $wnd.viewerSetSlide = $entry(@com.radiogramviewer.client.HTMLconstants::setMode(I));
+       $wnd.viewerSetSlideAt = $entry(@com.radiogramviewer.client.HTMLconstants::setModeAt(II));
        $wnd.viewerGetClicksFor = $entry(@com.radiogramviewer.client.HTMLconstants::getClicksFor(ILjava/lang/String;Ljava/lang/String;));
        $wnd.viewerGetScrollTimesFor = $entry(@com.radiogramviewer.client.HTMLconstants::getScrollTimesFor(ILjava/lang/String;Ljava/lang/String;));
        $wnd.viewerResetScrolls = $entry(@com.radiogramviewer.client.HTMLconstants::resetScrollsFor(I));

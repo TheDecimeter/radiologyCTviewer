@@ -27,7 +27,9 @@ public class Config {
 
         global=new GlobalClass(fakeDensity,1/scale);
 
-        window=new WindowClass(originalWidth,getInt("height",vpWindow), getBool("downscaleTexture",vpWindow));
+        window=new WindowClass(originalWidth,getInt("height",vpWindow),
+                getInt("barWidth",vpWindow),getInt("barBorder",vpWindow), getColor("barColor",vpWindow),
+                getBool("downscaleTexture",vpWindow));
 
         vp=getProperties("debug",vals);
         debug=new DebugClass(getBool("advanceSlide",vp));
@@ -37,7 +39,9 @@ public class Config {
 
 
         vp=getProperties("click",vals);
-        click=new ClickClass(getInt("radius",vp),getInt("thickness",vp),getInt("depth",vp),getColor("color",vp),getColor("highlight",vp),getBool("overwritelastclick",vp));
+        click=new ClickClass(getInt("radius",vp),getInt("thickness",vp),getInt("depth",vp),getColor("color",vp),
+                getColor("highlightColor",vp),getInt("highlightRadius",vp),getInt("highlightThickness",vp),
+                getBool("overwritelastclick",vp));
 
         vp=getProperties("controls",vals);
         input=new ControlClass(getBool("wheel",vp),getBool("arrows",vp),getBool("wasd",vp),getFloat("holdTime",vp),getBool("drag",vp),getInt("dragDist",vp));
@@ -147,12 +151,16 @@ public class Config {
     }
 
     public class WindowClass{
-        public final int height, width;
+        public final int height, width, barWidth, barBorder;
         public final boolean scalableTexture;
-        WindowClass(int width, int height, boolean downscaleTexture){
+        public final Color barColor;
+        WindowClass(int width, int height, int barWidth, int barBorder, Color barColor, boolean downscaleTexture){
             this.height=(int)(height*scale);
             this.width=(int)(width*scale);
+            this.barWidth=(int)(barWidth*scale);
+            this.barBorder=(int)(barBorder*scale);
             this.scalableTexture=downscaleTexture;
+            this.barColor=barColor;
         }
     }
 
@@ -165,14 +173,17 @@ public class Config {
 
     public class ClickClass{
         final boolean overwriteLastClick;
-        final int radius,thickness, depth;
+        final int radius,thickness, depth, highlightRadius,highlightThickness;
         final Color color,highlightColor;
-        ClickClass(int radius,int thickness, int depth, Color color, Color highlightColor, boolean overwriteLastClick){
+        ClickClass(int radius,int thickness, int depth, Color color,
+                   Color highlightColor, int highlightRadius,int highlightThickness, boolean overwriteLastClick){
             this.radius=(int)(radius*scale);
             this.thickness=(int)(thickness*scale);
             this.depth=depth;
             this.color=color;
             this.highlightColor=highlightColor;
+            this.highlightRadius=(int)(highlightRadius*scale);
+            this.highlightThickness=(int)(highlightThickness*scale);
             this.overwriteLastClick=overwriteLastClick;
         }
     }
@@ -209,7 +220,7 @@ public class Config {
 
     public Color parseColor(String in){
         String s=c(in);
-        float r = 1, g = 1, b = 1, a = .5f;
+        float r = 1, g = 1, b = 1, a = 1;
         try {
             if (s.length() >= 6) {
                 r = ((float) Integer.parseInt(s.substring(0, 2), 16)) / 255;

@@ -19,6 +19,8 @@ public class DrawShape {
     }
 
     public static Texture circle(Color color, int radius){
+        if(radius<1)
+            radius=1;
         int d=radius*2;
         Pixmap pixmap = new Pixmap(d, d, Pixmap.Format.RGBA8888);
         pixmap.setColor(color);
@@ -31,6 +33,11 @@ public class DrawShape {
     }
 
     public static Texture ring(Color color, int radius, int thickness){
+        if(radius<1)
+            radius=1;
+        if(thickness<1)
+            thickness=1;
+
         if(radius<=thickness)
             return circle(color,radius);
 

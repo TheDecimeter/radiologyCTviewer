@@ -20,15 +20,15 @@ public class Bar{
 
 
 
-    public Bar(Color color,Config c, int width){
+    public Bar(Config c){
 
 
         this.x=c.window.width;
         this.y=c.window.height;
-        this.width=(int)(width*(1/c.global.scale));
+        this.width=(int)(c.window.barWidth);
         if(this.width<1)
             this.width=1;
-        border=(int)(this.width*.2f);
+        border=c.window.barBorder;
         if(border<1)
             border=1;
 
@@ -37,8 +37,7 @@ public class Bar{
         this.y-=(height);
         this.x-=(this.width+border*2);
 
-        color.a=.7f;
-        bar= DrawShape.rect(color,this.width,height);
+        bar= DrawShape.rect(c.window.barColor,this.width,height);
         outline=DrawShape.rect(new Color(0,0,0,.5f),this.width+border*2,c.window.height);
     }
 

@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 
 import java.nio.IntBuffer;
+import java.util.HashMap;
 
 
 /**
@@ -23,6 +24,8 @@ public class SlideManager implements Disposable{
     private boolean buttons, discardDelta=false;
     private Drawer drawer;
 
+    private static HashMap<String,DistributedRegions> textureCache;
+
     public SlideManager(SlideDimensions.Node node, ScrollFollower scrollLog, Config c){
         dir=stay;
         holdFor=c.input.holdTime;
@@ -31,11 +34,18 @@ public class SlideManager implements Disposable{
         try{
             //try loading the image, if it can't be found, but wasn't mentioned in the slide Dimensions
             // then it is expected to not be important.
-            // otherwise, throw an exception.
-            Pixmap p;
-            p=new Pixmap(Gdx.files.internal(node.file));
-            int maxSize=maxSize();
-            drawer=new NormalDrawer(node,scrollLog,c, p, maxSize);
+            // otherwise, throw an  GDBS exception.
+            if(isCached(node.file)){
+                drawer=new NormalDrawer(node,scrollLog,getCached(node.file));
+                MainViewer.println("using cached slides: "+node.file,Constants.d);
+            }
+            else {
+                Pixmap p;
+                p = new Pixmap(Gdx.files.internal(node.file));
+                int maxSize = maxSize();
+                drawer = new NormalDrawer(node, scrollLog, c, p, maxSize);
+                cache(node.file,drawer);
+            }
         }
         catch (Exception e){
             if(node.necessary)
@@ -46,6 +56,23 @@ public class SlideManager implements Disposable{
 
 
     }
+
+    private boolean isCached(String filename){
+        if(textureCache==null)
+            return false;
+        return textureCache.containsKey(filename);
+    }
+
+    private DistributedRegions getCached(String filename){
+        return textureCache.get(filename);
+    }
+
+    private void cache(String filename, Drawer d){
+        if(textureCache==null)
+            textureCache=new HashMap<String, DistributedRegions>();
+        textureCache.put(filename,d.getTextures());
+    }
+
 
     //used for calculating how to fit the slideset into the GPU
     private int largestDimension(Pixmap p){
@@ -156,6 +183,7 @@ public class SlideManager implements Disposable{
      */
     @Override
     public void dispose() {
+        textureCache=null;
         drawer.dispose();
     }
     @Override
@@ -187,6 +215,7 @@ public class SlideManager implements Disposable{
         void advanceSlide(int howMuch);
         int getSlide();
         int getTotal();
+        DistributedRegions getTextures();
     }
 
 
@@ -198,6 +227,17 @@ public class SlideManager implements Disposable{
         private ScrollFollower scrollLog;
         TextureRegion [][] img;
         private Texture [] texture;
+
+        public NormalDrawer(SlideDimensions.Node node, ScrollFollower scrollLog, DistributedRegions d){
+            ih= node.height;
+            iw= node.width;
+            it= node.total;
+            x=0;
+            y=0;
+            this.scrollLog=scrollLog;
+            this.img=d.img;
+            this.texture=d.texture;
+        }
 
         /**
          * Create a drawer
@@ -353,17 +393,6 @@ public class SlideManager implements Disposable{
             }
         }
 
-        /**
-         * simple node for holding textures and regions
-         */
-        private class DistributedRegions{
-            final TextureRegion [][] img;
-            final Texture [] texture;
-            DistributedRegions(TextureRegion [][] img, Texture[] texture){
-                this.img=img;
-                this.texture=texture;
-            }
-        }
 
 
         /**
@@ -500,6 +529,11 @@ public class SlideManager implements Disposable{
             return it;
         }
 
+        @Override
+        public DistributedRegions getTextures() {
+            return new DistributedRegions(img,texture);
+        }
+
 
         @Override
         public void dispose() {
@@ -528,7 +562,24 @@ public class SlideManager implements Disposable{
         public int getSlide() {return 0;}
         @Override
         public int getTotal() {return 0;}
+
+        @Override
+        public DistributedRegions getTextures() { return null; }
+
         @Override
         public void dispose() {}
+    }
+
+
+    /**
+     * simple node for holding textures and regions
+     */
+    private class DistributedRegions{
+        final TextureRegion [][] img;
+        final Texture [] texture;
+        DistributedRegions(TextureRegion [][] img, Texture[] texture){
+            this.img=img;
+            this.texture=texture;
+        }
     }
 }

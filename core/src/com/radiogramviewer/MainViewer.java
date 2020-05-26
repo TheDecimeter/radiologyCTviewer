@@ -91,8 +91,8 @@ public class MainViewer extends ApplicationAdapter {
 
 			//Generate the ring for indicating clicks and scroll bar
 			clickImg = DrawShape.ring(c.click.color, c.click.radius, c.click.thickness);
-			clickHighlightImg = DrawShape.ring(c.click.highlightColor, c.click.radius, c.click.thickness);
-			scroll = new Bar(Color.LIGHT_GRAY, c, 10);
+			clickHighlightImg = DrawShape.ring(c.click.highlightColor, c.click.highlightRadius, c.click.highlightThickness);
+			scroll = new Bar(c);
 
 			slideManagers = new ArrayList<SlideManager>(20);
 			setupSlideManagers(c);
@@ -186,7 +186,8 @@ public class MainViewer extends ApplicationAdapter {
 
 			batch.begin();
 			slideManager.draw(batch);				//draw slide
-			slideClick.draw(batch,currentSlide);	//draw any relevant clicks
+			slideClick.drawClicks(batch,currentSlide);	//draw any relevant clicks
+			slideClick.drawHighlights(batch,currentSlide);	//draw any highlightedAreas
 			if(totalSlides>1)
 				scroll.draw(batch);					//draw scroll bar, if more than 1 slide
 			batch.end();
