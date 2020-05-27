@@ -117,7 +117,7 @@ public class HTMLconstants implements Constants {
         return Controls.lastClick.toString(Controls.z);
     }
     public static int getCurrentSlide(){
-        return controller.getCurrentSlide();
+        return controller.getCurrentSlide()+1;
     }
     public static int getCurrentMode(){
         return MainViewer.getSlideMode();
@@ -224,7 +224,7 @@ public class HTMLconstants implements Constants {
        $wnd.viewerResetLastClick = $entry(@com.radiogramviewer.client.HTMLconstants::resetLastClick());
        $wnd.viewerGetLastClick = $entry(@com.radiogramviewer.client.HTMLconstants::getLastClick());
        $wnd.viewerGetCurrentSlide = $entry(@com.radiogramviewer.client.HTMLconstants::getCurrentSlide());
-       $wnd.viewerGetCurrentMode = $entry(@com.radiogramviewer.client.HTMLconstants::getCurrentMode());
+       $wnd.viewerGetCurrentSet = $entry(@com.radiogramviewer.client.HTMLconstants::getCurrentMode());
        $wnd.viewerGetUpTime = $entry(@com.radiogramviewer.client.HTMLconstants::getUpTime());
        $wnd.viewerGetStartTime = $entry(@com.radiogramviewer.client.HTMLconstants::getStartTime());
        $wnd.viewerSetSlide = $entry(@com.radiogramviewer.client.HTMLconstants::setMode(I));
