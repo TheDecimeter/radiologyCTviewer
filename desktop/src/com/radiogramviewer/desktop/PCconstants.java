@@ -15,7 +15,7 @@ public class PCconstants implements Constants {
 
     @Override
     public int getMode() {
-        return 1;
+        return 3;
     }
 
 
@@ -48,6 +48,16 @@ public class PCconstants implements Constants {
 
     @Override
     public void inputOccured() {
+
+    }
+
+    @Override
+    public void clickAdded(String click) {
+
+    }
+
+    @Override
+    public void clickRemoved(String click) {
 
     }
 

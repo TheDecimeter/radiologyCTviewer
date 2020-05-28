@@ -9,6 +9,8 @@ public interface Constants {
     long getTime();
     void addControls(Controls c);
     void inputOccured();
+    void clickAdded(String click);
+    void clickRemoved(String click);
     void loadingStateChanged(int state);
     float getScale(int originalWidth);
 }

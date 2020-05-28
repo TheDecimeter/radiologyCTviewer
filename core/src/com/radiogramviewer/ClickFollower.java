@@ -73,12 +73,15 @@ public class ClickFollower {
             ArrayList<ClickNode> l = clicks.get(z);
             for (int i = 0; i < l.size(); ++i) {
                 if (overlap(x, y, l.get(i).p)) {
+                    MainViewer.clickRemoved(l.get(i).toString(z));
                     remove(i, l);
                     return;
                 }
             }
         }
-        clicks.get(slide).add(new ClickNode(x,y,Timing.getMillis()));
+        ClickNode n=new ClickNode(x,y,Timing.getMillis());
+        MainViewer.clickAdded(n.toString(slide));
+        clicks.get(slide).add(n);
     }
 
     /**

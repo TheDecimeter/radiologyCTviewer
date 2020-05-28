@@ -1,12 +1,15 @@
 package com.radiogramviewer.client;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.radiogramviewer.ClickNode;
 import com.radiogramviewer.Config;
 import com.radiogramviewer.Constants;
 import com.radiogramviewer.Controls;
 import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.Timing;
+import com.radiogramviewer.WindowingShaders;
 
 public class HTMLconstants implements Constants {
 
@@ -90,6 +93,16 @@ public class HTMLconstants implements Constants {
     }
 
     @Override
+    public void clickAdded(String click) {
+        nativeClickAdded(click);
+    }
+
+    @Override
+    public void clickRemoved(String click) {
+        nativeClickRemoved(click);
+    }
+
+    @Override
     public void loadingStateChanged(int state) {
         nativeLoadingStateChanged(state);
     }
@@ -128,6 +141,32 @@ public class HTMLconstants implements Constants {
         Controls.z=0;
     }
 
+
+    public static void addShader(String name, String vertex, String fragment){
+        ShaderProgram p= WindowingShaders.generateShader(vertex,fragment);
+        if(p.isCompiled())
+            MainViewer.addShader(name,p);
+    }
+
+    public static void addWindowShaderGray(String name, float level, float width){
+        ShaderProgram p= WindowingShaders.windowGray(level,width);
+        if(p.isCompiled())
+            MainViewer.addShader(name,p);
+    }
+    public static void addWindowShaderValue(String name, float level, float width){
+        ShaderProgram p= WindowingShaders.windowValue(level,width);
+        if(p.isCompiled())
+            MainViewer.addShader(name,p);
+    }
+
+    public static void removeShader(String name){
+        MainViewer.removeShader(name);
+    }
+
+    public static void setShader(String name){
+        MainViewer.setShader(name);
+    }
+
     public static void pipeInput(int key, int eventType){
         if(controller!=null){
             if(eventType==keyDown){
@@ -153,6 +192,9 @@ public class HTMLconstants implements Constants {
     }
     public static int getViewerWidth(){
         return MainViewer.getWidth();
+    }
+    public static double getViewerWidthInches(){
+        return MainViewer.getWidth()/(Gdx.graphics.getDensity()*160);
     }
     public static double getViewerDensityFactor(){
         return MainViewer.getConfig().global.scale;
@@ -188,6 +230,16 @@ public class HTMLconstants implements Constants {
                 $wnd.viewerListenerInput()
             }
             }-*/;
+    public static native int nativeClickAdded(String click)/*-{
+            if (typeof $wnd.viewerListenerClickAdded === "function"){
+                $wnd.viewerListenerClickAdded(click)
+            }
+            }-*/;
+    public static native int nativeClickRemoved(String click)/*-{
+            if (typeof $wnd.viewerListenerClickRemoved === "function"){
+                $wnd.viewerListenerClickRemoved(click)
+            }
+            }-*/;
 
     public static native void nativeLoadingStateChanged(int state)/*-{
             if (typeof $wnd.viewerListenerLoadingStateChanged === "function"){
@@ -217,23 +269,36 @@ public class HTMLconstants implements Constants {
 
     public static native void exportStaticMethods() /*-{
        $wnd.viewerGetViewerDensityFactor = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerDensityFactor());
-       $wnd.viewerGetViewerWidth = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerWidth());
-       $wnd.viewerGetViewerHeight = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerHeight());
+       $wnd.viewerGetWidth = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerWidth());
+       $wnd.viewerGetWidthInches = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerWidthInches());
+       $wnd.viewerGetHeight = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerHeight());
+
        $wnd.viewerSetDragDistance = $entry(@com.radiogramviewer.client.HTMLconstants::setDragDistance(I));
        $wnd.viewerPipeInput = $entry(@com.radiogramviewer.client.HTMLconstants::pipeInput(II));
+
        $wnd.viewerResetLastClick = $entry(@com.radiogramviewer.client.HTMLconstants::resetLastClick());
        $wnd.viewerGetLastClick = $entry(@com.radiogramviewer.client.HTMLconstants::getLastClick());
        $wnd.viewerGetCurrentSlide = $entry(@com.radiogramviewer.client.HTMLconstants::getCurrentSlide());
        $wnd.viewerGetCurrentSet = $entry(@com.radiogramviewer.client.HTMLconstants::getCurrentMode());
+
        $wnd.viewerGetUpTime = $entry(@com.radiogramviewer.client.HTMLconstants::getUpTime());
        $wnd.viewerGetStartTime = $entry(@com.radiogramviewer.client.HTMLconstants::getStartTime());
+
        $wnd.viewerSetSlide = $entry(@com.radiogramviewer.client.HTMLconstants::setMode(I));
        $wnd.viewerSetSlideAt = $entry(@com.radiogramviewer.client.HTMLconstants::setModeAt(II));
+
        $wnd.viewerGetClicksFor = $entry(@com.radiogramviewer.client.HTMLconstants::getClicksFor(ILjava/lang/String;Ljava/lang/String;));
        $wnd.viewerGetScrollTimesFor = $entry(@com.radiogramviewer.client.HTMLconstants::getScrollTimesFor(ILjava/lang/String;Ljava/lang/String;));
        $wnd.viewerResetScrolls = $entry(@com.radiogramviewer.client.HTMLconstants::resetScrollsFor(I));
        $wnd.viewerResetClicks = $entry(@com.radiogramviewer.client.HTMLconstants::resetClicksFor(I));
-       $wnd.viewerAddClick = $entry(@com.radiogramviewer.client.HTMLconstants::addClick(IIII));
+
+       $wnd.viewerSimulateClick = $entry(@com.radiogramviewer.client.HTMLconstants::addClick(IIII));
        $wnd.viewerAddHighlight = $entry(@com.radiogramviewer.client.HTMLconstants::addHighlight(IIII));
+
+       $wnd.viewerAddCustomShader = $entry(@com.radiogramviewer.client.HTMLconstants::addShader(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;));
+       $wnd.viewerAddWindowingShaderGray = $entry(@com.radiogramviewer.client.HTMLconstants::addWindowShaderGray(Ljava/lang/String;FF));
+       $wnd.viewerAddWindowingShaderValue = $entry(@com.radiogramviewer.client.HTMLconstants::addWindowShaderValue(Ljava/lang/String;FF));
+       $wnd.viewerRemoveShader = $entry(@com.radiogramviewer.client.HTMLconstants::removeShader(Ljava/lang/String;));
+       $wnd.viewerSetShader = $entry(@com.radiogramviewer.client.HTMLconstants::setShader(Ljava/lang/String;));
     }-*/;
 }

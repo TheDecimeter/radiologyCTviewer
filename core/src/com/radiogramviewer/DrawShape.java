@@ -69,7 +69,7 @@ public class DrawShape {
         for(int y=0; y<pixmap.getHeight(); ++y){
             for(int x=0; x<pixmap.getHeight(); ++x){
                 int dist=(int)Vector2.dst(radius,radius,x,y);
-                if(dist<radius && dist>hollow)
+                if(dist<radius && dist>=hollow)
                         pixmap.drawPixel(x,y);
             }
         }

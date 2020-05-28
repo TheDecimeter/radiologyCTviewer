@@ -6,9 +6,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainViewer extends ApplicationAdapter {
 
@@ -19,7 +21,8 @@ public class MainViewer extends ApplicationAdapter {
 
 
 
-	private SpriteBatch batch;
+	private static SpriteBatch batch;
+	private static SpriteBatch windowBatch;
 	private Texture img;
 	private SlideManager slideManager;
 	private ArrayList<SlideManager> slideManagers;
@@ -39,6 +42,7 @@ public class MainViewer extends ApplicationAdapter {
 
 	private static ArrayList<ScrollFollower> scrollTimes; //all scroll trackers
 
+	private static HashMap<String,ShaderProgram> shaders;
 
 	public MainViewer(Constants constants){
 		MainViewer.constants=constants;
@@ -55,9 +59,15 @@ public class MainViewer extends ApplicationAdapter {
 		constants.print(msg, code);
 	}
 
-	//Simple interface to forward input event from controls to Javascript
+	//Simple interfaces to forward input event from controls to Javascript
 	public static void inputOccured(){
 		constants.inputOccured();
+	}
+	public static void clickAdded(String click){
+		constants.clickAdded(""+SlideMode+","+click);
+	}
+	public static void clickRemoved(String click){
+		constants.clickRemoved(""+SlideMode+","+click);
 	}
 
 	public static int loadingState(){
@@ -88,6 +98,7 @@ public class MainViewer extends ApplicationAdapter {
 
 			Gdx.graphics.setWindowedMode(width, height);
 			batch = new SpriteBatch();
+			windowBatch=new SpriteBatch();
 
 			//Generate the ring for indicating clicks and scroll bar
 			clickImg = DrawShape.ring(c.click.color, c.click.radius, c.click.thickness);
@@ -100,6 +111,10 @@ public class MainViewer extends ApplicationAdapter {
 			LastSlideMode = SlideMode = constants.getMode();
 			updateSlides = true;
 			updateSlideMode();
+
+//			ShaderProgram shader=WindowingShaders.windowGray(.3f,.8f);
+//			batch.setShader(shader);
+
 			loadingState = ready;
 		}
 		catch (Exception e){
@@ -145,6 +160,41 @@ public class MainViewer extends ApplicationAdapter {
 	public static void addHighlight(int at, int x, int y, int slide){
 		click.get(at).addHighlight(x,y,slide);
 	}
+	public static void addShader(String key, ShaderProgram value){
+		if(shaders==null)
+			shaders=new HashMap<String, ShaderProgram>();
+
+		boolean applyShader=false;
+		if(shaders.containsKey(key)) { //if there is already a shader by that name, replace it
+			if(batch.getShader().equals(shaders.get(key)))
+				applyShader=true;  //if it is the active shader, repace it with the new one
+			removeShader(key);
+		}
+		shaders.put(key,value);
+		if(applyShader)
+			batch.setShader(value);
+	}
+	public static void removeShader(String key){
+		if(shaders==null)
+			return;
+		if(!shaders.containsKey(key))
+			return;
+		ShaderProgram s=shaders.get(key);
+		if(batch.getShader().equals(s))
+			batch.setShader(null);
+		s.dispose();
+		shaders.remove(key);
+	}
+	public static void setShader(String key){
+		if(key.equals("off")){
+			batch.setShader(null);
+			return;
+		}
+		if(shaders==null)
+			return;
+		if(shaders.containsKey(key))
+			batch.setShader(shaders.get(key));
+	}
 
 	/**
 	 * Link slide managers to their respective scroll and click trackers
@@ -169,7 +219,7 @@ public class MainViewer extends ApplicationAdapter {
 	@Override
 	public void render () {
 		//clear the last rendered image
-		Gdx.gl.glClearColor(.5f, .5f, .5f, 1);
+		Gdx.gl.glClearColor(1f, .5f, .5f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		//if changing to a new slide set, do that
@@ -185,12 +235,15 @@ public class MainViewer extends ApplicationAdapter {
 			scroll.setHeight(totalSlides - currentSlide, totalSlides);
 
 			batch.begin();
-			slideManager.draw(batch);				//draw slide
-			slideClick.drawClicks(batch,currentSlide);	//draw any relevant clicks
-			slideClick.drawHighlights(batch,currentSlide);	//draw any highlightedAreas
-			if(totalSlides>1)
-				scroll.draw(batch);					//draw scroll bar, if more than 1 slide
+			slideManager.draw(batch);  //draw slide
 			batch.end();
+
+			windowBatch.begin();
+			slideClick.drawClicks(windowBatch,currentSlide);	//draw any relevant clicks
+			slideClick.drawHighlights(windowBatch,currentSlide);	//draw any highlightedAreas
+			if(totalSlides>1)
+				scroll.draw(windowBatch);					//draw scroll bar, if more than 1 slide
+			windowBatch.end();
 		}
 	}
 
@@ -228,10 +281,17 @@ public class MainViewer extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
+		windowBatch.dispose();
 
 		scroll.dispose();
 		for(SlideManager m : slideManagers)
 			m.dispose();
+
+		if(shaders!=null) {
+			for (ShaderProgram p : shaders.values())
+				p.dispose();
+			shaders = null;
+		}
 
 		clickImg.dispose();
 		clickHighlightImg.dispose();

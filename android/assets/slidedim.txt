@@ -8,5 +8,6 @@
 #    mark clicks in the slide (true or false)
 #    file extension
 1,1,7,6,42,t,.jpg
-2,2,8,8,61,t,.jpg
-4,2,8,8,61,t,.jpg
+2,2,8,8,64,t,.jpg
+3,3,8,8,64,t,.jpg
+4,1,7,6,42,t,.jpg
