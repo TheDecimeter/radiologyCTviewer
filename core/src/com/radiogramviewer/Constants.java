@@ -11,6 +11,8 @@ public interface Constants {
     void inputOccured();
     void clickAdded(String click);
     void clickRemoved(String click);
+    void scrollMove(int index);
+    void scrollStuck(int index);
     void loadingStateChanged(int state);
     float getScale(int originalWidth);
 }

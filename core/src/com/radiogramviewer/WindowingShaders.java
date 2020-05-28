@@ -26,9 +26,6 @@ public class WindowingShaders {
             "uniform mat4 u_projTrans1;\n"+
             "float lo = ";
 
-    private final static String fragmentShader2=
-            ";\nfloat hi = ";
-
     private final static String fragmentShader3hsv=
             ";\n" +
             "vec3 rgb2hsv(vec3 c)\n" +
@@ -93,8 +90,8 @@ public class WindowingShaders {
         width/=2;
         float hi=level+width;
         float lo=level-width;
-        float rg=hi-lo;
-        String fragment=fragmentShader1+lo+fragmentShader2+hi+guts+rg+fragmentShader4;
+        float range=hi-lo;
+        String fragment=fragmentShader1+lo+guts+range+fragmentShader4;
         return generateShader(fragment);
     }
 

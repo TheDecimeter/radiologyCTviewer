@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 public class MainViewer extends ApplicationAdapter {
 
-	public static final int none=0, dont=-1, ready=1,error=-1,pending=0,play=2; //flags for when no slide is shown, and when scrollpos shouldn't be set
+	public static final int none=0, dont=-1, ready=22,error=-3,pending=-2,play=2; //flags for when no slide is shown, and when scrollpos shouldn't be set
 	private static int SlideMode, SlideIndex, LastSlideMode; //state keeping variables
 	private static boolean updateSlides; //triggering variable
 	private static int viewWidth, viewHeight; //keep track of width and height, it's not always constant
@@ -70,6 +70,13 @@ public class MainViewer extends ApplicationAdapter {
 		constants.clickRemoved(""+SlideMode+","+click);
 	}
 
+	public static void scrollMove(int index){
+		constants.scrollMove(index);
+	}
+	public static void scrollStuck(int index){
+		constants.scrollStuck(index);
+	}
+
 	public static int loadingState(){
 		return loadingState;
 	}
@@ -112,7 +119,7 @@ public class MainViewer extends ApplicationAdapter {
 			updateSlides = true;
 			updateSlideMode();
 
-//			ShaderProgram shader=WindowingShaders.windowGray(.3f,.8f);
+//			ShaderProgram shader=WindowingShaders.windowValue(.515f,.075f);
 //			batch.setShader(shader);
 
 			loadingState = ready;
@@ -161,6 +168,8 @@ public class MainViewer extends ApplicationAdapter {
 		click.get(at).addHighlight(x,y,slide);
 	}
 	public static void addShader(String key, ShaderProgram value){
+		if(key.equals("off"))
+			return;
 		if(shaders==null)
 			shaders=new HashMap<String, ShaderProgram>();
 
@@ -205,11 +214,15 @@ public class MainViewer extends ApplicationAdapter {
 		click=new ArrayList<ClickFollower>();
 		scrollTimes=new ArrayList<ScrollFollower>();
 		SlideDimensions d=new SlideDimensions();
+		loadingState=0;
+        constants.loadingStateChanged(loadingState);
 		for(SlideDimensions.Node n : d.dims()){
 			ScrollFollower sf= new ScrollFollower(c,n.total);
 			scrollTimes.add(sf);
 			slideManagers.add(new SlideManager(n, sf, c));
 			click.add(new ClickFollower(n.total,c.click.radius,c.click.depth,n.markClicks,clickImg,clickHighlightImg, c));
+			loadingState++;
+            constants.loadingStateChanged(loadingState);
 		}
 	}
 
@@ -264,6 +277,7 @@ public class MainViewer extends ApplicationAdapter {
 		}
 
 		//go to the next slide set
+
 		slideManager=slideManagers.get(SlideMode-1);
 		//change to specified index if necessary
 		if(SlideIndex!=dont)
@@ -274,7 +288,8 @@ public class MainViewer extends ApplicationAdapter {
 		controller.setSlideManager(slideManager,slideClick);
 
 		//Record focus gained
-		scrollTimes.get(SlideMode-1).logOpen(slideManager.getSlide());
+        if(LastSlideMode!=SlideMode)
+		    scrollTimes.get(SlideMode-1).logOpen(slideManager.getSlide());
 	}
 
 	//release memory back into the wild

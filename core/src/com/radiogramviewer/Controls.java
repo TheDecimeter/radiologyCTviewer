@@ -18,6 +18,8 @@ import java.util.HashMap;
  */
 public class Controls implements InputProcessor {
 
+    public static boolean freeze=false;
+
     private SlideManager slides; //keep track of slide manager so slices can be scrolled
     private ClickFollower click; //keep track of click follower so clicks can be recorded
     private Config c;
@@ -52,12 +54,14 @@ public class Controls implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        if(freeze) return false;
         handleKeyDown(keycode);
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
+        if(freeze) return false;
         handleKeyUp(keycode);
         if(keycode== Input.Keys.M&&c.debug.advanceSlide)
         {
@@ -79,12 +83,14 @@ public class Controls implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if(freeze) return false;
         startDrag(screenX,screenY,pointer);
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if(freeze) return false;
         if(dragged(pointer)) {
             stopDrag(pointer);
             return false;
@@ -110,6 +116,7 @@ public class Controls implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        if(freeze) return false;
         if(c.input.drag && MainViewer.getSlideMode()!=MainViewer.none)
             slides.advanceSlide(drag(screenX,screenY,pointer));
         return false;
@@ -122,6 +129,7 @@ public class Controls implements InputProcessor {
 
     @Override
     public boolean scrolled(int amount) {
+        if(freeze) return false;
 //        System.out.println("scrolled "+amount);
         if(c.input.wheel && MainViewer.getSlideMode()!=MainViewer.none)
             slides.advanceSlide(amount);
@@ -255,7 +263,7 @@ public class Controls implements InputProcessor {
 
         //A touch down event should have already stored the index with "startDrag"
         if(!drag.containsKey(index)) {
-            MainViewer.println("checking drag on unsaved index "+index,Constants.e);
+            MainViewer.println("checking drag on unsaved index "+index+" ignore this if input was frozen.",Constants.w);
             return 0;
         }
 

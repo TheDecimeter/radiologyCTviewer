@@ -60,6 +60,13 @@ public class PCconstants implements Constants {
     public void clickRemoved(String click) {
 
     }
+    @Override
+    public void scrollMove(int index) {
+    }
+
+    @Override
+    public void scrollStuck(int index) {
+    }
 
     @Override
     public void loadingStateChanged(int state) {

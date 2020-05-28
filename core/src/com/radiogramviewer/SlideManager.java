@@ -454,17 +454,19 @@ public class SlideManager implements Disposable{
             slide=clamp(slide,0,it-1);
             int nx=getX(slide);
             int ny=getY(slide);
-            if(nx!=x||ny!=y)
+            if(nx!=x||ny!=y) {
                 MainViewer.inputOccured();
-            x=nx;
-            y=ny;
+                x=nx;
+                y=ny;
+            }
         }
 
         @Override
-        public void advanceSlide(int howMuch){
-            howMuch=clamp(howMuch,-it,it);
+        public void advanceSlide(int howFar){
+            int howMuch=clamp(howFar,-it,it);
 
 //        MainViewer.println("advance slide "+howMuch,Constants.d);
+            int oldIndex=getSlide();
             if(howMuch>0) {
                 MainViewer.inputOccured();
                 for (int i = 0; i < howMuch; ++i)
@@ -476,7 +478,15 @@ public class SlideManager implements Disposable{
                     prevSlide();
             }
 //        Gdx.graphics.requestRendering();
-            scrollLog.logScroll(getSlide());
+            int nextIndex=getSlide();
+            if(oldIndex==nextIndex){
+                if(howFar!=0)
+                    MainViewer.scrollStuck(nextIndex);
+            }
+            else{
+                MainViewer.scrollMove(nextIndex);
+                scrollLog.logScroll(getSlide());
+            }
         }
 
 

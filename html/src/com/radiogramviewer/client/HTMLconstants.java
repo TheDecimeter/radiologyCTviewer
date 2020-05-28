@@ -20,7 +20,7 @@ public class HTMLconstants implements Constants {
     public HTMLconstants(){
         mode=MainViewer.none;
         exportStaticMethods();
-
+        exportStaticVariables(MainViewer.ready, MainViewer.pending, MainViewer.error);
     }
 
     @Override
@@ -103,6 +103,16 @@ public class HTMLconstants implements Constants {
     }
 
     @Override
+    public void scrollMove(int index) {
+        nativeScrollMoved(index);
+    }
+
+    @Override
+    public void scrollStuck(int index) {
+        nativeScrollStuck(index);
+    }
+
+    @Override
     public void loadingStateChanged(int state) {
         nativeLoadingStateChanged(state);
     }
@@ -142,22 +152,42 @@ public class HTMLconstants implements Constants {
     }
 
 
-    public static void addShader(String name, String vertex, String fragment){
+    public static boolean addShader(String name, String vertex, String fragment){
+        if(illegalName(name))
+            return false;
         ShaderProgram p= WindowingShaders.generateShader(vertex,fragment);
-        if(p.isCompiled())
-            MainViewer.addShader(name,p);
+        if(p==null||!p.isCompiled())
+            return false;
+        MainViewer.addShader(name, p);
+        return true;
     }
 
-    public static void addWindowShaderGray(String name, float level, float width){
+    public static boolean addWindowShaderGray(String name, float level, float width){
+        if(illegalName(name))
+            return false;
         ShaderProgram p= WindowingShaders.windowGray(level,width);
-        if(p.isCompiled())
-            MainViewer.addShader(name,p);
+        if(p==null||!p.isCompiled())
+            return false;
+        MainViewer.addShader(name, p);
+        return true;
     }
-    public static void addWindowShaderValue(String name, float level, float width){
+    public static boolean addWindowShaderValue(String name, float level, float width){
+        if(illegalName(name))
+            return false;
         ShaderProgram p= WindowingShaders.windowValue(level,width);
-        if(p.isCompiled())
-            MainViewer.addShader(name,p);
+        if(p==null||!p.isCompiled())
+            return false;
+        MainViewer.addShader(name, p);
+        return true;
     }
+
+    private static boolean illegalName(String name){
+        if(!name.equals("off"))
+            return false;
+        MainViewer.println("The name \"off\" is reserved.",Constants.e);
+        return true;
+    }
+
 
     public static void removeShader(String name){
         MainViewer.removeShader(name);
@@ -167,6 +197,9 @@ public class HTMLconstants implements Constants {
         MainViewer.setShader(name);
     }
 
+    public static void freezeInput(boolean freeze){
+        Controls.freeze=freeze;
+    }
     public static void pipeInput(int key, int eventType){
         if(controller!=null){
             if(eventType==keyDown){
@@ -240,6 +273,16 @@ public class HTMLconstants implements Constants {
                 $wnd.viewerListenerClickRemoved(click)
             }
             }-*/;
+    public static native int nativeScrollMoved(int index)/*-{
+            if (typeof $wnd.viewerListenerScrollSuccess === "function"){
+                $wnd.viewerListenerScrollSuccess(index)
+            }
+            }-*/;
+    public static native int nativeScrollStuck(int index)/*-{
+            if (typeof $wnd.viewerListenerScrollFail === "function"){
+                $wnd.viewerListenerScrollFail(index)
+            }
+            }-*/;
 
     public static native void nativeLoadingStateChanged(int state)/*-{
             if (typeof $wnd.viewerListenerLoadingStateChanged === "function"){
@@ -266,6 +309,11 @@ public class HTMLconstants implements Constants {
             return Date.now();
             }-*/;
 
+    public static native void exportStaticVariables(int readyFlag, int pendingFlag, int failedFlag)/*-{
+            $wnd.FLAGviewerReady=readyFlag;
+            $wnd.FLAGviewerPendingUnknown=pendingFlag;
+            $wnd.FLAGviewerFailedLoad=failedFlag;
+            }-*/;
 
     public static native void exportStaticMethods() /*-{
        $wnd.viewerGetViewerDensityFactor = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerDensityFactor());
@@ -275,6 +323,7 @@ public class HTMLconstants implements Constants {
 
        $wnd.viewerSetDragDistance = $entry(@com.radiogramviewer.client.HTMLconstants::setDragDistance(I));
        $wnd.viewerPipeInput = $entry(@com.radiogramviewer.client.HTMLconstants::pipeInput(II));
+       $wnd.viewerFreezeInput = $entry(@com.radiogramviewer.client.HTMLconstants::freezeInput(Z));
 
        $wnd.viewerResetLastClick = $entry(@com.radiogramviewer.client.HTMLconstants::resetLastClick());
        $wnd.viewerGetLastClick = $entry(@com.radiogramviewer.client.HTMLconstants::getLastClick());
