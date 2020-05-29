@@ -91,8 +91,16 @@ public class WindowingShaders {
         float hi=level+width;
         float lo=level-width;
         float range=hi-lo;
-        String fragment=fragmentShader1+lo+guts+range+fragmentShader4;
+        String fragment=fragmentShader1+f(lo)+guts+f(range)+fragmentShader4;
         return generateShader(fragment);
+    }
+
+    private static String f(float v){
+        String r=""+v;
+        if(r.contains("."))
+            return r;
+        else
+            return r+".0";
     }
 
 
