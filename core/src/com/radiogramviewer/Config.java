@@ -22,9 +22,8 @@ public class Config {
     public Config(Constants constants){
         HashMap<String,HashMap<String,String>> vals=vals();
         HashMap<String,String> vpWindow=getProperties("window",vals);
-        HashMap<String,String>
 
-        vp=getProperties("debug",vals);
+        HashMap<String,String> vp=getProperties("debug",vals);
         debug=new DebugClass(getBool("advanceSlide",vp),maxSize(getBool("fakeGPU",vp),getInt("fakeTextureMax",vp)));
 
         vp=getProperties("global",vals);
@@ -33,7 +32,7 @@ public class Config {
         boolean fakeDensity=getBool("fakeDensity",vp);
         scale=getScale(constants, originalWidth, fakeDensity);
 
-        global=new GlobalClass(fakeDensity,1/scale, debug.gpuMaxTextureSize);
+        global=new GlobalClass(fakeDensity,1/scale, debug.gpuMaxTextureSize, getInt("overscan",vp));
 
         window=new WindowClass(originalWidth,getInt("height",vpWindow),
                 getInt("barWidth",vpWindow),getInt("barBorder",vpWindow), getColor("barColor",vpWindow),
@@ -228,11 +227,16 @@ public class Config {
     public class GlobalClass{
         public final boolean densityIndepndant;
         public final float scale;
-        public final int gpuMaxTextureSize;
-        GlobalClass(boolean densityIndepndant, float scale, int gpuMaxTextureSize){
+        public final int gpuMaxTextureSize, overscan;
+        GlobalClass(boolean densityIndepndant, float scale, int gpuMaxTextureSize, int overscan){
             this.scale=scale;
             this.densityIndepndant=densityIndepndant;
             this.gpuMaxTextureSize=gpuMaxTextureSize;
+            int tmp=(int)(overscan*Config.this.scale);
+            if(tmp>1)
+                this.overscan=tmp;
+            else
+                this.overscan=1;
         }
     }
 

@@ -36,7 +36,7 @@ public class SlideManager implements Disposable{
             // then it is expected to not be important.
             // otherwise, throw an  GDBS exception.
             if(isCached(node.file)){
-                drawer=new NormalDrawer(node,scrollLog,getCached(node.file));
+                drawer=new NormalDrawer(node,c,scrollLog,getCached(node.file));
                 MainViewer.println("using cached slides: "+node.file,Constants.d);
             }
             else {
@@ -218,17 +218,21 @@ public class SlideManager implements Disposable{
      * The Drawer for a usable slide set
      */
     private class NormalDrawer implements Drawer{
+        final int overscan;
         int x, y, ih,iw,it;
         private ScrollFollower scrollLog;
         TextureRegion [][] img;
         private Texture [] texture;
 
-        public NormalDrawer(SlideDimensions.Node node, ScrollFollower scrollLog, DistributedRegions d){
+        public NormalDrawer(SlideDimensions.Node node, Config c, ScrollFollower scrollLog, DistributedRegions d){
             ih= node.height;
             iw= node.width;
             it= node.total;
             x=0;
             y=0;
+
+            overscan=c.global.overscan;
+
             this.scrollLog=scrollLog;
             this.img=d.img;
             this.texture=d.texture;
@@ -248,8 +252,10 @@ public class SlideManager implements Disposable{
             it= node.total;
             x=0;
             y=0;
-            this.scrollLog=scrollLog;
 
+            overscan=c.global.overscan;
+
+            this.scrollLog=scrollLog;
             //The slideset comes in through the CPU first, so that we can see how to fit it in the GPU
             if(largestDimension(p)<maxTextureSize) { //if texture already fits in renderable space on GPU
                 texture=new Texture[1];
@@ -440,7 +446,7 @@ public class SlideManager implements Disposable{
         @Override
         public boolean draw(SpriteBatch batch) {
             //MainViewer.println("draw width:"+MainViewer.getWidth()+" draw height:"+MainViewer.getHeight(),Constants.d);
-            batch.draw(img[y][x],0,0,MainViewer.getWidth(),MainViewer.getHeight());
+            batch.draw(img[y][x],-overscan,-overscan,MainViewer.getWidth()+overscan,MainViewer.getHeight()+overscan);
             return true;
         }
 
