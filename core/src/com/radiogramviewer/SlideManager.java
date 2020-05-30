@@ -36,7 +36,7 @@ public class SlideManager implements Disposable, Coroutine{
             // then it is expected to not be important.
             // otherwise, throw an exception.
             if(isCached(node.file)){
-                NormalDrawer d=new NormalDrawer(node,c,scrollLog);
+                NormalDrawer d=new NormalDrawer(scrollLog,c);
                 drawer=d;
                 requestCache(node.file,d);
                 MainViewer.println("using cached slides: "+node.file,Constants.d);
@@ -260,20 +260,22 @@ public class SlideManager implements Disposable, Coroutine{
         private Texture [] texture;
         private Coroutine co=null;
 
-        public NormalDrawer(SlideDimensions.Node node, Config c, ScrollFollower scrollLog){
-            ih= node.height;
-            iw= node.width;
-            it= node.total;
-            x=0;
-            y=0;
-
-            overscan=c.global.overscan;
-
+        /**
+         * Partial Constructor which doesn't initialize the textures themselves because it knows
+         * they are being processed by another manager and it can get them from the cache when it
+         * is done.
+         * @param scrollLog the log to record scrolling
+         * @param c the config object
+         */
+        public NormalDrawer(ScrollFollower scrollLog, Config c){
+            y=x=0;
+            this.overscan=c.global.overscan;
             this.scrollLog=scrollLog;
         }
 
         /**
-         * Create a drawer
+         * Create a full drawer Note that this prepares a coroutine to acutally process the information, it is not ready
+         * to be used until that coroutine runs to completion.
          * @param node the node containing all the slide specific information (how many slides high, wide, total, etc)
          * @param scrollLog the log to report all scrolling to
          * @param c the app config with basic constants
@@ -282,8 +284,7 @@ public class SlideManager implements Disposable, Coroutine{
             ih= node.height;
             iw= node.width;
             it= node.total;
-            x=0;
-            y=0;
+            y=x=0;
 
             overscan=c.global.overscan;
 
@@ -516,6 +517,9 @@ public class SlideManager implements Disposable, Coroutine{
                 for(NormalDrawer d : requests){
                     d.img=img;
                     d.texture=texture;
+                    d.ih=ih;
+                    d.it=it;
+                    d.iw=iw;
                 }
                 orig.dispose();
                 co=null;
