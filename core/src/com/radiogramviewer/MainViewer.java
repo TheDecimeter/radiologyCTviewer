@@ -8,13 +8,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
+import com.radiogramviewer.coroutine.CoroutineRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainViewer extends ApplicationAdapter {
 
-	public static final int none=0, dont=-1, ready=22,error=-3,pending=-2,play=2; //flags for when no slide is shown, and when scrollpos shouldn't be set
+	public static final int none=0, dont=-1, loaded=21,ready=22,error=-3,pending=-2,play=2; //flags for when no slide is shown, and when scrollpos shouldn't be set
 	private static int SlideMode, SlideIndex, LastSlideMode; //state keeping variables
 	private static boolean updateSlides; //triggering variable
 	private static int viewWidth, viewHeight; //keep track of width and height, it's not always constant
@@ -26,6 +27,7 @@ public class MainViewer extends ApplicationAdapter {
 	private Texture img;
 	private SlideManager slideManager;
 	private ArrayList<SlideManager> slideManagers;
+	private CoroutineRunner slideProcessor;
 	private Controls controller;
 	private Bar scroll;
 
@@ -95,6 +97,8 @@ public class MainViewer extends ApplicationAdapter {
 			//Get config file state
 			c = new Config(constants);
 
+			slideProcessor=new CoroutineRunner(c.global.yieldMillis,constants);
+
 			//Get perferred dimensions (incase dynamically specified in JavaScript)
 			int width = c.window.width;
 			int height = c.window.height;
@@ -110,7 +114,7 @@ public class MainViewer extends ApplicationAdapter {
 			batch = new SpriteBatch();
 			windowBatch=new SpriteBatch();
 
-			//Generate the ring for indicating clicks and scroll bar
+			//Generate the images for indicating clicks and scroll bar
 			clickImg = DrawShape.ring(c.click.color, c.click.radius, c.click.thickness);
 			clickHighlightImg = DrawShape.ring(c.click.highlightColor, c.click.highlightRadius, c.click.highlightThickness);
 			scroll = new Bar(c);
@@ -125,15 +129,14 @@ public class MainViewer extends ApplicationAdapter {
 //			ShaderProgram shader=WindowingShaders.windowValue(.515f,.075f);
 //			batch.setShader(shader);
 
-            //while(Timing.getMillis()<4000){}
-
-			loadingState = ready;
+			loadingState = loaded;
 		}
 		catch (Exception e){
 			loadingState=error;
 			println(e.getMessage(),Constants.e);
 		}
 		constants.loadingStateChanged(loadingState);
+
 	}
 
 
@@ -151,6 +154,9 @@ public class MainViewer extends ApplicationAdapter {
 		SlideIndex=index;
 		Gdx.graphics.requestRendering();
 	}
+
+
+
 	public static int getSlideMode(){
 		return SlideMode;
 	}
@@ -224,11 +230,14 @@ public class MainViewer extends ApplicationAdapter {
 		for(SlideDimensions.Node n : d.dims()){
 			ScrollFollower sf= new ScrollFollower(c,n.total);
 			scrollTimes.add(sf);
-			slideManagers.add(new SlideManager(n, sf, c));
+			SlideManager s=new SlideManager(n,sf,c);
+			slideProcessor.add(s);
+			slideManagers.add(s);
 			click.add(new ClickFollower(n.total,c.click.radius,c.click.depth,n.markClicks,clickImg,clickHighlightImg, c));
 			loadingState++;
             constants.loadingStateChanged(loadingState);
 		}
+		slideProcessor.invertWork();
 	}
 
 	/**
@@ -236,6 +245,17 @@ public class MainViewer extends ApplicationAdapter {
 	 */
 	@Override
 	public void render () {
+        if(slideProcessor.runOne()) {
+            Gdx.graphics.requestRendering();
+            if(slideProcessor.done()) {
+                loadingState = ready;
+                constants.loadingStateChanged(loadingState);
+            }
+            return;
+        }
+
+
+
 		//clear the last rendered image
 		Gdx.gl.glClearColor(1f, .5f, .5f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

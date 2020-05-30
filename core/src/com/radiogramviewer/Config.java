@@ -32,11 +32,10 @@ public class Config {
         boolean fakeDensity=getBool("fakeDensity",vp);
         scale=getScale(constants, originalWidth, fakeDensity);
 
-        global=new GlobalClass(fakeDensity,1/scale, debug.gpuMaxTextureSize, getInt("overscan",vp));
+        global=new GlobalClass(fakeDensity,1/scale, debug.gpuMaxTextureSize, getInt("overscan",vp), getBool("downscaleTexture",vp), getInt("yield",vp));
 
         window=new WindowClass(originalWidth,getInt("height",vpWindow),
-                getInt("barWidth",vpWindow),getInt("barBorder",vpWindow), getColor("barColor",vpWindow),
-                getBool("downscaleTexture",vpWindow));
+                getInt("barWidth",vpWindow),getInt("barBorder",vpWindow), getColor("barColor",vpWindow));
 
         vp=getProperties("record",vals);
         record=new RecordClass(getBool("logScrolling",vp));
@@ -165,14 +164,12 @@ public class Config {
 
     public class WindowClass{
         public final int height, width, barWidth, barBorder;
-        public final boolean scalableTexture;
         public final Color barColor;
-        WindowClass(int width, int height, int barWidth, int barBorder, Color barColor, boolean downscaleTexture){
+        WindowClass(int width, int height, int barWidth, int barBorder, Color barColor){
             this.height=(int)(height*scale);
             this.width=(int)(width*scale);
             this.barWidth=(int)(barWidth*scale);
             this.barBorder=(int)(barBorder*scale);
-            this.scalableTexture=downscaleTexture;
             this.barColor=barColor;
         }
     }
@@ -225,10 +222,10 @@ public class Config {
     }
 
     public class GlobalClass{
-        public final boolean densityIndepndant;
+        public final boolean densityIndepndant, downscaleTexture;
         public final float scale;
-        public final int gpuMaxTextureSize, overscan;
-        GlobalClass(boolean densityIndepndant, float scale, int gpuMaxTextureSize, int overscan){
+        public final int gpuMaxTextureSize, overscan, yieldMillis;
+        GlobalClass(boolean densityIndepndant, float scale, int gpuMaxTextureSize, int overscan, boolean downscaleTexture, int yieldMillis){
             this.scale=scale;
             this.densityIndepndant=densityIndepndant;
             this.gpuMaxTextureSize=gpuMaxTextureSize;
@@ -237,6 +234,8 @@ public class Config {
                 this.overscan=tmp;
             else
                 this.overscan=1;
+            this.yieldMillis=yieldMillis;
+            this.downscaleTexture=downscaleTexture;
         }
     }
 

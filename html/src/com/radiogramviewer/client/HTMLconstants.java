@@ -22,7 +22,7 @@ public class HTMLconstants implements Constants {
         packet=new StringBuilder();
         mode=MainViewer.none;
         exportStaticMethods();
-        exportStaticVariables(MainViewer.ready, MainViewer.pending, MainViewer.error);
+        exportStaticVariables(MainViewer.ready, MainViewer.loaded, MainViewer.pending, MainViewer.error);
     }
 
     @Override
@@ -117,6 +117,11 @@ public class HTMLconstants implements Constants {
     @Override
     public void loadingStateChanged(int state) {
         nativeLoadingStateChanged(state);
+    }
+
+    @Override
+    public void processingState(int remaining, float progress) {
+        nativeProcessingChanged(remaining,progress);
     }
 
     @Override
@@ -270,36 +275,41 @@ public class HTMLconstants implements Constants {
 
     public static native int nativeInputReceived()/*-{
             if (typeof $wnd.viewerListenerInput === "function"){
-                $wnd.viewerListenerInput()
+                $wnd.viewerListenerInput();
             }
             }-*/;
     public static native int nativeClickAdded(String click)/*-{
             if (typeof $wnd.viewerListenerClickAdded === "function"){
-                $wnd.viewerListenerClickAdded(click)
+                $wnd.viewerListenerClickAdded(click);
             }
             }-*/;
     public static native int nativeClickRemoved(String click)/*-{
             if (typeof $wnd.viewerListenerClickRemoved === "function"){
-                $wnd.viewerListenerClickRemoved(click)
+                $wnd.viewerListenerClickRemoved(click);
             }
             }-*/;
     public static native int nativeScrollMoved(int index)/*-{
             if (typeof $wnd.viewerListenerScrollSuccess === "function"){
-                $wnd.viewerListenerScrollSuccess(index)
+                $wnd.viewerListenerScrollSuccess(index);
             }
             }-*/;
     public static native int nativeScrollStuck(int index)/*-{
             if (typeof $wnd.viewerListenerScrollFail === "function"){
-                $wnd.viewerListenerScrollFail(index)
+                $wnd.viewerListenerScrollFail(index);
             }
             }-*/;
 
     public static native void nativeLoadingStateChanged(int state)/*-{
             if (typeof $wnd.viewerListenerLoadingStateChanged === "function"){
-                $wnd.viewerListenerLoadingStateChanged(state)
+                $wnd.viewerListenerLoadingStateChanged(state);
             }
              else{
                 console.log("failed to notify viewerListenerLoadingStateChanged(int) of loading occurrence");
+            }
+            }-*/;
+    public static native void nativeProcessingChanged(int remaining, float progress)/*-{
+            if (typeof $wnd.viewerListenerProcessing === "function"){
+                $wnd.viewerListenerProcessing(remaining,progress);
             }
             }-*/;
 
@@ -319,8 +329,9 @@ public class HTMLconstants implements Constants {
             return Date.now();
             }-*/;
 
-    public static native void exportStaticVariables(int readyFlag, int pendingFlag, int failedFlag)/*-{
+    public static native void exportStaticVariables(int readyFlag, int loadedFlag, int pendingFlag, int failedFlag)/*-{
             $wnd.FLAGviewerReady=readyFlag;
+            $wnd.FLAGviewerLoaded=loadedFlag;
             $wnd.FLAGviewerPendingUnknown=pendingFlag;
             $wnd.FLAGviewerFailedLoad=failedFlag;
             }-*/;

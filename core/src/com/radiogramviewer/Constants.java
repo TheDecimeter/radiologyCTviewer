@@ -14,6 +14,7 @@ public interface Constants {
     void scrollMove(int index);
     void scrollStuck(int index);
     void loadingStateChanged(int state);
+    void processingState(int remaining, float progress);
     float getScale(int originalWidth);
     void addToPacket(String msg);
 }

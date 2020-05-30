@@ -1,22 +1,21 @@
 package com.radiogramviewer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
+import com.radiogramviewer.coroutine.Coroutine;
 
-import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
 /**
  * Slide set drawer and navigator, it ain't simple
  */
-public class SlideManager implements Disposable{
+public class SlideManager implements Disposable, Coroutine{
     public final static int up=1, down=-1, stay=0;
 
     private int dir;
@@ -24,9 +23,10 @@ public class SlideManager implements Disposable{
     private boolean buttons, discardDelta=false;
     private Drawer drawer;
 
-    private static HashMap<String,DistributedRegions> textureCache;
+    private static HashMap<String,NormalDrawer> textureCache;
 
     public SlideManager(SlideDimensions.Node node, ScrollFollower scrollLog, Config c){
+
         dir=stay;
         holdFor=c.input.holdTime;
         buttons=c.input.wasd||c.input.arrow;
@@ -36,20 +36,33 @@ public class SlideManager implements Disposable{
             // then it is expected to not be important.
             // otherwise, throw an exception.
             if(isCached(node.file)){
-                drawer=new NormalDrawer(node,c,scrollLog,getCached(node.file));
+                NormalDrawer d=new NormalDrawer(node,c,scrollLog);
+                drawer=d;
+                requestCache(node.file,d);
                 MainViewer.println("using cached slides: "+node.file,Constants.d);
             }
             else {
-                Pixmap p;
-                p = new Pixmap(Gdx.files.internal(node.file));
-                int maxSize = c.global.gpuMaxTextureSize;
-                drawer = new NormalDrawer(node, scrollLog, c, p, maxSize);
-                cache(node.file,drawer);
+                if(Gdx.files.internal(node.file).exists()){
+
+                    NormalDrawer d=new NormalDrawer(node, scrollLog, c);
+                    drawer=d;
+                    cache(node.file,d);
+                }
+                else{
+                    if(node.necessary) {
+                        drawer=new DummyDrawer();
+                        throw new FailToLoadException("Failed to load necessary image "+node.file);
+                    }
+                    else
+                        drawer=new DummyDrawer();
+                }
             }
         }
         catch (Exception e){
-            if(node.necessary)
-                throw new FailToLoadException("Failed to load necessary image "+e.getMessage());
+            if(node.necessary) {
+                drawer=new DummyDrawer();
+                throw new FailToLoadException("Failed to load necessary image " + e.getMessage());
+            }
             else
                 drawer=new DummyDrawer();
         }
@@ -57,20 +70,28 @@ public class SlideManager implements Disposable{
 
     }
 
+
     private boolean isCached(String filename){
         if(textureCache==null)
             return false;
         return textureCache.containsKey(filename);
     }
 
-    private DistributedRegions getCached(String filename){
-        return textureCache.get(filename);
+    private void cache(String filename, NormalDrawer s){
+        if(textureCache==null)
+            textureCache=new HashMap<String, NormalDrawer>();
+        textureCache.put(filename,s);
     }
 
-    private void cache(String filename, Drawer d){
-        if(textureCache==null)
-            textureCache=new HashMap<String, DistributedRegions>();
-        textureCache.put(filename,d.getTextures());
+    private void requestCache(String filename, NormalDrawer thisDrawer){
+        NormalDrawer d=textureCache.get(filename);
+        if(d.workAvailable())
+            d.requestCache(thisDrawer);
+        else{
+            thisDrawer.texture=d.texture;
+            thisDrawer.img=d.img;
+        }
+
     }
 
 
@@ -202,15 +223,29 @@ public class SlideManager implements Disposable{
 
     }
 
+    @Override
+    public boolean workAvailable() {
+        return drawer.workAvailable();
+    }
+
+    @Override
+    public float progress() {
+        return drawer.progress();
+    }
+
+    @Override
+    public void run() {
+        drawer.run();
+    }
+
     private class FailToLoadException extends RuntimeException{ FailToLoadException(String s){super(s);}}
 
-    private interface Drawer  extends Disposable{
+    private interface Drawer  extends Disposable, Coroutine{
         boolean draw(SpriteBatch batch);
         void goToSlide(int slide);
         void advanceSlide(int howMuch);
         int getSlide();
         int getTotal();
-        DistributedRegions getTextures();
     }
 
 
@@ -223,8 +258,9 @@ public class SlideManager implements Disposable{
         private ScrollFollower scrollLog;
         TextureRegion [][] img;
         private Texture [] texture;
+        private Coroutine co=null;
 
-        public NormalDrawer(SlideDimensions.Node node, Config c, ScrollFollower scrollLog, DistributedRegions d){
+        public NormalDrawer(SlideDimensions.Node node, Config c, ScrollFollower scrollLog){
             ih= node.height;
             iw= node.width;
             it= node.total;
@@ -234,8 +270,6 @@ public class SlideManager implements Disposable{
             overscan=c.global.overscan;
 
             this.scrollLog=scrollLog;
-            this.img=d.img;
-            this.texture=d.texture;
         }
 
         /**
@@ -243,10 +277,8 @@ public class SlideManager implements Disposable{
          * @param node the node containing all the slide specific information (how many slides high, wide, total, etc)
          * @param scrollLog the log to report all scrolling to
          * @param c the app config with basic constants
-         * @param p the image of the slideset
-         * @param maxTextureSize how large of a texture the GPU can hold
          */
-        public NormalDrawer(SlideDimensions.Node node, ScrollFollower scrollLog, Config c, Pixmap p, int maxTextureSize){
+        public NormalDrawer(SlideDimensions.Node node, ScrollFollower scrollLog, Config c){
             ih= node.height;
             iw= node.width;
             it= node.total;
@@ -257,39 +289,9 @@ public class SlideManager implements Disposable{
 
             this.scrollLog=scrollLog;
             //The slideset comes in through the CPU first, so that we can see how to fit it in the GPU
-            if(largestDimension(p)<maxTextureSize) { //if texture already fits in renderable space on GPU
-                texture=new Texture[1];
-                texture[0] = new Texture(p);
-                img = parse(texture[0], ih, iw);
-            }
-            else if(c.window.scalableTexture){ //if it is desirable to scale texture to make it fit
-                MainViewer.println("scaling "+node.file+" to fit in memory", Constants.w);
-                p = scale(p, maxTextureSize, iw, ih);
-                texture=new Texture[1];
-                texture[0] = new Texture(p);
-                img = parse(texture[0], ih, iw);
-                MainViewer.addToTextureInfoPacket(node.file+",scaled,gpuMax:"+maxTextureSize+",x:"+texture[0].getWidth()+",y:"+texture[0].getHeight());
-            }
-            else{ //if dividing the texture across multiple textures is desirable for making it fit
-                int size=canFit(p,maxTextureSize,iw,ih);
-                boolean scaled=false;
-                if(size<=0) {
-                    size=1;
-                    scaled=true;
-                    MainViewer.println("dividing up and scaling"+node.file+" to fit in memory", Constants.w);
 
-                }
-                else
-                    MainViewer.println("dividing up "+node.file+" to fit in memory", Constants.w);
-                DistributedRegions d=distribute(p,maxTextureSize,iw,ih,it,size);
-                texture=d.texture;
-                img=d.img;
-                if(scaled)
-                    MainViewer.addToTextureInfoPacket(node.file+",divided&scaled,gpuMax:"+maxTextureSize+",x:"+texture[0].getWidth()+",y:"+texture[0].getHeight()+",count:"+texture.length);
-                else
-                    MainViewer.addToTextureInfoPacket(node.file+",divided,gpuMax:"+maxTextureSize+",x:"+texture[0].getWidth()+",y:"+texture[0].getHeight()+",count:"+texture.length);
-            }
-            p.dispose();
+            co=new Coroutine(node,c);
+
         }
 
         /**
@@ -322,41 +324,169 @@ public class SlideManager implements Disposable{
          * @param size how many slides we are going to fit in one dimension of the new textures (can't be 0)
          * @return The new textures holding the image, and the new locations of each slide
          */
-        private DistributedRegions distribute(Pixmap orig, int maxTextureSize, int w, int h, int totalSlides,int size){
+        private void distribute(SlideDimensions.Node node, boolean scaled, Pixmap orig, int maxTextureSize, int w, int h, int totalSlides,int size){
             int textureCount=totalSlides/(size*size); //see how many textures are needed to hold the slideset
 
-            Texture[] rt=new Texture[textureCount+1]; //set up return structure
-            TextureRegion [][] rr=new TextureRegion[h][w];
-            DistributedRegions r=new DistributedRegions(rr,rt);
+            //co=new Coroutine(node,cscaled,textureCount,h,w,totalSlides,size,maxTextureSize,orig);
 
-            //get individual slide dimensions
-            int eachW=orig.getWidth()/w;
-            int eachH=orig.getHeight()/h;
-            //get coordinate counters
-            Coord oc1=new Coord(w); //oc is the coordinates for the original image's grid
-            Coord oc2=new Coord(w);
-            Coord pc=new Coord(size); //pc is the coordinates for the smaller image with fewer slides (that can fit in the GPU)
+            MainViewer.println("individual dimensions: w"+co.eachW+", h"+co.eachH+" s"+size+" textures used"+co.rt.length, Constants.w);
 
-            MainViewer.println("individual dimensions: w"+eachW+", h"+eachH+" s"+size+" textures used"+r.texture.length, Constants.w);
+            co.textureIndex=0;
+            co.i=0;
+//            while(co!=null){
+//                run();
+//            }
 
-            int textureIndex=0;
-            int incr=size*size;
-            for(int i=0; i<totalSlides; i+=incr){
-                Pixmap p=new Pixmap(size*eachW,size*eachH,orig.getFormat());
 
-                //map as many slides from the old image as you can onto a new pixmap
-                pc.reset();
-                for(int j=0; j<incr && i+j<totalSlides; ++j){
-                    p.drawPixmap(orig,oc1.x*eachW,oc1.y*eachH,eachW,eachH,pc.x*eachW,pc.y*eachH,eachW,eachH);
-                    oc1.advance();
-                    pc.advance();
+
+            //return co.r;
+        }
+
+        @Override
+        public boolean workAvailable() {
+            return co!=null;
+        }
+
+        @Override
+        public float progress() {
+            if(co==null)
+                return 1;
+            return (float)(co.i + co.j)/co.totalSlides;
+        }
+
+        @Override
+        public void run() {
+            switch(co.stage) {
+                case 0:
+                    co.coStage0Init();
+                    if(co==null)
+                        return;
+                    co.stage++;
+                    break;
+                case 1: //make a new smaller pixmap to hold some of the slides
+                    co.p = new Pixmap(co.size * co.eachW, co.size * co.eachH, co.orig.getFormat());
+                    co.pc.reset();
+                    co.j = 0;
+                    co.stage++;
+                break;
+                case 2: //move whatever slides that will fit onto the new pixmap
+                    if (co.j < co.incr && co.i + co.j < co.totalSlides) {
+                        co.coStage1MapFromOldToNew(); //take a slide from the old pixmap, and put it on the new one.
+                        ++co.j;
+                        return;
+                    }
+                    co.stage++;
+                break;
+                case 3: //set up the new texture regions for the smaller texture
+                    co.coStage2MapNewToGrid();
+                    co.p.dispose();
+                    co.i += co.incr;
+                    if(co.i<co.totalSlides)
+                        co.stage=1;
+                    else
+                        co.stage=4;
+                break;
+                case 4: //set values and get rid of coroutine.
+                    co.coStage3Finalize();
+                    break;
+            }
+        }
+
+
+        /**
+         * Divides up the work of processing an image so that it can be more easily
+         * interrupted... oh yield return, wherefore art thou yield return
+         */
+        private class Coroutine{
+            Texture[] rt;
+            TextureRegion [][] rr;
+            int textureIndex,i,j,stage=0;
+            int eachW,eachH,size,maxTextureSize,totalSlides,incr;
+            Coord oc1,oc2,pc;
+            Pixmap p,orig;
+            Texture t;
+            boolean scaled;
+            final SlideDimensions.Node node;
+
+            Config c;
+
+            ArrayList<NormalDrawer> requests=new ArrayList<NormalDrawer>();
+
+            public Coroutine(SlideDimensions.Node node, Config c){
+                rr=new TextureRegion[ih][iw];
+
+
+                //get individual slide dimensions
+                //get coordinate counters
+                oc1=new Coord(iw); //oc is the coordinates for the original image's grid
+                oc2=new Coord(iw);
+
+                this.node=node;
+                this.c=c;
+                textureIndex=0;
+            }
+
+            private void coStage0Init(){
+                orig = new Pixmap(Gdx.files.internal(node.file));
+                maxTextureSize = c.global.gpuMaxTextureSize;
+
+
+                if(largestDimension(orig)<maxTextureSize) { //if texture already fits in renderable space on GPU
+                    texture=new Texture[1];
+                    texture[0] = new Texture(orig);
+                    img = parse(texture[0], ih, iw);
+                    wrapUp();
                 }
+                else if(c.global.downscaleTexture){ //if it is desirable to scale texture to make it fit
+                    MainViewer.println("scaling "+node.file+" to fit in memory", Constants.w);
+                    orig = scale(orig, maxTextureSize, iw, ih);
+                    texture=new Texture[1];
+                    texture[0] = new Texture(orig);
+                    img = parse(texture[0], ih, iw);
+                    MainViewer.addToTextureInfoPacket(node.file+",scaled,gpuMax:"+maxTextureSize+",x:"+texture[0].getWidth()+",y:"+texture[0].getHeight());
+                    wrapUp();
+                }
+                else{ //if dividing the texture across multiple textures is desirable for making it fit
+                    size=canFit(orig,maxTextureSize,iw,ih);
+                    scaled=false;
+                    if(size<=0) {
+                        size=1;
+                        scaled=true;
+                        MainViewer.println("dividing up and scaling"+node.file+" to fit in memory", Constants.w);
 
+                    }
+                    else
+                        MainViewer.println("dividing up "+node.file+" to fit in memory", Constants.w);
+                    //distribute(node,scaled,orig,maxTextureSize,iw,ih,it,size);
+//                texture=d.texture;
+//                img=d.img;
+
+                    totalSlides=it;
+                    int textureCount=totalSlides/(size*size);
+                    rt=new Texture[textureCount+1];
+                    eachW=orig.getWidth()/iw;
+                    eachH=orig.getHeight()/ih;
+
+
+
+                    this.incr=size*size;
+                    pc=new Coord(size); //pc is the coordinates for the smaller image with fewer slides (that can fit in the GPU)
+                }
+            }
+
+
+            private void coStage1MapFromOldToNew(){
+                p.drawPixmap(orig,oc1.x*eachW,oc1.y*eachH,eachW,eachH,pc.x*eachW,pc.y*eachH,eachW,eachH);
+                oc1.advance();
+                pc.advance();
+            }
+
+
+            private void coStage2MapNewToGrid(){
                 //save the new pixmap to a texture, scale it if necessary.
                 p=scale(p, maxTextureSize, size, size);
-                Texture t=new Texture(p);
-                r.texture[textureIndex++]=t;
-                p.dispose();
+                t=new Texture(p);
+                rt[textureIndex++]=t;
 
                 //get newly scaled dimensions for accurate texture regions
                 int H=t.getHeight()/size;
@@ -365,39 +495,57 @@ public class SlideManager implements Disposable{
                 //map the new texture's slides onto the original image's grid.
                 pc.reset();
                 for(int j=0; j<incr && i+j<totalSlides; ++j){
-                    r.img[oc2.y][oc2.x]=new TextureRegion(t,pc.x*W,pc.y*H,W,H);
+                    rr[oc2.y][oc2.x]=new TextureRegion(t,pc.x*W,pc.y*H,W,H);
                     oc2.advance();
                     pc.advance();
                 }
             }
 
+            private void coStage3Finalize(){
+                img=rr;
+                texture=rt;
 
-            return r;
-        }
-
-        /**
-         * incriment coordinates by emulating a grid of width 'r'
-         */
-        private class Coord{
-            int x, y;
-            private int r;
-
-            Coord(int width){
-                r=width;
-                x=0;
-                y=0;
+                if(scaled)
+                    MainViewer.addToTextureInfoPacket(node.file+",divided&scaled,gpuMax:"+maxTextureSize+",x:"+texture[0].getWidth()+",y:"+texture[0].getHeight()+",count:"+texture.length);
+                else
+                    MainViewer.addToTextureInfoPacket(node.file+",divided,gpuMax:"+maxTextureSize+",x:"+texture[0].getWidth()+",y:"+texture[0].getHeight()+",count:"+texture.length);
+                wrapUp();
             }
-            void advance(){
-                x++;
-                if(x>=r)
-                {
-                    x=0;
-                    y++;
+
+            private void wrapUp(){
+                for(NormalDrawer d : requests){
+                    d.img=img;
+                    d.texture=texture;
                 }
+                orig.dispose();
+                co=null;
             }
-            void reset(){
-                x=0;
-                y=0;
+
+
+            /**
+             * incriment coordinates by emulating a grid of width 'r'
+             */
+            private class Coord{
+                int x, y;
+                private int r;
+
+                Coord(int width){
+                    r=width;
+                    x=0;
+                    y=0;
+                }
+                void advance(){
+                    x++;
+                    if(x>=r)
+                    {
+                        x=0;
+                        y++;
+                    }
+                }
+                void reset(){
+                    x=0;
+                    y=0;
+                }
             }
         }
 
@@ -547,14 +695,20 @@ public class SlideManager implements Disposable{
             return it;
         }
 
-        @Override
-        public DistributedRegions getTextures() {
-            return new DistributedRegions(img,texture);
+        public void requestCache(NormalDrawer d) {
+            co.requests.add(d);
         }
+
+//        @Override
+//        public DistributedRegions getTextures() {
+//            return new DistributedRegions(img,texture);
+//        }
 
 
         @Override
         public void dispose() {
+            if(texture==null)
+                return;
             for(Texture t : texture)
                 if(t!=null)
                     t.dispose();
@@ -569,9 +723,7 @@ public class SlideManager implements Disposable{
      */
     public class DummyDrawer implements Drawer{
         @Override
-        public boolean draw(SpriteBatch batch) {
-            return true;
-        }
+        public boolean draw(SpriteBatch batch) {return true;}
         @Override
         public void goToSlide(int slide) {}
         @Override
@@ -580,24 +732,15 @@ public class SlideManager implements Disposable{
         public int getSlide() {return 0;}
         @Override
         public int getTotal() {return 0;}
-
-        @Override
-        public DistributedRegions getTextures() { return null; }
-
         @Override
         public void dispose() {}
-    }
+        @Override
+        public boolean workAvailable() {return false;}
 
+        @Override
+        public float progress() {return 0;}
 
-    /**
-     * simple node for holding textures and regions
-     */
-    private class DistributedRegions{
-        final TextureRegion [][] img;
-        final Texture [] texture;
-        DistributedRegions(TextureRegion [][] img, Texture[] texture){
-            this.img=img;
-            this.texture=texture;
-        }
+        @Override
+        public void run() {}
     }
 }

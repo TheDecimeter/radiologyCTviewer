@@ -74,6 +74,11 @@ public class PCconstants implements Constants {
     }
 
     @Override
+    public void processingState(int remaining, float progress) {
+        System.out.println("  processing. "+remaining+"tasks remaining, current is "+(int)(progress*100)+"% done");
+    }
+
+    @Override
     public float getScale(int originalWidth) {
         //desired width/original width, for now, always return 1
         return 1;
