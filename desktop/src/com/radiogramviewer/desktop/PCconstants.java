@@ -79,4 +79,9 @@ public class PCconstants implements Constants {
         return 1;
         //return 555f/originalWidth;
     }
+
+    @Override
+    public void addToPacket(String msg) {
+        System.out.println(" adding to packet:"+msg);
+    }
 }

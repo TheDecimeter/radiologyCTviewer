@@ -15,4 +15,5 @@ public interface Constants {
     void scrollStuck(int index);
     void loadingStateChanged(int state);
     float getScale(int originalWidth);
+    void addToPacket(String msg);
 }

@@ -34,7 +34,7 @@ public class SlideManager implements Disposable{
         try{
             //try loading the image, if it can't be found, but wasn't mentioned in the slide Dimensions
             // then it is expected to not be important.
-            // otherwise, throw an  GDBS exception.
+            // otherwise, throw an exception.
             if(isCached(node.file)){
                 drawer=new NormalDrawer(node,c,scrollLog,getCached(node.file));
                 MainViewer.println("using cached slides: "+node.file,Constants.d);
@@ -268,11 +268,14 @@ public class SlideManager implements Disposable{
                 texture=new Texture[1];
                 texture[0] = new Texture(p);
                 img = parse(texture[0], ih, iw);
+                MainViewer.addToTextureInfoPacket(node.file+",scaled,gpuMax:"+maxTextureSize+",x:"+texture[0].getWidth()+",y:"+texture[0].getHeight());
             }
             else{ //if dividing the texture across multiple textures is desirable for making it fit
                 int size=canFit(p,maxTextureSize,iw,ih);
+                boolean scaled=false;
                 if(size<=0) {
                     size=1;
+                    scaled=true;
                     MainViewer.println("dividing up and scaling"+node.file+" to fit in memory", Constants.w);
 
                 }
@@ -281,6 +284,10 @@ public class SlideManager implements Disposable{
                 DistributedRegions d=distribute(p,maxTextureSize,iw,ih,it,size);
                 texture=d.texture;
                 img=d.img;
+                if(scaled)
+                    MainViewer.addToTextureInfoPacket(node.file+",divided&scaled,gpuMax:"+maxTextureSize+",x:"+texture[0].getWidth()+",y:"+texture[0].getHeight()+",count:"+texture.length);
+                else
+                    MainViewer.addToTextureInfoPacket(node.file+",divided,gpuMax:"+maxTextureSize+",x:"+texture[0].getWidth()+",y:"+texture[0].getHeight()+",count:"+texture.length);
             }
             p.dispose();
         }

@@ -16,8 +16,10 @@ public class HTMLconstants implements Constants {
     private final static int keyDown=0, keyUp=1;
     private static int mode=MainViewer.none;
     private static Controls controller;
+    private static StringBuilder packet;
 
     public HTMLconstants(){
+        packet=new StringBuilder();
         mode=MainViewer.none;
         exportStaticMethods();
         exportStaticVariables(MainViewer.ready, MainViewer.pending, MainViewer.error);
@@ -122,6 +124,14 @@ public class HTMLconstants implements Constants {
         if(nativeWindowSizeSpecified())
             return nativeWindowWidth()/originalWidth;
         return 1;
+    }
+
+    @Override
+    public void addToPacket(String msg) {
+        packet.append(msg).append(";");
+    }
+    public static String getTextureInfoPacket(){
+        return packet.toString();
     }
 
 
@@ -320,6 +330,7 @@ public class HTMLconstants implements Constants {
        $wnd.viewerGetWidth = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerWidth());
        $wnd.viewerGetWidthInches = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerWidthInches());
        $wnd.viewerGetHeight = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerHeight());
+       $wnd.viewerGetTextureInfo = $entry(@com.radiogramviewer.client.HTMLconstants::getTextureInfoPacket());
 
        $wnd.viewerSetDragDistance = $entry(@com.radiogramviewer.client.HTMLconstants::setDragDistance(I));
        $wnd.viewerPipeInput = $entry(@com.radiogramviewer.client.HTMLconstants::pipeInput(II));

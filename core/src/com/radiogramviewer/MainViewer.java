@@ -77,6 +77,9 @@ public class MainViewer extends ApplicationAdapter {
 		constants.scrollStuck(index);
 	}
 
+	public static void addToTextureInfoPacket(String msg){
+		constants.addToPacket(msg);
+	}
 	public static int loadingState(){
 		return loadingState;
 	}
