@@ -42,7 +42,7 @@ public class SlideManager implements Disposable{
             else {
                 Pixmap p;
                 p = new Pixmap(Gdx.files.internal(node.file));
-                int maxSize = maxSize();
+                int maxSize = c.global.gpuMaxTextureSize;
                 drawer = new NormalDrawer(node, scrollLog, c, p, maxSize);
                 cache(node.file,drawer);
             }
@@ -83,12 +83,7 @@ public class SlideManager implements Disposable{
         else return w;
     }
 
-    //used for seeing how large a texture can be on a specific platform's GPU
-    private int maxSize(){
-        IntBuffer buf = BufferUtils.newIntBuffer(16);
-        Gdx.gl.glGetIntegerv(GL20.GL_MAX_TEXTURE_SIZE, buf);
-        return buf.get(0);
-    }
+
 
     /**
      * @return the current slide index

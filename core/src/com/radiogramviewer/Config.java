@@ -3,7 +3,10 @@ package com.radiogramviewer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.BufferUtils;
 
+import java.nio.IntBuffer;
 import java.util.HashMap;
 
 public class Config {
@@ -19,20 +22,22 @@ public class Config {
     public Config(Constants constants){
         HashMap<String,HashMap<String,String>> vals=vals();
         HashMap<String,String> vpWindow=getProperties("window",vals);
-        HashMap<String,String> vp=getProperties("global",vals);
+        HashMap<String,String>
+
+        vp=getProperties("debug",vals);
+        debug=new DebugClass(getBool("advanceSlide",vp),maxSize(getBool("fakeGPU",vp),getInt("fakeTextureMax",vp)));
+
+        vp=getProperties("global",vals);
 
         int originalWidth=getInt("width",vpWindow);
         boolean fakeDensity=getBool("fakeDensity",vp);
         scale=getScale(constants, originalWidth, fakeDensity);
 
-        global=new GlobalClass(fakeDensity,1/scale);
+        global=new GlobalClass(fakeDensity,1/scale, debug.gpuMaxTextureSize);
 
         window=new WindowClass(originalWidth,getInt("height",vpWindow),
                 getInt("barWidth",vpWindow),getInt("barBorder",vpWindow), getColor("barColor",vpWindow),
                 getBool("downscaleTexture",vpWindow));
-
-        vp=getProperties("debug",vals);
-        debug=new DebugClass(getBool("advanceSlide",vp));
 
         vp=getProperties("record",vals);
         record=new RecordClass(getBool("logScrolling",vp));
@@ -150,6 +155,15 @@ public class Config {
         return in;
     }
 
+    //used for seeing how large a texture can be on a specific platform's GPU
+    private int maxSize(boolean fake, int fakeMax){
+        if(fake)
+            return fakeMax;
+        IntBuffer buf = BufferUtils.newIntBuffer(16);
+        Gdx.gl.glGetIntegerv(GL20.GL_MAX_TEXTURE_SIZE, buf);
+        return buf.get(0);
+    }
+
     public class WindowClass{
         public final int height, width, barWidth, barBorder;
         public final boolean scalableTexture;
@@ -204,17 +218,21 @@ public class Config {
 
     public class DebugClass{
         final boolean advanceSlide;
-        DebugClass(boolean advanceSlide){
+        final int gpuMaxTextureSize;
+        DebugClass(boolean advanceSlide, int gpuMaxTextureSize){
             this.advanceSlide=advanceSlide;
+            this.gpuMaxTextureSize=gpuMaxTextureSize;
         }
     }
 
     public class GlobalClass{
         public final boolean densityIndepndant;
         public final float scale;
-        GlobalClass(boolean densityIndepndant, float scale){
+        public final int gpuMaxTextureSize;
+        GlobalClass(boolean densityIndepndant, float scale, int gpuMaxTextureSize){
             this.scale=scale;
             this.densityIndepndant=densityIndepndant;
+            this.gpuMaxTextureSize=gpuMaxTextureSize;
         }
     }
 

@@ -122,6 +122,8 @@ public class MainViewer extends ApplicationAdapter {
 //			ShaderProgram shader=WindowingShaders.windowValue(.515f,.075f);
 //			batch.setShader(shader);
 
+            //while(Timing.getMillis()<4000){}
+
 			loadingState = ready;
 		}
 		catch (Exception e){
