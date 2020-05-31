@@ -115,6 +115,11 @@ public class WindowingShaders {
      *  (look in the console for debug info)
      */
     public static ShaderProgram generateShader (String vertex, String fragment){
+        if(vertex.length()<8) {
+            String s=vertex.toLowerCase();
+            if (s.equals("default")||s.equals("d"))
+                return generateShader(fragment);
+        }
         ShaderProgram r = new ShaderProgram(vertex,fragment);
 
         if(r.isCompiled())
@@ -128,7 +133,7 @@ public class WindowingShaders {
 
         if(r.isCompiled())
             return r;
-        MainViewer.println("Failed to generate shader \nFragment:\n"+fragment+"\nLog:\n"+r.getLog(),Constants.e);
+        MainViewer.println("Failed to generate shader with default Vertex and \nFragment:\n"+fragment+"\nLog:\n"+r.getLog(),Constants.e);
         return null;
     }
 

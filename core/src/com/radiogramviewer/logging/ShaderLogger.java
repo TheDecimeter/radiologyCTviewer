@@ -3,7 +3,9 @@ package com.radiogramviewer.logging;
 import java.util.ArrayList;
 
 public class ShaderLogger {
-    public static char custom='c',gray='g',value='v',remove='r', invoke='i';
+    public final static char custom='c',gray='g',value='v',remove='r', invoke='i';
+
+    public static boolean log=true;
 
     ArrayList<Node> shaders;
     public ShaderLogger(){
@@ -15,7 +17,8 @@ public class ShaderLogger {
     }
 
     public void add(char type, String name, String vertex, String fragment){
-        shaders.add(new Node(type,name,vertex,fragment,Timing.getMillis()));
+        if(log)
+            shaders.add(new Node(type,name,vertex,fragment,Timing.getMillis()));
     }
     public void add(char type, String name, float level, float width){
         add(type, name,""+level, ""+width);
@@ -50,9 +53,9 @@ public class ShaderLogger {
         }
         public void appendSelf(StringBuilder b, String cs){
             if(type==invoke)
-                b.append(type).append(cs).append(name);
+                b.append(type).append(cs).append(name).append(cs).append(time);
             else if(type==remove)
-                b.append(type).append(cs).append(name);
+                b.append(type).append(cs).append(name).append(cs).append(time);
             else
                 b.append(type).append(cs).append(name).append(cs).append(v).append(cs).append(f).append(cs).append(time);
         }
