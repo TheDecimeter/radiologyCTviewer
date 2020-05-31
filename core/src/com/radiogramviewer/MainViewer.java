@@ -189,7 +189,7 @@ public class MainViewer extends ApplicationAdapter {
         coroutineRunner.run(); //note that in pc this will only run when responding to input
 
 		//clear the last rendered image
-		Gdx.gl.glClearColor(1f, .5f, .5f, 1);
+		Gdx.gl.glClearColor(.5f, .5f, .5f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		//if changing to a new slide set, do that
