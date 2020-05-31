@@ -1,6 +1,7 @@
-package com.radiogramviewer;
+package com.radiogramviewer.relay;
 
 import com.badlogic.gdx.math.Vector2;
+import com.radiogramviewer.Controls;
 
 public interface Constants {
     int d=1,w=2,e=3;

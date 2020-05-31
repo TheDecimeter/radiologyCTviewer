@@ -1,10 +1,7 @@
 package com.radiogramviewer.desktop;
 
-import com.badlogic.gdx.math.Vector2;
-import com.radiogramviewer.Config;
-import com.radiogramviewer.Constants;
+import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.Controls;
-import com.radiogramviewer.MainViewer;
 
 /**
  * Mostly a dummy class to mock what would be an interface with outside JavaScript

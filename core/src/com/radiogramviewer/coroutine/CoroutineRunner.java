@@ -1,8 +1,8 @@
 package com.radiogramviewer.coroutine;
 
 
-import com.radiogramviewer.Constants;
-import com.radiogramviewer.Timing;
+import com.radiogramviewer.relay.Constants;
+import com.radiogramviewer.logging.Timing;
 
 import java.util.ArrayList;
 

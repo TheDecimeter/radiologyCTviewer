@@ -2,7 +2,7 @@ package com.radiogramviewer.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.radiogramviewer.Constants;
+import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.MainViewer;
 
 public class DesktopLauncher {

@@ -9,14 +9,11 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.radiogramviewer.Constants;
+import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.MainViewer;
-
-import org.w3c.dom.html.HTMLElement;
 
 public class HtmlLauncher extends GwtApplication {
 

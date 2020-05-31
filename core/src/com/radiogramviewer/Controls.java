@@ -1,9 +1,14 @@
 package com.radiogramviewer;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.math.Vector2;
+import com.radiogramviewer.config.Config;
+import com.radiogramviewer.graphics.SlideManager;
+import com.radiogramviewer.logging.ClickFollower;
+import com.radiogramviewer.logging.ClickNode;
+import com.radiogramviewer.logging.Timing;
+import com.radiogramviewer.relay.Constants;
+import com.radiogramviewer.relay.Relay;
 
 import java.util.HashMap;
 
@@ -97,13 +102,13 @@ public class Controls implements InputProcessor {
         }
 
         //Convert touch coordinates (top left) to screen coordinates (bottom left)
-        screenY=MainViewer.getHeight()-(screenY+1);
+        screenY= Relay.getHeight()-(screenY+1);
 
         if(MainViewer.getSlideMode()!=MainViewer.none) {
             click.updateClick(screenX, screenY, slides.getSlide());
             if(saveClick()) {
                 z = slides.getSlide()+1;
-                lastClick=new ClickNode((int)(screenX*c.global.scale),(int)(screenY*c.global.scale),Timing.getMillis());
+                lastClick=new ClickNode((int)(screenX*c.global.scale),(int)(screenY*c.global.scale), Timing.getMillis());
             }
         }
         else if(saveClick()){
@@ -263,7 +268,7 @@ public class Controls implements InputProcessor {
 
         //A touch down event should have already stored the index with "startDrag"
         if(!drag.containsKey(index)) {
-            MainViewer.println("checking drag on unsaved index "+index+" ignore this if input was frozen.",Constants.w);
+            MainViewer.println("checking drag on unsaved index "+index+" ignore this if input was frozen.", Constants.w);
             return 0;
         }
 

@@ -2,23 +2,32 @@ package com.radiogramviewer;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector2;
+import com.radiogramviewer.config.Config;
+import com.radiogramviewer.config.SlideDimensions;
+import com.radiogramviewer.graphics.Bar;
+import com.radiogramviewer.graphics.DrawShape;
+import com.radiogramviewer.graphics.SlideManager;
+import com.radiogramviewer.graphics.shaders.ShaderManager;
+import com.radiogramviewer.logging.ClickFollower;
+import com.radiogramviewer.logging.ScrollFollower;
+import com.radiogramviewer.logging.Timing;
 import com.radiogramviewer.coroutine.CoroutineRunner;
+import com.radiogramviewer.relay.Constants;
+import com.radiogramviewer.relay.Relay;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainViewer extends ApplicationAdapter {
 
-	public static final int none=0, dont=-1, loaded=21,ready=22,error=-3,pending=-2,play=2; //flags for when no slide is shown, and when scrollpos shouldn't be set
+	public static final int none=0, dont=-1; //flags for when no slide is shown, and when scrollpos shouldn't be set
 	private static int SlideMode, SlideIndex, LastSlideMode; //state keeping variables
 	private static boolean updateSlides; //triggering variable
-	private static int viewWidth, viewHeight; //keep track of width and height, it's not always constant
+	 //keep track of width and height, it's not always constant
 
 
 
@@ -31,7 +40,6 @@ public class MainViewer extends ApplicationAdapter {
 	private Controls controller;
 	private Bar scroll;
 
-	private static int loadingState=pending; //informs external javascript of loading state when it changes
 
 	private static Constants constants; //used to interface with javascript (or a dummy if compiled for PC)
 
@@ -43,8 +51,8 @@ public class MainViewer extends ApplicationAdapter {
 	private static ClickFollower slideClick; //the current slide's click follower
 
 	private static ArrayList<ScrollFollower> scrollTimes; //all scroll trackers
-
-	private static HashMap<String,ShaderProgram> shaders;
+ 	private ShaderManager shaderManager;
+ 	private Relay relay;
 
 	public MainViewer(Constants constants){
 		MainViewer.constants=constants;
@@ -62,35 +70,12 @@ public class MainViewer extends ApplicationAdapter {
 	}
 
 	//Simple interfaces to forward input event from controls to Javascript
-	public static void inputOccured(){
-		constants.inputOccured();
-	}
-	public static void clickAdded(String click){
-		constants.clickAdded(""+SlideMode+","+click);
-	}
-	public static void clickRemoved(String click){
-		constants.clickRemoved(""+SlideMode+","+click);
-	}
 
-	public static void scrollMove(int index){
-		constants.scrollMove(index);
-	}
-	public static void scrollStuck(int index){
-		constants.scrollStuck(index);
-	}
-
-	public static void addToTextureInfoPacket(String msg){
-		constants.addToPacket(msg);
-	}
-	public static int loadingState(){
-		return loadingState;
-	}
 
 	//Called when program loads, performs initial setup
 	@Override
 	public void create () {
 		try {
-			loadingState = pending;
 			Gdx.graphics.setContinuousRendering(false); //this keeps the processor from constantly cycling on PC, does nothing in HTML
 			SlideIndex = dont;
 
@@ -102,8 +87,6 @@ public class MainViewer extends ApplicationAdapter {
 			//Get perferred dimensions (incase dynamically specified in JavaScript)
 			int width = c.window.width;
 			int height = c.window.height;
-			viewWidth = width;
-			viewHeight = height;
 			//println("using fixed pxl: width:" + width + " height:" + height, Constants.d);
 
 			controller = new Controls(null, c);
@@ -121,21 +104,20 @@ public class MainViewer extends ApplicationAdapter {
 
 			slideManagers = new ArrayList<SlideManager>(20);
 			setupSlideManagers(c);
+			relay=new Relay(click,scrollTimes,constants,width,height);
 
 			LastSlideMode = SlideMode = constants.getMode();
 			updateSlides = true;
 			updateSlideMode();
 
-//			ShaderProgram shader=WindowingShaders.windowValue(.515f,.075f);
-//			batch.setShader(shader);
+			shaderManager=new ShaderManager(batch);
 
-			loadingState = loaded;
+			Relay.changeLoadingState(Relay.loaded);
 		}
 		catch (Exception e){
-			loadingState=error;
+			Relay.changeLoadingState(Relay.error,constants);
 			println(e.getMessage(),Constants.e);
 		}
-		constants.loadingStateChanged(loadingState);
 
 	}
 
@@ -157,64 +139,11 @@ public class MainViewer extends ApplicationAdapter {
 
 
 
+
 	public static int getSlideMode(){
 		return SlideMode;
 	}
-	public static String getClicksAt(int at, String compDiv, String itemDiv){
-		return click.get(at).getClicks(compDiv,itemDiv);
-	}
-	public static String getScrollTimesFor(int at, String compDiv, String itemDiv){
-		return scrollTimes.get(at).getScrolls(compDiv,itemDiv);
-	}
-	public static void resetClicksFor(int at){
-		click.get(at).reset();
-	}
-	public static void resetScrollsFor(int at){
-		scrollTimes.get(at).reset();
-	}
-	public static void addClick(int at, int x, int y, int slide){
-		click.get(at).updateClick(x,y,slide);
-	}
-	public static void addHighlight(int at, int x, int y, int slide){
-		click.get(at).addHighlight(x,y,slide);
-	}
-	public static void addShader(String key, ShaderProgram value){
-		if(key.equals("off"))
-			return;
-		if(shaders==null)
-			shaders=new HashMap<String, ShaderProgram>();
 
-		boolean applyShader=false;
-		if(shaders.containsKey(key)) { //if there is already a shader by that name, replace it
-			if(batch.getShader().equals(shaders.get(key)))
-				applyShader=true;  //if it is the active shader, repace it with the new one
-			removeShader(key);
-		}
-		shaders.put(key,value);
-		if(applyShader)
-			batch.setShader(value);
-	}
-	public static void removeShader(String key){
-		if(shaders==null)
-			return;
-		if(!shaders.containsKey(key))
-			return;
-		ShaderProgram s=shaders.get(key);
-		if(batch.getShader().equals(s))
-			batch.setShader(null);
-		s.dispose();
-		shaders.remove(key);
-	}
-	public static void setShader(String key){
-		if(key.equals("off")){
-			batch.setShader(null);
-			return;
-		}
-		if(shaders==null)
-			return;
-		if(shaders.containsKey(key))
-			batch.setShader(shaders.get(key));
-	}
 
 	/**
 	 * Link slide managers to their respective scroll and click trackers
@@ -225,8 +154,8 @@ public class MainViewer extends ApplicationAdapter {
 		click=new ArrayList<ClickFollower>();
 		scrollTimes=new ArrayList<ScrollFollower>();
 		SlideDimensions d=new SlideDimensions();
-		loadingState=0;
-        constants.loadingStateChanged(loadingState);
+		int loadingState=0;
+		Relay.changeLoadingState(loadingState,constants);
 		for(SlideDimensions.Node n : d.dims()){
 			ScrollFollower sf= new ScrollFollower(c,n.total);
 			scrollTimes.add(sf);
@@ -234,8 +163,8 @@ public class MainViewer extends ApplicationAdapter {
 			slideProcessor.add(s);
 			slideManagers.add(s);
 			click.add(new ClickFollower(n.total,c.click.radius,c.click.depth,n.markClicks,clickImg,clickHighlightImg, c));
-			loadingState++;
-            constants.loadingStateChanged(loadingState);
+
+			Relay.changeLoadingState(++loadingState,constants);
 		}
 		slideProcessor.invertWork();
 	}
@@ -248,8 +177,7 @@ public class MainViewer extends ApplicationAdapter {
         if(slideProcessor.runOne()) {
             Gdx.graphics.requestRendering();
             if(slideProcessor.done()) {
-                loadingState = ready;
-                constants.loadingStateChanged(loadingState);
+				Relay.changeLoadingState(Relay.ready);
             }
             return;
         }
@@ -327,11 +255,8 @@ public class MainViewer extends ApplicationAdapter {
 		for(SlideManager m : slideManagers)
 			m.dispose();
 
-		if(shaders!=null) {
-			for (ShaderProgram p : shaders.values())
-				p.dispose();
-			shaders = null;
-		}
+		if(slideManager!=null)
+			shaderManager.dispose();
 
 		clickImg.dispose();
 		clickHighlightImg.dispose();
@@ -347,12 +272,5 @@ public class MainViewer extends ApplicationAdapter {
 		{
 			super.finalize();
 		}
-	}
-
-	public static int getWidth(){
-		return viewWidth;
-	}
-	public static int getHeight(){
-		return viewHeight;
 	}
 }

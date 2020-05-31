@@ -3,13 +3,15 @@ package com.radiogramviewer.client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.radiogramviewer.ClickNode;
-import com.radiogramviewer.Config;
-import com.radiogramviewer.Constants;
+import com.radiogramviewer.graphics.shaders.ShaderManager;
+import com.radiogramviewer.logging.ClickNode;
+import com.radiogramviewer.config.Config;
+import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.Controls;
 import com.radiogramviewer.MainViewer;
-import com.radiogramviewer.Timing;
-import com.radiogramviewer.WindowingShaders;
+import com.radiogramviewer.logging.Timing;
+import com.radiogramviewer.graphics.shaders.WindowingShaders;
+import com.radiogramviewer.relay.Relay;
 
 public class HTMLconstants implements Constants {
 
@@ -22,7 +24,7 @@ public class HTMLconstants implements Constants {
         packet=new StringBuilder();
         mode=MainViewer.none;
         exportStaticMethods();
-        exportStaticVariables(MainViewer.ready, MainViewer.loaded, MainViewer.pending, MainViewer.error);
+        exportStaticVariables(Relay.ready, Relay.loaded, Relay.pending, Relay.error);
     }
 
     @Override
@@ -33,28 +35,28 @@ public class HTMLconstants implements Constants {
     public static String getClicksFor(int slideSet, String compDiv, String itemDiv) {
         compDiv= Config.fix(compDiv);
         itemDiv=Config.fix(itemDiv);
-        return MainViewer.getClicksAt(slideSet-1,compDiv,itemDiv);
+        return Relay.getClicksAt(slideSet-1,compDiv,itemDiv);
     }
 
     public static String getScrollTimesFor(int slideSet, String compDiv, String itemDiv) {
         compDiv= Config.fix(compDiv);
         itemDiv=Config.fix(itemDiv);
-        return MainViewer.getScrollTimesFor(slideSet-1,compDiv,itemDiv);
+        return Relay.getScrollTimesFor(slideSet-1,compDiv,itemDiv);
     }
 
     public static void resetClicksFor(int slideSet){
-        MainViewer.resetClicksFor(slideSet-1);
+        Relay.resetClicksFor(slideSet-1);
     }
     public static void resetScrollsFor(int slideSet){
-        MainViewer.resetScrollsFor(slideSet-1);
+        Relay.resetScrollsFor(slideSet-1);
     }
     public static void addClick(int slideSet, int x, int y, int slide){
         float scale=1/MainViewer.getConfig().global.scale;
-        MainViewer.addClick(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
+        Relay.addClick(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
     }
     public static void addHighlight(int slideSet, int x, int y, int slide){
         float scale=1/MainViewer.getConfig().global.scale;
-        MainViewer.addHighlight(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
+        Relay.addHighlight(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
     }
 
     @Override
@@ -173,7 +175,7 @@ public class HTMLconstants implements Constants {
         ShaderProgram p= WindowingShaders.generateShader(vertex,fragment);
         if(p==null||!p.isCompiled())
             return false;
-        MainViewer.addShader(name, p);
+        ShaderManager.addShader(name, p);
         return true;
     }
 
@@ -183,7 +185,7 @@ public class HTMLconstants implements Constants {
         ShaderProgram p= WindowingShaders.windowGray(level,width);
         if(p==null||!p.isCompiled())
             return false;
-        MainViewer.addShader(name, p);
+        ShaderManager.addShader(name, p);
         return true;
     }
     public static boolean addWindowShaderValue(String name, float level, float width){
@@ -192,7 +194,7 @@ public class HTMLconstants implements Constants {
         ShaderProgram p= WindowingShaders.windowValue(level,width);
         if(p==null||!p.isCompiled())
             return false;
-        MainViewer.addShader(name, p);
+        ShaderManager.addShader(name, p);
         return true;
     }
 
@@ -205,11 +207,11 @@ public class HTMLconstants implements Constants {
 
 
     public static void removeShader(String name){
-        MainViewer.removeShader(name);
+        ShaderManager.removeShader(name);
     }
 
     public static void setShader(String name){
-        MainViewer.setShader(name);
+        ShaderManager.setShader(name);
     }
 
     public static void freezeInput(boolean freeze){
@@ -236,13 +238,13 @@ public class HTMLconstants implements Constants {
     }
 
     public static int getViewerHeight(){
-        return MainViewer.getHeight();
+        return Relay.getHeight();
     }
     public static int getViewerWidth(){
-        return MainViewer.getWidth();
+        return Relay.getWidth();
     }
     public static double getViewerWidthInches(){
-        return MainViewer.getWidth()/(Gdx.graphics.getDensity()*160);
+        return Relay.getWidth()/(Gdx.graphics.getDensity()*160);
     }
     public static double getViewerDensityFactor(){
         return MainViewer.getConfig().global.scale;
