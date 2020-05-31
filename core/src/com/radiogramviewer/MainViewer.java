@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.radiogramviewer.config.Config;
 import com.radiogramviewer.config.SlideDimensions;
+import com.radiogramviewer.coroutine.CoroutineConstantRunner;
 import com.radiogramviewer.graphics.Bar;
 import com.radiogramviewer.graphics.DrawShape;
 import com.radiogramviewer.graphics.SlideManager;
@@ -53,10 +54,12 @@ public class MainViewer extends ApplicationAdapter {
 	private static ArrayList<ScrollFollower> scrollTimes; //all scroll trackers
  	private ShaderManager shaderManager;
  	private Relay relay;
+ 	private CoroutineConstantRunner coroutineRunner;
 
 	public MainViewer(Constants constants){
 		MainViewer.constants=constants;
 		Timing.start(constants.getTime());
+		coroutineRunner=new CoroutineConstantRunner(constants);
 	}
 
 	/**
@@ -177,12 +180,13 @@ public class MainViewer extends ApplicationAdapter {
         if(slideProcessor.runOne()) {
             Gdx.graphics.requestRendering();
             if(slideProcessor.done()) {
+                constants.processingState(0,1);
 				Relay.changeLoadingState(Relay.ready);
             }
             return;
         }
 
-
+        coroutineRunner.run(); //note that in pc this will only run when responding to input
 
 		//clear the last rendered image
 		Gdx.gl.glClearColor(1f, .5f, .5f, 1);

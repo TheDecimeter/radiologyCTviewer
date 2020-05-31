@@ -1,6 +1,7 @@
 package com.radiogramviewer.coroutine;
 
 
+import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.logging.Timing;
 
@@ -53,11 +54,13 @@ public class CoroutineRunner {
     }
 
     public boolean runOne() {
+        boolean ret=false;
         float startTime= Timing.getMillis();
         for (int i=coroutines.size()-1; i>=0; i--) {
             Coroutine t = coroutines.get(i);
             if (t.workAvailable()) {
                 while(t.workAvailable()) {
+                    ret = true;
                     t.run();
                     if (Timing.getMillis() - startTime > time) {
                         constants.processingState(coroutines.size(),t.progress());
@@ -69,9 +72,9 @@ public class CoroutineRunner {
             }
             else {
                 coroutines.remove(i);
-                //MainViewer.println("removing one "+t, Constants.d);
+                MainViewer.println("removing one "+t, Constants.d);
             }
         }
-        return false;
+        return ret;
     }
 }

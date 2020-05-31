@@ -18,4 +18,7 @@ public interface Constants {
     void processingState(int remaining, float progress);
     float getScale(int originalWidth);
     void addToPacket(String msg);
+    boolean hasCoroutine();
+    void runCoroutine();
+
 }

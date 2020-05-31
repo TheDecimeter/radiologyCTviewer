@@ -137,6 +137,17 @@ public class HTMLconstants implements Constants {
     public void addToPacket(String msg) {
         packet.append(msg).append(";");
     }
+
+    @Override
+    public boolean hasCoroutine() {
+        return nativeHasCoroutine();
+    }
+
+    @Override
+    public void runCoroutine() {
+        nativeRunCoroutine();
+    }
+
     public static String getTextureInfoPacket(){
         return packet.toString();
     }
@@ -273,6 +284,14 @@ public class HTMLconstants implements Constants {
 
     public static native float nativeWindowWidth()/*-{
             return $wnd.viewerStatsWidth();
+            }-*/;
+
+    public static native boolean nativeHasCoroutine()/*-{
+            return (typeof $wnd.viewerCoroutine === "function");
+            }-*/;
+
+    public static native float nativeRunCoroutine()/*-{
+            $wnd.viewerCoroutine();
             }-*/;
 
     public static native int nativeInputReceived()/*-{

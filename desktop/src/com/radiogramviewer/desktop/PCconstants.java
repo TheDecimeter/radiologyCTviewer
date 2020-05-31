@@ -86,4 +86,13 @@ public class PCconstants implements Constants {
     public void addToPacket(String msg) {
         System.out.println(" adding to packet:"+msg);
     }
+
+    @Override
+    public boolean hasCoroutine() {
+        return false;
+    }
+
+    @Override
+    public void runCoroutine() {
+    }
 }
