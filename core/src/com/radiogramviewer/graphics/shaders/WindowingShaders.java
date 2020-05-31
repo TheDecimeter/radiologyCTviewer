@@ -2,9 +2,11 @@ package com.radiogramviewer.graphics.shaders;
 
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.radiogramviewer.MainViewer;
+import com.radiogramviewer.logging.ShaderLogger;
 import com.radiogramviewer.relay.Constants;
 
 public class WindowingShaders {
+
     private final static String vertexShader = "attribute vec4 a_position;\n" +
             "attribute vec4 a_color;\n" +
             "attribute vec2 a_texCoord0;\n" +

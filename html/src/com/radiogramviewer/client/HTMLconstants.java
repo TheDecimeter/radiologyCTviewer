@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.radiogramviewer.graphics.shaders.ShaderManager;
 import com.radiogramviewer.logging.ClickNode;
 import com.radiogramviewer.config.Config;
+import com.radiogramviewer.logging.ShaderLogger;
 import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.Controls;
 import com.radiogramviewer.MainViewer;
@@ -42,6 +43,10 @@ public class HTMLconstants implements Constants {
         compDiv= Config.fix(compDiv);
         itemDiv=Config.fix(itemDiv);
         return Relay.getScrollTimesFor(slideSet-1,compDiv,itemDiv);
+    }
+
+    public static String getShaderLog(String cs, String vs) {
+        return ShaderManager.logger.get(cs,vs);
     }
 
     public static void resetClicksFor(int slideSet){
@@ -186,6 +191,7 @@ public class HTMLconstants implements Constants {
         ShaderProgram p= WindowingShaders.generateShader(vertex,fragment);
         if(p==null||!p.isCompiled())
             return false;
+        ShaderManager.logger.add(ShaderLogger.custom,name,vertex,fragment);
         ShaderManager.addShader(name, p);
         return true;
     }
@@ -196,6 +202,7 @@ public class HTMLconstants implements Constants {
         ShaderProgram p= WindowingShaders.windowGray(level,width);
         if(p==null||!p.isCompiled())
             return false;
+        ShaderManager.logger.add(ShaderLogger.gray,name,level,width);
         ShaderManager.addShader(name, p);
         return true;
     }
@@ -205,6 +212,7 @@ public class HTMLconstants implements Constants {
         ShaderProgram p= WindowingShaders.windowValue(level,width);
         if(p==null||!p.isCompiled())
             return false;
+        ShaderManager.logger.add(ShaderLogger.value,name,level,width);
         ShaderManager.addShader(name, p);
         return true;
     }
@@ -379,6 +387,7 @@ public class HTMLconstants implements Constants {
        $wnd.viewerSetSlide = $entry(@com.radiogramviewer.client.HTMLconstants::setMode(I));
        $wnd.viewerSetSlideAt = $entry(@com.radiogramviewer.client.HTMLconstants::setModeAt(II));
 
+       $wnd.viewerGetShaderLog = $entry(@com.radiogramviewer.client.HTMLconstants::getShaderLog(Ljava/lang/String;Ljava/lang/String;));
        $wnd.viewerGetClicksFor = $entry(@com.radiogramviewer.client.HTMLconstants::getClicksFor(ILjava/lang/String;Ljava/lang/String;));
        $wnd.viewerGetScrollTimesFor = $entry(@com.radiogramviewer.client.HTMLconstants::getScrollTimesFor(ILjava/lang/String;Ljava/lang/String;));
        $wnd.viewerResetScrolls = $entry(@com.radiogramviewer.client.HTMLconstants::resetScrollsFor(I));

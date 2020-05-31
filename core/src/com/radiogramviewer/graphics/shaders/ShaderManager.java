@@ -3,15 +3,20 @@ package com.radiogramviewer.graphics.shaders;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Disposable;
+import com.radiogramviewer.logging.ShaderLogger;
 
 import java.util.HashMap;
 
 public class ShaderManager implements Disposable {
+    public static final ShaderLogger logger=new ShaderLogger();
+
     private static HashMap<String,ShaderProgram> shaders;
     private static SpriteBatch batch;
+    private static String last;
 
     public ShaderManager(SpriteBatch batch){
         this.batch=batch;
+        last="off";
     }
 
     public static void addShader(String key, ShaderProgram value){
@@ -35,21 +40,31 @@ public class ShaderManager implements Disposable {
             return;
         if(!shaders.containsKey(key))
             return;
+        logger.remove(key);
         ShaderProgram s=shaders.get(key);
-        if(batch.getShader().equals(s))
+        if(batch.getShader().equals(s)) {
+            last="off";
             batch.setShader(null);
+        }
         s.dispose();
         shaders.remove(key);
     }
     public static void setShader(String key){
+        if(key.equals(last))
+            return;
         if(key.equals("off")){
+            last=key;
+            logger.invoke(key);
             batch.setShader(null);
             return;
         }
         if(shaders==null)
             return;
-        if(shaders.containsKey(key))
+        if(shaders.containsKey(key)) {
+            last=key;
+            logger.invoke(key);
             batch.setShader(shaders.get(key));
+        }
     }
 
     @Override
@@ -59,5 +74,6 @@ public class ShaderManager implements Disposable {
                 p.dispose();
             shaders = null;
         }
+        logger.reset();
     }
 }
