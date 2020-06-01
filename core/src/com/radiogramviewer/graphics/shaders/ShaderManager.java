@@ -13,6 +13,7 @@ public class ShaderManager implements Disposable {
     private static HashMap<String,ShaderProgram> shaders;
     private static SpriteBatch batch;
     private static String last;
+    private static ShaderProgram currentShader;
 
     public ShaderManager(SpriteBatch batch){
         this.batch=batch;
@@ -33,7 +34,7 @@ public class ShaderManager implements Disposable {
         }
         shaders.put(key,value);
         if(applyShader)
-            batch.setShader(value);
+            applyShader(value);
     }
     public static void removeShader(String key){
         if(shaders==null)
@@ -44,7 +45,7 @@ public class ShaderManager implements Disposable {
         ShaderProgram s=shaders.get(key);
         if(batch.getShader().equals(s)) {
             last="off";
-            batch.setShader(null);
+            applyShader(null);
         }
         s.dispose();
         shaders.remove(key);
@@ -55,7 +56,7 @@ public class ShaderManager implements Disposable {
         if(key.equals("off")){
             last=key;
             logger.invoke(key);
-            batch.setShader(null);
+            applyShader(null);
             return;
         }
         if(shaders==null)
@@ -63,7 +64,7 @@ public class ShaderManager implements Disposable {
         if(shaders.containsKey(key)) {
             last=key;
             logger.invoke(key);
-            batch.setShader(shaders.get(key));
+            applyShader(shaders.get(key));
         }
     }
 
@@ -75,5 +76,17 @@ public class ShaderManager implements Disposable {
             shaders = null;
         }
         logger.reset();
+    }
+
+    private static void applyShader(ShaderProgram shader){
+        currentShader=shader;
+        batch.setShader(currentShader);
+    }
+
+    public void applyShader(){
+        batch.setShader(currentShader);
+    }
+    public void disableShader(){
+        batch.setShader(null);
     }
 }

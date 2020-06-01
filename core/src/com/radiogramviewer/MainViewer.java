@@ -33,7 +33,6 @@ public class MainViewer extends ApplicationAdapter {
 
 
 	private static SpriteBatch batch;
-	private static SpriteBatch windowBatch;
 	private Texture img;
 	private SlideManager slideManager;
 	private ArrayList<SlideManager> slideManagers;
@@ -98,7 +97,6 @@ public class MainViewer extends ApplicationAdapter {
 
 			Gdx.graphics.setWindowedMode(width, height);
 			batch = new SpriteBatch();
-			windowBatch=new SpriteBatch();
 
 			//Generate the images for indicating clicks and scroll bar
 			clickImg = DrawShape.ring(c.click.color, c.click.radius, c.click.thickness);
@@ -204,16 +202,18 @@ public class MainViewer extends ApplicationAdapter {
 			int totalSlides=slideManager.getTotal();
 			scroll.setHeight(totalSlides - currentSlide, totalSlides);
 
+			shaderManager.applyShader();
 			batch.begin();
 			slideManager.draw(batch);  //draw slide
 			batch.end();
 
-			windowBatch.begin();
-			slideClick.drawClicks(windowBatch,currentSlide);	//draw any relevant clicks
-			slideClick.drawHighlights(windowBatch,currentSlide);	//draw any highlightedAreas
+			shaderManager.disableShader();
+			batch.begin();
+			slideClick.drawClicks(batch,currentSlide);	//draw any relevant clicks
+			slideClick.drawHighlights(batch,currentSlide);	//draw any highlightedAreas
 			if(totalSlides>1)
-				scroll.draw(windowBatch);					//draw scroll bar, if more than 1 slide
-			windowBatch.end();
+				scroll.draw(batch);					//draw scroll bar, if more than 1 slide
+			batch.end();
 		}
 	}
 
@@ -253,7 +253,6 @@ public class MainViewer extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		windowBatch.dispose();
 
 		scroll.dispose();
 		for(SlideManager m : slideManagers)
