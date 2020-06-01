@@ -206,19 +206,23 @@ public class MainViewer extends ApplicationAdapter {
 
 			//note that I use individual batches here, using only one and changing the shader
 			// causes a crash in html5, not sure why.
+
+			ShaderManager.apply(slideBatch);
 			slideBatch.begin();
 			slideManager.draw(slideBatch);  //draw slide
 			slideBatch.end();
 
-
-			windowBatch.begin();
-			slideClick.drawClicks(windowBatch,currentSlide);	//draw any relevant clicks
-			slideClick.drawHighlights(windowBatch,currentSlide);	//draw any highlightedAreas
-			if(totalSlides>1)
-				scroll.draw(windowBatch);					//draw scroll bar, if more than 1 slide
-			windowBatch.end();
+			ShaderManager.remove(slideBatch);
+			slideBatch.begin();
+			slideClick.drawClicks(slideBatch, currentSlide);    //draw any relevant clicks
+			slideClick.drawHighlights(slideBatch, currentSlide);    //draw any highlightedAreas
+			if (totalSlides > 1)
+				scroll.draw(slideBatch);                    //draw scroll bar, if more than 1 slide
+			slideBatch.end();
 		}
 	}
+
+
 
 	/**
 	 * trigger method to change slide set (because the change is triggered through a static

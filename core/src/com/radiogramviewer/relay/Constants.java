@@ -20,5 +20,5 @@ public interface Constants {
     void addToPacket(String msg);
     boolean hasCoroutine();
     void runCoroutine();
-
+    void passKey(int key);
 }

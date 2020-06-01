@@ -68,15 +68,15 @@ public class Controls implements InputProcessor {
     public boolean keyUp(int keycode) {
         if(freeze) return false;
         handleKeyUp(keycode);
-        if(keycode== Input.Keys.M&&c.debug.advanceSlide)
+        if(c.debug.quickKeys)
         {
-            int slideMode=MainViewer.getSlideMode()+1;
-            if(slideMode>20)
-                slideMode=0;
-            MainViewer.setSlideMode(slideMode,0);
-//            MainViewer.setSlideMode(MainViewer.getSlideMode()+1,0);
-//            if(MainViewer.getSlideMode()>20)
-//                MainViewer.setSlideMode(0,0);
+            if(keycode== Input.Keys.M) {
+                int slideMode = MainViewer.getSlideMode() + 1;
+                if (slideMode > 20)
+                    slideMode = 0;
+                MainViewer.setSlideMode(slideMode, 0);
+            }
+            Relay.getConstants().passKey(keycode);
         }
         return false;
     }

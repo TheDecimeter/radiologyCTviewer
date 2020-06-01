@@ -78,4 +78,5 @@ public class Relay {
     }
     public static int getWidth(){return viewWidth;}
     public static int getHeight(){return viewHeight;}
+    public static Constants getConstants(){return constants;}
 }

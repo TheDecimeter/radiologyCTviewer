@@ -153,6 +153,7 @@ public class HTMLconstants implements Constants {
         nativeRunCoroutine();
     }
 
+
     public static String getTextureInfoPacket(){
         return packet.toString();
     }
@@ -244,13 +245,6 @@ public class HTMLconstants implements Constants {
         ShaderLogger.log=true;
     }
 
-    private static native boolean optional(boolean b)/*-{
-            if (typeof b === "undefined" || b==null){
-                return true;
-            }
-            else
-                return b;
-            }-*/;
 
     public static void freezeInput(boolean freeze){
         Controls.freeze=freeze;
@@ -294,6 +288,36 @@ public class HTMLconstants implements Constants {
     public static double getStartTime(){
         return Timing.getStartTime();
     }
+
+    @Override
+    public void passKey(int key){
+        MainViewer.println("pass "+key,1);
+        switch(key){
+            case Input.Keys.NUM_1:
+                MainViewer.setSlideMode(3,0);
+                break;
+            case Input.Keys.NUM_2:
+                ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray(.5f,-1));
+                break;
+            case Input.Keys.NUM_3:
+                ShaderManager.setShader("customPassKey1");
+                break;
+            case Input.Keys.NUM_4:
+                ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray(.5f,.5f));
+                break;
+            case Input.Keys.NUM_5:
+                ShaderManager.removeShader("customPassKey1");
+                break;
+        }
+    }
+
+    private static native boolean optional(boolean b)/*-{
+            if (typeof b === "undefined" || b==null){
+                return true;
+            }
+            else
+                return b;
+            }-*/;
 
 
     public static native boolean nativeConsoleOut(String msg)/*-{

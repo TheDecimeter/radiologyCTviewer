@@ -1,5 +1,9 @@
 package com.radiogramviewer.desktop;
 
+import com.badlogic.gdx.Input;
+import com.radiogramviewer.MainViewer;
+import com.radiogramviewer.graphics.shaders.ShaderManager;
+import com.radiogramviewer.graphics.shaders.WindowingShaders;
 import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.Controls;
 
@@ -94,5 +98,27 @@ public class PCconstants implements Constants {
 
     @Override
     public void runCoroutine() {
+    }
+
+    @Override
+    public void passKey(int key) {
+        MainViewer.println("pass "+key,1);
+        switch(key){
+            case Input.Keys.NUM_1:
+                MainViewer.setSlideMode(3,0);
+                break;
+            case Input.Keys.NUM_2:
+                ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray(.5f,-1));
+                break;
+            case Input.Keys.NUM_3:
+                ShaderManager.setShader("customPassKey1");
+                break;
+            case Input.Keys.NUM_4:
+                ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray(.5f,.5f));
+                break;
+            case Input.Keys.NUM_5:
+                ShaderManager.removeShader("customPassKey1");
+                break;
+        }
     }
 }

@@ -27,7 +27,7 @@ public class Config {
         HashMap<String,String> vpWindow=getProperties("window",vals);
 
         HashMap<String,String> vp=getProperties("debug",vals);
-        debug=new DebugClass(getBool("advanceSlide",vp),maxSize(getBool("fakeGPU",vp),getInt("fakeTextureMax",vp)));
+        debug=new DebugClass(getBool("quickKeys",vp),maxSize(getBool("fakeGPU",vp),getInt("fakeTextureMax",vp)));
 
         vp=getProperties("global",vals);
 
@@ -216,10 +216,10 @@ public class Config {
     }
 
     public class DebugClass{
-        public final boolean advanceSlide;
+        public final boolean quickKeys;
         public final int gpuMaxTextureSize;
-        DebugClass(boolean advanceSlide, int gpuMaxTextureSize){
-            this.advanceSlide=advanceSlide;
+        DebugClass(boolean quickKeys, int gpuMaxTextureSize){
+            this.quickKeys=quickKeys;
             this.gpuMaxTextureSize=gpuMaxTextureSize;
         }
     }
