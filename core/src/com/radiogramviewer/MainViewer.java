@@ -13,6 +13,7 @@ import com.radiogramviewer.graphics.Bar;
 import com.radiogramviewer.graphics.DrawShape;
 import com.radiogramviewer.graphics.SlideManager;
 import com.radiogramviewer.graphics.shaders.ShaderManager;
+import com.radiogramviewer.graphics.shaders.WindowingShaders;
 import com.radiogramviewer.logging.ClickFollower;
 import com.radiogramviewer.logging.ScrollFollower;
 import com.radiogramviewer.logging.Timing;
@@ -32,7 +33,7 @@ public class MainViewer extends ApplicationAdapter {
 
 
 
-	private static SpriteBatch batch;
+	private static SpriteBatch windowBatch,slideBatch;
 	private Texture img;
 	private SlideManager slideManager;
 	private ArrayList<SlideManager> slideManagers;
@@ -96,7 +97,8 @@ public class MainViewer extends ApplicationAdapter {
 			Gdx.input.setInputProcessor(controller);
 
 			Gdx.graphics.setWindowedMode(width, height);
-			batch = new SpriteBatch();
+			windowBatch = new SpriteBatch();
+			slideBatch=new SpriteBatch();
 
 			//Generate the images for indicating clicks and scroll bar
 			clickImg = DrawShape.ring(c.click.color, c.click.radius, c.click.thickness);
@@ -111,7 +113,7 @@ public class MainViewer extends ApplicationAdapter {
 			updateSlides = true;
 			updateSlideMode();
 
-			shaderManager=new ShaderManager(batch);
+			shaderManager=new ShaderManager(slideBatch);
 
 			Relay.changeLoadingState(Relay.loaded);
 		}
@@ -202,18 +204,19 @@ public class MainViewer extends ApplicationAdapter {
 			int totalSlides=slideManager.getTotal();
 			scroll.setHeight(totalSlides - currentSlide, totalSlides);
 
-			shaderManager.applyShader();
-			batch.begin();
-			slideManager.draw(batch);  //draw slide
-			batch.end();
+			//note that I use individual batches here, using only one and changing the shader
+			// causes a crash in html5, not sure why.
+			slideBatch.begin();
+			slideManager.draw(slideBatch);  //draw slide
+			slideBatch.end();
 
-			shaderManager.disableShader();
-			batch.begin();
-			slideClick.drawClicks(batch,currentSlide);	//draw any relevant clicks
-			slideClick.drawHighlights(batch,currentSlide);	//draw any highlightedAreas
+
+			windowBatch.begin();
+			slideClick.drawClicks(windowBatch,currentSlide);	//draw any relevant clicks
+			slideClick.drawHighlights(windowBatch,currentSlide);	//draw any highlightedAreas
 			if(totalSlides>1)
-				scroll.draw(batch);					//draw scroll bar, if more than 1 slide
-			batch.end();
+				scroll.draw(windowBatch);					//draw scroll bar, if more than 1 slide
+			windowBatch.end();
 		}
 	}
 
@@ -252,7 +255,8 @@ public class MainViewer extends ApplicationAdapter {
 	//release memory back into the wild
 	@Override
 	public void dispose () {
-		batch.dispose();
+		windowBatch.dispose();
+		slideBatch.dispose();
 
 		scroll.dispose();
 		for(SlideManager m : slideManagers)

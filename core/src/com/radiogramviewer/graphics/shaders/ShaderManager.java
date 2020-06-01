@@ -3,6 +3,7 @@ package com.radiogramviewer.graphics.shaders;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Disposable;
+import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.logging.ShaderLogger;
 
 import java.util.HashMap;
@@ -13,7 +14,6 @@ public class ShaderManager implements Disposable {
     private static HashMap<String,ShaderProgram> shaders;
     private static SpriteBatch batch;
     private static String last;
-    private static ShaderProgram currentShader;
 
     public ShaderManager(SpriteBatch batch){
         this.batch=batch;
@@ -41,6 +41,7 @@ public class ShaderManager implements Disposable {
             return;
         if(!shaders.containsKey(key))
             return;
+
         logger.remove(key);
         ShaderProgram s=shaders.get(key);
         if(batch.getShader().equals(s)) {
@@ -79,14 +80,6 @@ public class ShaderManager implements Disposable {
     }
 
     private static void applyShader(ShaderProgram shader){
-        currentShader=shader;
-        batch.setShader(currentShader);
-    }
-
-    public void applyShader(){
-        batch.setShader(currentShader);
-    }
-    public void disableShader(){
-        batch.setShader(null);
+        batch.setShader(shader);
     }
 }
