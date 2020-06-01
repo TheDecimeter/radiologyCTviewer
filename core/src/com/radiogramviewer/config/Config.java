@@ -38,7 +38,8 @@ public class Config {
         global=new GlobalClass(fakeDensity,1/scale, debug.gpuMaxTextureSize, getInt("overscan",vp), getBool("downscaleTexture",vp), getInt("yield",vp));
 
         window=new WindowClass(originalWidth,getInt("height",vpWindow),
-                getInt("barWidth",vpWindow),getInt("barBorder",vpWindow), getColor("barColor",vpWindow));
+                getInt("barWidth",vpWindow),getInt("barBorder",vpWindow)
+                , getColor("barColor",vpWindow), getColor("borderColor",vpWindow));
 
         vp=getProperties("record",vals);
         record=new RecordClass(getBool("logScrolling",vp));
@@ -167,13 +168,14 @@ public class Config {
 
     public class WindowClass{
         public final int height, width, barWidth, barBorder;
-        public final Color barColor;
-        WindowClass(int width, int height, int barWidth, int barBorder, Color barColor){
+        public final Color barColor, borderColor;
+        WindowClass(int width, int height, int barWidth, int barBorder, Color barColor, Color borderColor){
             this.height=(int)(height*scale);
             this.width=(int)(width*scale);
             this.barWidth=(int)(barWidth*scale);
             this.barBorder=(int)(barBorder*scale);
             this.barColor=barColor;
+            this.borderColor=borderColor;
         }
     }
 

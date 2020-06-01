@@ -15,13 +15,12 @@ public class Bar{
 
     private Texture bar, outline;
 
-    private int x,y,width, maxWidth, height, border;
+    private int x,y,width, maxHeight, height, border;
 
 
 
     public Bar(Config c){
         this.x=c.window.width;
-        this.y=c.window.height;
         this.width=(int)(c.window.barWidth);
         if(this.width<1)
             this.width=1;
@@ -29,29 +28,29 @@ public class Bar{
         if(border<1)
             border=1;
 
-        this.height=y-border*2;
-        maxWidth=height;
-        this.y-=(height);
+        this.height=c.window.height-border*2;
+        maxHeight =height;
+        this.y=0;
         this.x-=(this.width+border*2);
 
         bar= DrawShape.rect(c.window.barColor,this.width,height);
-        outline=DrawShape.rect(new Color(0,0,0,.5f),this.width+border*2,c.window.height);
+        outline=DrawShape.rect(c.window.borderColor,this.width+border*2,c.window.height);
     }
 
     public boolean draw(SpriteBatch batch) {
         batch.draw(outline, x, y);
-        batch.draw(bar, x+border, y-border, width, height);
+        batch.draw(bar, x+border, y+border, width, height);
         return true;
     }
 
     public boolean setHeight(float current, float full){
-        height=(int)((current/full)*maxWidth);
+        height=(int)((current/full)* maxHeight);
         if(height<0) {
             height = 0;
             return false;
         }
-        else if(height>maxWidth) {
-            height = maxWidth;
+        else if(height> maxHeight) {
+            height = maxHeight;
         }
         return true;
     }
