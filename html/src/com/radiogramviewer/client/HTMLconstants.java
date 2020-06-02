@@ -24,14 +24,14 @@ public class HTMLconstants implements Constants {
     private static StringBuilder packet;
 
     public HTMLconstants(){
-        packet=new StringBuilder();
-        mode=SubViewer.none;
         exportStaticMethods();
         exportStaticVariables(Relay.ready, Relay.loaded, Relay.pending, Relay.error);
     }
 
     @Override
     public int getMode() {
+        packet=new StringBuilder();
+        mode=SubViewer.none;
         return mode;
     }
 
@@ -318,6 +318,11 @@ public class HTMLconstants implements Constants {
         }
     }
 
+    @Override
+    public void finishedResetting() {
+        nativeFinishedReset();
+    }
+
     private static native boolean optional(boolean b)/*-{
             if (typeof b === "undefined" || b==null){
                 return true;
@@ -334,6 +339,12 @@ public class HTMLconstants implements Constants {
             }
             else
                 return false;
+            }-*/;
+
+    public static native boolean nativeFinishedReset()/*-{
+            if (typeof $wnd.viewerEventResetFinished === "function"){
+                $wnd.viewerEventResetFinished();
+            }
             }-*/;
 
     public static native boolean nativeWindowSizeSpecified()/*-{

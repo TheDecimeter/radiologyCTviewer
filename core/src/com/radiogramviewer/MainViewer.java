@@ -63,6 +63,7 @@ public class MainViewer extends ApplicationAdapter {
 			viewer.dispose();
 			viewer=new SubViewer(constants);
 			reset=false;
+			constants.finishedResetting();
 		}
 	}
 

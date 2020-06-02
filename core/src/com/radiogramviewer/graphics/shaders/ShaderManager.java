@@ -10,18 +10,20 @@ import com.radiogramviewer.logging.Timing;
 import java.util.HashMap;
 
 public class ShaderManager{
-    public static final ShaderLogger logger=new ShaderLogger();
+    private static final String off="off";
+
+    public static ShaderLogger logger;
 
     private static HashMap<String,ShaderProgram> shaders;
     private static SpriteBatch batch;
     private static String last;
     public static ShaderProgram shader;
-    private static int skip=0;
-    private static final String off="off";
 
     public static void init(SpriteBatch batch){
         ShaderManager.batch=batch;
         last=off;
+        shader=null;
+        logger=new ShaderLogger();
     }
 
     /**

@@ -20,4 +20,5 @@ public interface Constants {
     boolean hasCoroutine();
     void runCoroutine();
     void passKey(int key);
+    void finishedResetting();
 }

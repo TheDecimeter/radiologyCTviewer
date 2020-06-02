@@ -43,7 +43,7 @@ public class SlideManager implements Disposable, Coroutine{
         if(previousCache==null)
             previousCache=new HashMap<String, Slides>();
 
-//        try{
+        try{
             //try loading the image, if it can't be found, but wasn't mentioned in the slide Dimensions
             // then it is expected to not be important.
             // otherwise, throw an exception.
@@ -73,15 +73,15 @@ public class SlideManager implements Disposable, Coroutine{
                         drawer=new DummyDrawer();
                 }
             }
-//        }
-//        catch (Exception e){
-//            if(node.necessary) {
-//                drawer=new DummyDrawer();
-//                throw new FailToLoadException("Failed to load necessary image " + e.getMessage());
-//            }
-//            else
-//                drawer=new DummyDrawer();
-//        }
+        }
+        catch (Exception e){
+            if(node.necessary) {
+                drawer=new DummyDrawer();
+                throw new FailToLoadException("Failed to load necessary image " + e.getMessage());
+            }
+            else
+                drawer=new DummyDrawer();
+        }
 
 
     }

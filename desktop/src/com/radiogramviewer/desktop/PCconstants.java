@@ -8,6 +8,7 @@ import com.radiogramviewer.graphics.shaders.WindowingShaders;
 import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.Controls;
 import com.radiogramviewer.relay.P;
+import com.radiogramviewer.relay.Relay;
 
 /**
  * Mostly a dummy class to mock what would be an interface with outside JavaScript
@@ -125,5 +126,10 @@ public class PCconstants implements Constants {
                 ShaderManager.removeShader("customPassKey1");
                 break;
         }
+    }
+
+    @Override
+    public void finishedResetting() {
+        P.d("finished resetting state="+ Relay.loadingState());
     }
 }
