@@ -24,7 +24,7 @@ public class Relay {
         Relay.viewWidth=width;
         Relay.viewHeight=height;
     }
-    public static void initLogs(List<ClickFollower> click, List<ScrollFollower> srollTimes){
+    public static void initLogs(List<ClickFollower> click, List<ScrollFollower> scrollTimes){
         Relay.click=click;
         Relay.scrollTimes=scrollTimes;
     }

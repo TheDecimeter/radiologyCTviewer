@@ -125,6 +125,9 @@ public class PCconstants implements Constants {
             case Input.Keys.NUM_5:
                 ShaderManager.removeShader("customPassKey1");
                 break;
+            case Input.Keys.NUM_9:
+                Relay.getScrollTimesFor(3,",","\n");
+                break;
         }
     }
 
