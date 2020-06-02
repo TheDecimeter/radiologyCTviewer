@@ -31,7 +31,8 @@ public class SlideManager implements Disposable, Coroutine{
     private boolean buttons, discardDelta=false;
     private Drawer drawer;
 
-    private static HashMap<String,NormalDrawer> textureCache;
+    private static HashMap<String,NormalDrawer> textureCache; //keep drawers so they can pass slides to each other during creation
+    private static HashMap<String,Slides> previousCache; //keep slides so drawers can use them during recreation.
 
     public SlideManager(SlideDimensions.Node node, ScrollFollower scrollLog, Config c){
 
@@ -39,11 +40,18 @@ public class SlideManager implements Disposable, Coroutine{
         holdFor=c.input.holdTime;
         buttons=c.input.wasd||c.input.arrow;
 
+        if(previousCache==null)
+            previousCache=new HashMap<String, Slides>();
+
 //        try{
             //try loading the image, if it can't be found, but wasn't mentioned in the slide Dimensions
             // then it is expected to not be important.
             // otherwise, throw an exception.
-            if(isCached(node.file)){
+            if(previousCache.containsKey(node.file)){
+                Slides s=previousCache.get(node.file);
+                drawer=new NormalDrawer(node,scrollLog,c,s.t,s.r);
+            }
+            else if(isCached(node.file)){
                 NormalDrawer d=new NormalDrawer(scrollLog,c);
                 drawer=d;
                 requestCache(node.file,d);
@@ -278,6 +286,18 @@ public class SlideManager implements Disposable, Coroutine{
             y=x=0;
             this.overscan=c.global.overscan;
             this.scrollLog=scrollLog;
+        }
+        public NormalDrawer(SlideDimensions.Node node, ScrollFollower scrollLog, Config c, Texture [] t, TextureRegion [][] r){
+            y=x=0;
+
+            ih= node.height;
+            iw= node.width;
+            it= node.total;
+
+            this.overscan=c.global.overscan;
+            this.scrollLog=scrollLog;
+            this.texture=t;
+            this.img=r;
         }
 
         /**
@@ -528,6 +548,8 @@ public class SlideManager implements Disposable, Coroutine{
                     d.it=it;
                     d.iw=iw;
                 }
+                if(!previousCache.containsKey(co.node.file))
+                    previousCache.put(co.node.file,new Slides(texture,img));
                 orig.dispose();
                 co=null;
             }
@@ -718,14 +740,22 @@ public class SlideManager implements Disposable, Coroutine{
 
         @Override
         public void dispose() {
-            if(texture==null)
-                return;
-            for(Texture t : texture)
-                if(t!=null)
-                    t.dispose();
+//            if(texture==null)
+//                return;
+//            for(Texture t : texture)
+//                if(t!=null)
+//                    t.dispose();
         }
+
     }
 
+
+    public static void disposeCompletely(){
+        if(previousCache==null)
+            return;
+        for(Slides s : previousCache.values())
+            s.dispose();
+    }
 
     /**
      * if an image fails to load, but was deemed unnecessary, use a dummy drawer
@@ -751,5 +781,22 @@ public class SlideManager implements Disposable, Coroutine{
         public float progress() {return 1;}
         @Override
         public void run() {}
+    }
+
+    class Slides{
+        final Texture [] t;
+        final TextureRegion [][] r;
+
+        Slides(Texture [] t, TextureRegion [][] r){
+            this.t=t;
+            this.r=r;
+        }
+        private void dispose(){
+            if(t==null)
+                return;
+            for(Texture ti : t)
+                if(ti!=null)
+                    ti.dispose();
+        }
     }
 }

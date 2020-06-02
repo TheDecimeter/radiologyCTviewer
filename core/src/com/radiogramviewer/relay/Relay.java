@@ -16,9 +16,10 @@ public class Relay {
     private static List<ScrollFollower> scrollTimes;
     private static Constants constants;
 
-    private static int loadingState=pending; //informs external javascript of loading state when it changes
+    private static int loadingState; //informs external javascript of loading state when it changes
 
     public static void initMain(Constants constants, int width, int height){
+        loadingState=pending;
         Relay.constants=constants;
         Relay.viewWidth=width;
         Relay.viewHeight=height;

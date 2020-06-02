@@ -51,6 +51,8 @@ public class HTMLconstants implements Constants {
         return ShaderManager.logger.get(cs,vs);
     }
 
+    public static void resetEverything(){MainViewer.setToReset();}
+
     public static void resetClicksFor(int slideSet){
         Relay.resetClicksFor(slideSet-1);
     }
@@ -295,6 +297,9 @@ public class HTMLconstants implements Constants {
     public void passKey(int key){
         P.d("pass "+key);
         switch(key){
+            case Input.Keys.NUM_0:
+                MainViewer.setToReset();
+                break;
             case Input.Keys.NUM_1:
                 SubViewer.setSlideMode(3,0);
                 break;
@@ -426,6 +431,7 @@ public class HTMLconstants implements Constants {
        $wnd.viewerGetCurrentSlide = $entry(@com.radiogramviewer.client.HTMLconstants::getCurrentSlide());
        $wnd.viewerGetCurrentSet = $entry(@com.radiogramviewer.client.HTMLconstants::getCurrentMode());
 
+       $wnd.viewerDeleteAndReset = $entry(@com.radiogramviewer.client.HTMLconstants::resetEverything());
        $wnd.viewerGetUpTime = $entry(@com.radiogramviewer.client.HTMLconstants::getUpTime());
        $wnd.viewerGetStartTime = $entry(@com.radiogramviewer.client.HTMLconstants::getStartTime());
 

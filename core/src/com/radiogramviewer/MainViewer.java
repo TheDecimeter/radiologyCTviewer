@@ -19,6 +19,7 @@ import com.radiogramviewer.logging.ScrollFollower;
 import com.radiogramviewer.logging.Timing;
 import com.radiogramviewer.coroutine.CoroutineRunner;
 import com.radiogramviewer.relay.Constants;
+import com.radiogramviewer.relay.P;
 import com.radiogramviewer.relay.Relay;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class MainViewer extends ApplicationAdapter {
 
     private Constants constants;
     private SubViewer viewer;
+    private static boolean reset;
 
 
 	public MainViewer(Constants constants){
@@ -43,6 +45,7 @@ public class MainViewer extends ApplicationAdapter {
 	@Override
 	public void create () {
 		viewer=new SubViewer(constants);
+		reset=false;
 	}
 
 
@@ -51,17 +54,28 @@ public class MainViewer extends ApplicationAdapter {
 	 */
 	@Override
 	public void render () {
+		if(reset) reset();
         viewer.render();
 	}
 
+	private void reset(){
+		if(Relay.loadingState()==Relay.ready){
+			viewer.dispose();
+			viewer=new SubViewer(constants);
+			reset=false;
+		}
+	}
 
-
+	public static void setToReset(){
+		reset=true;
+	}
 
 
 	//release memory back into the wild
 	@Override
 	public void dispose () {
 		viewer.dispose();
+		SlideManager.disposeCompletely();
 	}
 	@Override
 	protected void finalize() throws Throwable

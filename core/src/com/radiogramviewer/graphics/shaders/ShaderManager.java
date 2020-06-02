@@ -9,7 +9,7 @@ import com.radiogramviewer.logging.Timing;
 
 import java.util.HashMap;
 
-public class ShaderManager implements Disposable {
+public class ShaderManager{
     public static final ShaderLogger logger=new ShaderLogger();
 
     private static HashMap<String,ShaderProgram> shaders;
@@ -19,8 +19,8 @@ public class ShaderManager implements Disposable {
     private static int skip=0;
     private static final String off="off";
 
-    public ShaderManager(SpriteBatch batch){
-        this.batch=batch;
+    public static void init(SpriteBatch batch){
+        ShaderManager.batch=batch;
         last=off;
     }
 
@@ -78,8 +78,8 @@ public class ShaderManager implements Disposable {
         }
     }
 
-    @Override
-    public void dispose() {
+
+    public static void dispose() {
         if(shaders!=null) {
             for (ShaderProgram p : shaders.values())
                 p.dispose();

@@ -28,13 +28,11 @@ public class SubViewer {
 
 
     private static SpriteBatch windowBatch,slideBatch;
-    private Texture img;
     private SlideManager slideManager;
     private ArrayList<SlideManager> slideManagers;
     private CoroutineRunner slideProcessor;
     private Controls controller;
     private Bar scroll;
-    private ShaderManager shaderManager;
     private CoroutineConstantRunner coroutineRunner;
 
 
@@ -94,7 +92,7 @@ public class SubViewer {
             updateSlides = true;
             updateSlideMode();
 
-            shaderManager=new ShaderManager(slideBatch);
+            ShaderManager.init(slideBatch);
 
             Relay.changeLoadingState(Relay.loaded);
 //        }
@@ -103,6 +101,10 @@ public class SubViewer {
 //            P.e(e.getMessage());
 //        }
 
+            if(slideProcessor.done()){
+                constants.processingState(0,1);
+                Relay.changeLoadingState(Relay.ready);
+            }
     }
     public void render(){
         if(slideProcessor.runOne()) {
@@ -157,8 +159,7 @@ public class SubViewer {
         for(SlideManager m : slideManagers)
             m.dispose();
 
-        if(slideManager!=null)
-            shaderManager.dispose();
+        ShaderManager.dispose();
 
         clickImg.dispose();
         clickHighlightImg.dispose();

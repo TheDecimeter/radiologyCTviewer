@@ -106,6 +106,9 @@ public class PCconstants implements Constants {
     public void passKey(int key) {
         P.d("pass "+key);
         switch(key){
+            case Input.Keys.NUM_0:
+                MainViewer.setToReset();
+                break;
             case Input.Keys.NUM_1:
                 SubViewer.setSlideMode(3,0);
                 break;
