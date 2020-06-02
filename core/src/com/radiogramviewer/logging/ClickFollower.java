@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.radiogramviewer.config.Config;
 import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.MainViewer;
+import com.radiogramviewer.relay.P;
 import com.radiogramviewer.relay.Relay;
 
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class ClickFollower {
         x-=c.click.highlightRadius;
         y-=c.click.highlightRadius;
         if(slide<0||slide>=highlights.size()){
-            MainViewer.println("Highlight index out of range "+slide+", max size "+highlights.size(), Constants.e);
+            P.e("Highlight index out of range "+slide+", max size "+highlights.size());
             return;
         }
         highlights.get(slide).add(new ClickNode(x,y,0));

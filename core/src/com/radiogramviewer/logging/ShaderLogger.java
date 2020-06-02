@@ -14,6 +14,7 @@ public class ShaderLogger {
 
     public void reset(){
         shaders=new ArrayList<Node>();
+        log=true;
     }
 
     public void add(char type, String name, String vertex, String fragment){

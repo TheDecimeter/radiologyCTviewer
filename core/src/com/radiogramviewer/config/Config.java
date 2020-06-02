@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.relay.Constants;
+import com.radiogramviewer.relay.P;
 
 import java.nio.IntBuffer;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class Config {
         float scl=constants.getScale(originalWindowWidth);
         if(scl!=1){
             if(fakeDensity) {
-                MainViewer.println("Custom width and Density Independant pixels don't work together, Defaulting to Custom width", Constants.e);
+                P.e("Custom width and Density Independant pixels don't work together, Defaulting to Custom width");
             }
             return scl;
 
@@ -103,7 +104,7 @@ public class Config {
     private HashMap<String,String> getProperties(String section, HashMap<String,HashMap<String,String>> vals){
         String k=section.toLowerCase();
         if(!vals.containsKey(k))
-            MainViewer.println("could not find section "+k,Constants.e);
+            P.e("could not find section "+k);
         return vals.get(k);
     }
 
@@ -129,7 +130,7 @@ public class Config {
             String con="";
             for (String k : p.keySet())
                 con+="\n   "+k;
-            MainViewer.println("could not find property " + s+con, Constants.e);
+            P.e("could not find property " + s+con);
         }
         return v;
     }
@@ -146,7 +147,7 @@ public class Config {
         if(s.equals("1"))
             return true;
 
-        MainViewer.println("Failed to parse boolean value "+s, Constants.e);
+        P.e("Failed to parse boolean value "+s);
         return false;
     }
 
@@ -267,7 +268,7 @@ public class Config {
             }
         }
         catch(NumberFormatException e){
-            MainViewer.println("Failed to parse color "+in,Constants.e);
+            P.e("Failed to parse color "+in);
         }
         return new Color(r,g,b,a);
     }

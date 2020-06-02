@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.relay.Constants;
+import com.radiogramviewer.relay.P;
 
 import java.util.ArrayList;
 
@@ -35,7 +36,7 @@ public class SlideDimensions {
             String [] num=line.split(",");
             if(num.length!=7)
             {
-                MainViewer.println("slidedim.txt: line "+lineNum+" with "+num.length+" elements. "+line, Constants.e);
+                P.e("slidedim.txt: line "+lineNum+" with "+num.length+" elements. "+line);
                 continue;
             }
 
@@ -49,27 +50,27 @@ public class SlideDimensions {
                 String ext=num[6].trim();
                 if(i<1||i>20)
                 {
-                    MainViewer.println("slidedim.txt: line "+lineNum+" invalid index "+num[0]+" parsed as "+i+". "+line, Constants.e);
+                    P.e("slidedim.txt: line "+lineNum+" invalid index "+num[0]+" parsed as "+i+". "+line);
                     continue;
                 }
                 if(f<1||f>20)
                 {
-                    MainViewer.println("slidedim.txt: line "+lineNum+" invalid filenum "+num[1]+" parsed as "+f+". "+line, Constants.e);
+                    P.e("slidedim.txt: line "+lineNum+" invalid filenum "+num[1]+" parsed as "+f+". "+line);
                     continue;
                 }
                 if(t<1){
-                    MainViewer.println("slidedim.txt: line "+lineNum+" invalid total "+num[3]+" parsed as "+t+" must be greater than 0. "+line, Constants.e);
+                    P.e("slidedim.txt: line "+lineNum+" invalid total "+num[3]+" parsed as "+t+" must be greater than 0. "+line);
                     continue;
                 }
                 else if(t>h*w){
-                    MainViewer.println("slidedim.txt: line "+lineNum+" invalid total "+num[3]+" parsed as "+t+" is greater than than height("+h+") times width("+w+") = ("+(h*w)+". "+line, Constants.e);
+                    P.e("slidedim.txt: line "+lineNum+" invalid total "+num[3]+" parsed as "+t+" is greater than than height("+h+") times width("+w+") = ("+(h*w)+". "+line);
                     continue;
                 }
 
                 dims.set(i-1,new Node(i,f,w,h,t,monitorClicks, ext));
             }
             catch (Exception e){
-                MainViewer.println("slidedim.txt: line "+lineNum+" could not parse "+line, Constants.e);
+                P.e("slidedim.txt: line "+lineNum+" could not parse "+line);
             }
         }
     }

@@ -3,6 +3,7 @@ package com.radiogramviewer.client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.radiogramviewer.SubViewer;
 import com.radiogramviewer.graphics.shaders.ShaderManager;
 import com.radiogramviewer.logging.ClickNode;
 import com.radiogramviewer.config.Config;
@@ -12,18 +13,19 @@ import com.radiogramviewer.Controls;
 import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.logging.Timing;
 import com.radiogramviewer.graphics.shaders.WindowingShaders;
+import com.radiogramviewer.relay.P;
 import com.radiogramviewer.relay.Relay;
 
 public class HTMLconstants implements Constants {
 
     private final static int keyDown=0, keyUp=1;
-    private static int mode=MainViewer.none;
+    private static int mode=SubViewer.none;
     private static Controls controller;
     private static StringBuilder packet;
 
     public HTMLconstants(){
         packet=new StringBuilder();
-        mode=MainViewer.none;
+        mode=SubViewer.none;
         exportStaticMethods();
         exportStaticVariables(Relay.ready, Relay.loaded, Relay.pending, Relay.error);
     }
@@ -56,11 +58,11 @@ public class HTMLconstants implements Constants {
         Relay.resetScrollsFor(slideSet-1);
     }
     public static void addClick(int slideSet, int x, int y, int slide){
-        float scale=1/MainViewer.getConfig().global.scale;
+        float scale=1/SubViewer.getConfig().global.scale;
         Relay.addClick(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
     }
     public static void addHighlight(int slideSet, int x, int y, int slide){
-        float scale=1/MainViewer.getConfig().global.scale;
+        float scale=1/SubViewer.getConfig().global.scale;
         Relay.addHighlight(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
     }
 
@@ -68,17 +70,17 @@ public class HTMLconstants implements Constants {
     public void print(String s, int code) {
 
         switch(code){
-            case Constants.d:
+            case P.d:
                 if(nativeConsoleOut("Msg: "+s))
                     return;
                 ConsolePrint("Msg: "+s);
                 return;
-            case Constants.w:
+            case P.w:
                 if(nativeConsoleOut("Warning: "+s))
                     return;
                 ConsolePrintWarning("Warning: "+s);
                 return;
-            case Constants.e:
+            case P.e:
                 if(nativeConsoleOut("ERROR: "+s))
                     return;
                 ConsolePrintError(" ERROR: "+s);
@@ -160,11 +162,11 @@ public class HTMLconstants implements Constants {
 
 
     public static void setMode(int mode){
-        MainViewer.setSlideMode(mode,MainViewer.dont);
+        SubViewer.setSlideMode(mode,SubViewer.dont);
         HTMLconstants.mode=mode;
     }
     public static void setModeAt(int mode, int at){
-        MainViewer.setSlideMode(mode,at-1);
+        SubViewer.setSlideMode(mode,at-1);
         HTMLconstants.mode=mode;
     }
     public static void setDragDistance(int distance){
@@ -177,7 +179,7 @@ public class HTMLconstants implements Constants {
         return controller.getCurrentSlide()+1;
     }
     public static int getCurrentMode(){
-        return MainViewer.getSlideMode();
+        return SubViewer.getSlideMode();
     }
 
     public static void resetLastClick(){
@@ -229,7 +231,7 @@ public class HTMLconstants implements Constants {
     private static boolean illegalName(String name){
         if(!name.equals("off"))
             return false;
-        MainViewer.println("The name \"off\" is reserved.",Constants.e);
+        P.e("The name \"off\" is reserved.");
         return true;
     }
 
@@ -279,7 +281,7 @@ public class HTMLconstants implements Constants {
         return Relay.getWidth()/(Gdx.graphics.getDensity()*160);
     }
     public static double getViewerDensityFactor(){
-        return MainViewer.getConfig().global.scale;
+        return SubViewer.getConfig().global.scale;
     }
 
     public static double getUpTime(){
@@ -291,10 +293,10 @@ public class HTMLconstants implements Constants {
 
     @Override
     public void passKey(int key){
-        MainViewer.println("pass "+key,1);
+        P.d("pass "+key);
         switch(key){
             case Input.Keys.NUM_1:
-                MainViewer.setSlideMode(3,0);
+                SubViewer.setSlideMode(3,0);
                 break;
             case Input.Keys.NUM_2:
                 ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray(.5f,-1));

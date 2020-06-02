@@ -12,6 +12,7 @@ import com.radiogramviewer.config.SlideDimensions;
 import com.radiogramviewer.logging.ScrollFollower;
 import com.radiogramviewer.coroutine.Coroutine;
 import com.radiogramviewer.relay.Constants;
+import com.radiogramviewer.relay.P;
 import com.radiogramviewer.relay.Relay;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class SlideManager implements Disposable, Coroutine{
         holdFor=c.input.holdTime;
         buttons=c.input.wasd||c.input.arrow;
 
-        try{
+//        try{
             //try loading the image, if it can't be found, but wasn't mentioned in the slide Dimensions
             // then it is expected to not be important.
             // otherwise, throw an exception.
@@ -46,7 +47,7 @@ public class SlideManager implements Disposable, Coroutine{
                 NormalDrawer d=new NormalDrawer(scrollLog,c);
                 drawer=d;
                 requestCache(node.file,d);
-                MainViewer.println("using cached slides: "+node.file, Constants.d);
+                P.d("using cached slides: "+node.file);
             }
             else {
                 if(Gdx.files.internal(node.file).exists()){
@@ -64,15 +65,15 @@ public class SlideManager implements Disposable, Coroutine{
                         drawer=new DummyDrawer();
                 }
             }
-        }
-        catch (Exception e){
-            if(node.necessary) {
-                drawer=new DummyDrawer();
-                throw new FailToLoadException("Failed to load necessary image " + e.getMessage());
-            }
-            else
-                drawer=new DummyDrawer();
-        }
+//        }
+//        catch (Exception e){
+//            if(node.necessary) {
+//                drawer=new DummyDrawer();
+//                throw new FailToLoadException("Failed to load necessary image " + e.getMessage());
+//            }
+//            else
+//                drawer=new DummyDrawer();
+//        }
 
 
     }
@@ -336,7 +337,7 @@ public class SlideManager implements Disposable, Coroutine{
 
             //co=new Coroutine(node,cscaled,textureCount,h,w,totalSlides,size,maxTextureSize,orig);
 
-            MainViewer.println("individual dimensions: w"+co.eachW+", h"+co.eachH+" s"+size+" textures used"+co.rt.length, Constants.w);
+            P.w("individual dimensions: w"+co.eachW+", h"+co.eachH+" s"+size+" textures used"+co.rt.length);
 
             co.textureIndex=0;
             co.i=0;
@@ -445,7 +446,7 @@ public class SlideManager implements Disposable, Coroutine{
                     wrapUp();
                 }
                 else if(c.global.downscaleTexture){ //if it is desirable to scale texture to make it fit
-                    MainViewer.println("scaling "+node.file+" to fit in memory", Constants.w);
+                    P.w("scaling "+node.file+" to fit in memory");
                     orig = scale(orig, maxTextureSize, iw, ih);
                     texture=new Texture[1];
                     texture[0] = new Texture(orig);
@@ -459,11 +460,11 @@ public class SlideManager implements Disposable, Coroutine{
                     if(size<=0) {
                         size=1;
                         scaled=true;
-                        MainViewer.println("dividing up and scaling"+node.file+" to fit in memory", Constants.w);
+                        P.w("dividing up and scaling"+node.file+" to fit in memory");
 
                     }
                     else
-                        MainViewer.println("dividing up "+node.file+" to fit in memory", Constants.w);
+                        P.w("dividing up "+node.file+" to fit in memory");
                     //distribute(node,scaled,orig,maxTextureSize,iw,ih,it,size);
 //                texture=d.texture;
 //                img=d.img;

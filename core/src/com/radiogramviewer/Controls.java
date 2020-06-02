@@ -8,6 +8,7 @@ import com.radiogramviewer.logging.ClickFollower;
 import com.radiogramviewer.logging.ClickNode;
 import com.radiogramviewer.logging.Timing;
 import com.radiogramviewer.relay.Constants;
+import com.radiogramviewer.relay.P;
 import com.radiogramviewer.relay.Relay;
 
 import java.util.HashMap;
@@ -71,10 +72,10 @@ public class Controls implements InputProcessor {
         if(c.debug.quickKeys)
         {
             if(keycode== Input.Keys.M) {
-                int slideMode = MainViewer.getSlideMode() + 1;
+                int slideMode = SubViewer.getSlideMode() + 1;
                 if (slideMode > 20)
                     slideMode = 0;
-                MainViewer.setSlideMode(slideMode, 0);
+                SubViewer.setSlideMode(slideMode, 0);
             }
             Relay.getConstants().passKey(keycode);
         }
@@ -104,7 +105,7 @@ public class Controls implements InputProcessor {
         //Convert touch coordinates (top left) to screen coordinates (bottom left)
         screenY= Relay.getHeight()-(screenY+1);
 
-        if(MainViewer.getSlideMode()!=MainViewer.none) {
+        if(SubViewer.getSlideMode()!=SubViewer.none) {
             click.updateClick(screenX, screenY, slides.getSlide());
             if(saveClick()) {
                 z = slides.getSlide()+1;
@@ -122,7 +123,7 @@ public class Controls implements InputProcessor {
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         if(freeze) return false;
-        if(c.input.drag && MainViewer.getSlideMode()!=MainViewer.none)
+        if(c.input.drag && SubViewer.getSlideMode()!=SubViewer.none)
             slides.advanceSlide(drag(screenX,screenY,pointer));
         return false;
     }
@@ -136,7 +137,7 @@ public class Controls implements InputProcessor {
     public boolean scrolled(int amount) {
         if(freeze) return false;
 //        System.out.println("scrolled "+amount);
-        if(c.input.wheel && MainViewer.getSlideMode()!=MainViewer.none)
+        if(c.input.wheel && SubViewer.getSlideMode()!=SubViewer.none)
             slides.advanceSlide(amount);
         return false;
     }
@@ -151,7 +152,7 @@ public class Controls implements InputProcessor {
     private void handleKeyDown(int keycode){
         if(!c.input.arrow&&!c.input.wasd)
             return;
-        if(MainViewer.getSlideMode()==MainViewer.none)
+        if(SubViewer.getSlideMode()==SubViewer.none)
             return;
 
         if(c.input.arrow) {
@@ -182,7 +183,7 @@ public class Controls implements InputProcessor {
     private void handleKeyUp(int keycode){
         if(!c.input.arrow&&!c.input.wasd)
             return;
-        if(MainViewer.getSlideMode()==MainViewer.none)
+        if(SubViewer.getSlideMode()==SubViewer.none)
             return;
 
         if(c.input.arrow) {
@@ -268,7 +269,7 @@ public class Controls implements InputProcessor {
 
         //A touch down event should have already stored the index with "startDrag"
         if(!drag.containsKey(index)) {
-            MainViewer.println("checking drag on unsaved index "+index+" ignore this if input was frozen.", Constants.w);
+            P.w("checking drag on unsaved index "+index+" ignore this if input was frozen.");
             return 0;
         }
 
@@ -281,7 +282,7 @@ public class Controls implements InputProcessor {
             //and save the remainder to be calculated in the next drag event
             v.y -=dist*dragDist;
             v.dragged=true; //mark drag as successful so that it doesn't count as a click
-//            MainViewer.println("dist "+dist,Constants.d);
+//            SubViewer.println("dist "+dist,Constants.d);
             return dist;
         }
         else if(!v.dragged && Math.abs(v.x - x)>dragDist) //also check dragging along the x axis to prevent

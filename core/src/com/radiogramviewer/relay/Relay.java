@@ -1,6 +1,7 @@
 package com.radiogramviewer.relay;
 
 import com.radiogramviewer.MainViewer;
+import com.radiogramviewer.SubViewer;
 import com.radiogramviewer.logging.ClickFollower;
 import com.radiogramviewer.logging.ScrollFollower;
 
@@ -17,12 +18,14 @@ public class Relay {
 
     private static int loadingState=pending; //informs external javascript of loading state when it changes
 
-    public Relay(List<ClickFollower> click, List<ScrollFollower> srollTimes, Constants constants, int width, int height){
-        this.click=click;
-        this.scrollTimes=scrollTimes;
-        this.constants=constants;
-        this.viewWidth=width;
-        this.viewHeight=height;
+    public static void initMain(Constants constants, int width, int height){
+        Relay.constants=constants;
+        Relay.viewWidth=width;
+        Relay.viewHeight=height;
+    }
+    public static void initLogs(List<ClickFollower> click, List<ScrollFollower> srollTimes){
+        Relay.click=click;
+        Relay.scrollTimes=scrollTimes;
     }
 
     public static String getClicksAt(int at, String compDiv, String itemDiv){
@@ -48,10 +51,10 @@ public class Relay {
         constants.inputOccured();
     }
     public static void clickAdded(String click){
-        constants.clickAdded(""+ MainViewer.getSlideMode()+","+click);
+        constants.clickAdded(""+ SubViewer.getSlideMode()+","+click);
     }
     public static void clickRemoved(String click){
-        constants.clickRemoved(""+MainViewer.getSlideMode()+","+click);
+        constants.clickRemoved(""+SubViewer.getSlideMode()+","+click);
     }
 
     public static void scrollMove(int index){
@@ -68,9 +71,6 @@ public class Relay {
         return loadingState;
     }
     public static void changeLoadingState(int state){
-        changeLoadingState(state,constants);
-    }
-    public static void changeLoadingState(int state, Constants constants){
         if(loadingState==state)
             return;
         loadingState=state;

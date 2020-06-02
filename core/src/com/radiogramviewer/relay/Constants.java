@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.radiogramviewer.Controls;
 
 public interface Constants {
-    int d=1,w=2,e=3;
     int getMode();
     void print(String s, int type);
     long getTime();

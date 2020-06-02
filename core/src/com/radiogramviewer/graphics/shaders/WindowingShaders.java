@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.logging.ShaderLogger;
 import com.radiogramviewer.relay.Constants;
+import com.radiogramviewer.relay.P;
 
 public class WindowingShaders {
 
@@ -124,7 +125,7 @@ public class WindowingShaders {
 
         if(r.isCompiled())
             return r;
-        MainViewer.println("Failed to generate shader \nVertex:\n"+vertex+"\n\nFragment:\n"+fragment+"\nLog:\n"+r.getLog(), Constants.e);
+        P.e("Failed to generate shader \nVertex:\n"+vertex+"\n\nFragment:\n"+fragment+"\nLog:\n"+r.getLog());
         return null;
     }
 
@@ -133,7 +134,7 @@ public class WindowingShaders {
 
         if(r.isCompiled())
             return r;
-        MainViewer.println("Failed to generate shader with default Vertex and \nFragment:\n"+fragment+"\nLog:\n"+r.getLog(),Constants.e);
+        P.e("Failed to generate shader with default Vertex and \nFragment:\n"+fragment+"\nLog:\n"+r.getLog());
         return null;
     }
 

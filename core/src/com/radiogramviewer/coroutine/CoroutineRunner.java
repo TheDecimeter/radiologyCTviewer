@@ -4,6 +4,7 @@ package com.radiogramviewer.coroutine;
 import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.logging.Timing;
+import com.radiogramviewer.relay.P;
 
 import java.util.ArrayList;
 
@@ -72,7 +73,7 @@ public class CoroutineRunner {
             }
             else {
                 coroutines.remove(i);
-                MainViewer.println("removing one "+t, Constants.d);
+                P.d("removing one "+t);
             }
         }
         return ret;

@@ -2,10 +2,12 @@ package com.radiogramviewer.desktop;
 
 import com.badlogic.gdx.Input;
 import com.radiogramviewer.MainViewer;
+import com.radiogramviewer.SubViewer;
 import com.radiogramviewer.graphics.shaders.ShaderManager;
 import com.radiogramviewer.graphics.shaders.WindowingShaders;
 import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.Controls;
+import com.radiogramviewer.relay.P;
 
 /**
  * Mostly a dummy class to mock what would be an interface with outside JavaScript
@@ -25,13 +27,13 @@ public class PCconstants implements Constants {
     @Override
     public void print(String s, int code) {
         switch(code){
-            case Constants.d:
+            case P.d:
                 System.out.println("Msg: "+s);
                 return;
-            case Constants.w:
+            case P.w:
                 System.out.println("Warning: "+s);
                 return;
-            case Constants.e:
+            case P.e:
                 System.out.println(" ERROR: "+s);
                 return;
         }
@@ -102,10 +104,10 @@ public class PCconstants implements Constants {
 
     @Override
     public void passKey(int key) {
-        MainViewer.println("pass "+key,1);
+        P.d("pass "+key);
         switch(key){
             case Input.Keys.NUM_1:
-                MainViewer.setSlideMode(3,0);
+                SubViewer.setSlideMode(3,0);
                 break;
             case Input.Keys.NUM_2:
                 ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray(.5f,-1));
