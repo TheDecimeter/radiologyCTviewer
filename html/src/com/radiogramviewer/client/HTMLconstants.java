@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.radiogramviewer.SubViewer;
+import com.radiogramviewer.graphics.SlideManager;
 import com.radiogramviewer.graphics.shaders.ShaderManager;
+import com.radiogramviewer.logging.ClickFollower;
 import com.radiogramviewer.logging.ClickNode;
 import com.radiogramviewer.config.Config;
 import com.radiogramviewer.logging.ShaderLogger;
@@ -60,12 +62,25 @@ public class HTMLconstants implements Constants {
         Relay.resetScrollsFor(slideSet-1);
     }
     public static void addClick(int slideSet, int x, int y, int slide){
+        if(!validSlide(slide))return;
         float scale=1/SubViewer.getConfig().global.scale;
         Relay.addClick(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
     }
     public static void addHighlight(int slideSet, int x, int y, int slide){
+        if(!validSlide(slide))return;
         float scale=1/SubViewer.getConfig().global.scale;
         Relay.addHighlight(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
+    }
+    public static void clearHighlightsFor(int slideSet){
+        Relay.clearHighlights(slideSet-1);
+    }
+
+    private static boolean validSlide(int slide){
+        if(slide==0){
+            P.e("Slides start at 1");
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -175,7 +190,7 @@ public class HTMLconstants implements Constants {
         Controls.setDragDist(distance);
     }
     public static String getLastClick(){
-        return Controls.lastClick.toString(Controls.z);
+        return Controls.lastClick.toString(Controls.z,0);
     }
     public static int getCurrentSlide(){
         return controller.getCurrentSlide()+1;
@@ -249,9 +264,11 @@ public class HTMLconstants implements Constants {
         ShaderLogger.log=true;
     }
 
-
-    public static void freezeInput(boolean freeze){
-        Controls.freeze=freeze;
+    public static void scrollLock(boolean lock){
+        SlideManager.scrollLock=lock;
+    }
+    public static void clickLock(boolean lock){
+        ClickFollower.clickLock=lock;
     }
     public static void pipeInput(int key, int eventType){
         if(controller!=null){
@@ -280,7 +297,10 @@ public class HTMLconstants implements Constants {
         return Relay.getWidth();
     }
     public static double getViewerWidthInches(){
-        return Relay.getWidth()/(Gdx.graphics.getDensity()*160);
+        return pixelsToInches(Relay.getWidth());
+    }
+    public static double pixelsToInches(double px){
+        return px/(Gdx.graphics.getDensity()*160);
     }
     public static double getViewerDensityFactor(){
         return SubViewer.getConfig().global.scale;
@@ -435,7 +455,8 @@ public class HTMLconstants implements Constants {
 
        $wnd.viewerSetDragDistance = $entry(@com.radiogramviewer.client.HTMLconstants::setDragDistance(I));
        $wnd.viewerPipeInput = $entry(@com.radiogramviewer.client.HTMLconstants::pipeInput(II));
-       $wnd.viewerFreezeInput = $entry(@com.radiogramviewer.client.HTMLconstants::freezeInput(Z));
+       $wnd.viewerScrollLock = $entry(@com.radiogramviewer.client.HTMLconstants::scrollLock(Z));
+       $wnd.viewerClickLock = $entry(@com.radiogramviewer.client.HTMLconstants::clickLock(Z));
 
        $wnd.viewerResetLastClick = $entry(@com.radiogramviewer.client.HTMLconstants::resetLastClick());
        $wnd.viewerGetLastClick = $entry(@com.radiogramviewer.client.HTMLconstants::getLastClick());
@@ -454,6 +475,7 @@ public class HTMLconstants implements Constants {
        $wnd.viewerGetScrollTimesFor = $entry(@com.radiogramviewer.client.HTMLconstants::getScrollTimesFor(ILjava/lang/String;Ljava/lang/String;));
        $wnd.viewerResetScrolls = $entry(@com.radiogramviewer.client.HTMLconstants::resetScrollsFor(I));
        $wnd.viewerResetClicks = $entry(@com.radiogramviewer.client.HTMLconstants::resetClicksFor(I));
+       $wnd.viewerResetHighlights = $entry(@com.radiogramviewer.client.HTMLconstants::clearHighlightsFor(I));
 
        $wnd.viewerSimulateClick = $entry(@com.radiogramviewer.client.HTMLconstants::addClick(IIII));
        $wnd.viewerAddHighlight = $entry(@com.radiogramviewer.client.HTMLconstants::addHighlight(IIII));
@@ -463,5 +485,7 @@ public class HTMLconstants implements Constants {
        $wnd.viewerAddWindowingShaderValue = $entry(@com.radiogramviewer.client.HTMLconstants::addWindowShaderValue(Ljava/lang/String;FFZ));
        $wnd.viewerRemoveShader = $entry(@com.radiogramviewer.client.HTMLconstants::removeShader(Ljava/lang/String;Z));
        $wnd.viewerSetShader = $entry(@com.radiogramviewer.client.HTMLconstants::setShader(Ljava/lang/String;Z));
+
+       $wnd.viewerUtilityPixelsToInches = $entry(@com.radiogramviewer.client.HTMLconstants::pixelsToInches(D));
     }-*/;
 }

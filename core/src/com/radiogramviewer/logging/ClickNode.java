@@ -1,6 +1,7 @@
 package com.radiogramviewer.logging;
 
 import com.badlogic.gdx.math.Vector2;
+import com.radiogramviewer.SubViewer;
 
 /**
  * Simple class for holding and displaying click information
@@ -14,17 +15,12 @@ public class ClickNode{
         p=new Vector2(x,y);
         this.time=time;
     }
-    //simple to string with available information
-    @Override
-    public String toString(){
-        return ""+p.x+","+p.y+","+time;
+    private int o(float val, float offset){
+        return (int)Math.ceil((val+offset)*SubViewer.getConfig().global.scale);
     }
+
     //stringify the coordinates with added z (slide index) coordinate
-    public String toString(int z){
-        return ""+p.x+","+p.y+","+z+","+time;
-    }
-    //stringify the coordinate with z (slide index) and custom separater
-    public String toString(int z, String s){
-        return ""+p.x+s+p.y+s+z+s+time;
+    public String toString(int z, float offset){
+        return ""+o(p.x,offset)+","+o(p.y,offset)+","+z+","+time;
     }
 }

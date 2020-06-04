@@ -47,6 +47,9 @@ public class Relay {
     public static void addHighlight(int at, int x, int y, int slide){
         click.get(at).addHighlight(x,y,slide);
     }
+    public static void clearHighlights(int at){
+        click.get(at).resetHighlights();
+    }
 
     public static void inputOccured(){
         constants.inputOccured();

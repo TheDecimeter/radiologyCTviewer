@@ -24,6 +24,8 @@ import java.util.HashMap;
  */
 public class SlideManager implements Disposable, Coroutine{
 
+    public static boolean scrollLock=false;
+
     public final static int up=1, down=-1, stay=0;
 
     private int dir;
@@ -652,6 +654,9 @@ public class SlideManager implements Disposable, Coroutine{
 
         @Override
         public void advanceSlide(int howFar){
+            if(scrollLock)
+                return;
+
             int howMuch=clamp(howFar,-it,it);
 
 //        MainViewer.println("advance slide "+howMuch,Constants.d);

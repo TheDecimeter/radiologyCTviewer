@@ -24,8 +24,6 @@ import java.util.HashMap;
  */
 public class Controls implements InputProcessor {
 
-    public static boolean freeze=false;
-
     private SlideManager slides; //keep track of slide manager so slices can be scrolled
     private ClickFollower click; //keep track of click follower so clicks can be recorded
     private Config c;
@@ -60,14 +58,14 @@ public class Controls implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if(freeze) return false;
+        
         handleKeyDown(keycode);
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        if(freeze) return false;
+        
         handleKeyUp(keycode);
         if(c.debug.quickKeys)
         {
@@ -89,14 +87,14 @@ public class Controls implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(freeze) return false;
+        
         startDrag(screenX,screenY,pointer);
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(freeze) return false;
+        
         if(dragged(pointer)) {
             stopDrag(pointer);
             return false;
@@ -109,11 +107,11 @@ public class Controls implements InputProcessor {
             click.updateClick(screenX, screenY, slides.getSlide());
             if(saveClick()) {
                 z = slides.getSlide()+1;
-                lastClick=new ClickNode((int)(screenX*c.global.scale),(int)(screenY*c.global.scale), Timing.getMillis());
+                lastClick=new ClickNode(screenX,screenY, Timing.getMillis());
             }
         }
         else if(saveClick()){
-            lastClick=new ClickNode((int)(screenX*c.global.scale),(int)(screenY*c.global.scale),Timing.getMillis());
+            lastClick=new ClickNode(screenX,screenY,Timing.getMillis());
             z=1;
         }
         stopDrag(pointer);
@@ -122,7 +120,7 @@ public class Controls implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        if(freeze) return false;
+        
         if(c.input.drag && SubViewer.getSlideMode()!=SubViewer.none)
             slides.advanceSlide(drag(screenX,screenY,pointer));
         return false;
@@ -135,7 +133,7 @@ public class Controls implements InputProcessor {
 
     @Override
     public boolean scrolled(int amount) {
-        if(freeze) return false;
+        
 //        System.out.println("scrolled "+amount);
         if(c.input.wheel && SubViewer.getSlideMode()!=SubViewer.none)
             slides.advanceSlide(amount);

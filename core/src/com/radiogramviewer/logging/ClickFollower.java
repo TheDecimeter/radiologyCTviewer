@@ -16,11 +16,13 @@ import java.util.ArrayList;
  */
 public class ClickFollower {
 
+    public static boolean clickLock=false;
+
     private int radius,depth;
     private ArrayList<ArrayList<ClickNode>> clicks; //each slide has its own list of clicks
     private ArrayList<ArrayList<ClickNode>> highlights; //each slide has its own list of clicks
     private Texture click, highlight;
-    private boolean markClicks;
+    private final boolean markClicks;
     private Config c;
 
     public ClickFollower(int slices, int radius, int depth, boolean markClicks, Texture click, Texture highlight, Config c){
@@ -37,11 +39,16 @@ public class ClickFollower {
         for(int i=0; i<slices; ++i)
             clicks.add(new ArrayList<ClickNode>());
 
+        resetHighlights();
+    }
 
+    public void resetHighlights(){
+        int slices=clicks.size();
         highlights=new ArrayList<ArrayList<ClickNode>>(slices);
         for(int i=0; i<slices; ++i)
             highlights.add(new ArrayList<ClickNode>());
     }
+
 
     /**
      * Warning, this will clear all the previous clicks, make sure they are
@@ -65,7 +72,7 @@ public class ClickFollower {
      */
     public void updateClick(int x, int y, int slide){
         Relay.inputOccured();
-        if(!markClicks)
+        if(!markClicks || clickLock)
             return;
 
         x-=radius;
@@ -75,14 +82,14 @@ public class ClickFollower {
             ArrayList<ClickNode> l = clicks.get(z);
             for (int i = 0; i < l.size(); ++i) {
                 if (overlap(x, y, l.get(i).p)) {
-                    Relay.clickRemoved(l.get(i).toString(z));
+                    Relay.clickRemoved(l.get(i).toString(z+1,radius));
                     remove(i, l);
                     return;
                 }
             }
         }
         ClickNode n=new ClickNode(x,y,Timing.getMillis());
-        Relay.clickAdded(n.toString(slide));
+        Relay.clickAdded(n.toString(slide+1,radius));
         clicks.get(slide).add(n);
     }
 
@@ -172,7 +179,7 @@ public class ClickFollower {
 
     //Scale the absolute pixel coordinates to the config file pixels.
     private int scl(float val){
-        return (int)((val+radius)*c.global.scale);
+        return (int)Math.ceil((val+radius)*c.global.scale);
     }
 
     /**
