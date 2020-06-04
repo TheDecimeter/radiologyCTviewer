@@ -190,7 +190,7 @@ public class HTMLconstants implements Constants {
 //    }
 
     public static void setModeAt(int mode, int at){
-        SubViewer.setSlideMode(mode,optional(at,SubViewer.dont));
+        SubViewer.setSlideMode(mode,optional(at,SubViewer.dont+1)-1);
         HTMLconstants.mode=mode;
     }
     public static void setDragDistance(int distance){
