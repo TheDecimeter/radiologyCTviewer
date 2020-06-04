@@ -8,10 +8,9 @@ import java.util.ArrayList;
  * Keep track of scrolling behavior
  */
 public class ScrollFollower {
+    private static final char focus='f',scroll='s', blur='b',message='m';
 
-    private static final String focus="f",scroll="s", blur="b";
-
-    private ArrayList<Node> slideTimes;
+    private ArrayList<LogNode> slideTimes;
     private Config c;
     private int lastIndex=0;
 
@@ -21,7 +20,7 @@ public class ScrollFollower {
     }
 
     private void createTimings(int slices){
-        slideTimes=new ArrayList<Node>(slices); //size is technically unnecessary
+        slideTimes=new ArrayList<LogNode>(slices); //size is technically unnecessary
     }
 
     /**
@@ -62,7 +61,14 @@ public class ScrollFollower {
         }
     }
 
-    private void recordChange(int index, String transition){
+    /**
+     * record an event where a new slide was scrolled to
+     */
+    public void logMessage(String msg){
+        slideTimes.add(new MessageNode(msg,Timing.getMillis()));
+    }
+
+    private void recordChange(int index, char transition){
         lastIndex=index;
         slideTimes.add(new Node(index,Timing.getMillis(),transition));
     }
@@ -75,22 +81,42 @@ public class ScrollFollower {
      */
     public String getScrolls(String cs, String vs){
         StringBuilder b=new StringBuilder();
-        for(Node n : slideTimes)
-            b.append(n.slide+1).append(cs).append(n.time).append(cs).append(n.focus).append(vs);
+        for(LogNode n : slideTimes)
+//            b.append(n.slide+1).append(cs).append(n.time).append(cs).append(n.focus).append(vs);
+            n.append(b,cs,vs);
         return b.toString();
     }
 
     /**
      * simple class for keeping track of each scroll
      */
-    private class Node{
+    private class Node implements LogNode{
         public int time;
         public int slide;
-        public String focus;
-        public Node(int slide, long time, String focus){
+        public char focus;
+        public Node(int slide, long time, char focus){
             this.time=(int)time;
             this.slide=slide;
             this.focus=focus;
+        }
+
+        @Override
+        public void append(StringBuilder b, String cs, String vs) {
+            b.append(slide+1).append(cs).append(time).append(cs).append(focus).append(vs);
+        }
+    }
+
+    private class MessageNode implements LogNode{
+        final String msg;
+        final long time;
+        MessageNode(String msg,long time){
+            this.msg=msg;
+            this.time=time;
+        }
+
+        @Override
+        public void append(StringBuilder b, String cs, String vs) {
+            b.append(msg).append(cs).append(time).append(cs).append(message).append(vs);
         }
     }
 }

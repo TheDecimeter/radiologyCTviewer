@@ -29,7 +29,7 @@ public class Controls implements InputProcessor {
     private Config c;
 
     public static ClickNode lastClick;
-    public static int z;
+    //public static int z;
     private static int dragDist;
     private boolean up, down;
 
@@ -37,8 +37,8 @@ public class Controls implements InputProcessor {
 
     public Controls(SlideManager slides, Config c){
         this.slides=slides;
-        lastClick=new ClickNode(0,0,0);
-        z=0;
+        lastClick=new ClickNode(0,0,0,0);
+//        z=0;
         up=false;
         down=false;
 
@@ -105,14 +105,14 @@ public class Controls implements InputProcessor {
 
         if(SubViewer.getSlideMode()!=SubViewer.none) {
             if(saveClick()) {
-                z = slides.getSlide()+1;
-                lastClick=new ClickNode(screenX,screenY, Timing.getMillis());
+//                z = slides.getSlide()+1;
+                lastClick=new ClickNode(screenX,screenY, slides.getSlide(),Timing.getMillis());
             }
             click.updateClick(screenX, screenY, slides.getSlide());
         }
         else if(saveClick()){
-            lastClick=new ClickNode(screenX,screenY,Timing.getMillis());
-            z=1;
+            lastClick=new ClickNode(screenX,screenY,0,Timing.getMillis());
+//            z=1;
         }
         stopDrag(pointer);
         return false;

@@ -57,7 +57,6 @@ public class SlideManager implements Disposable, Coroutine{
                 NormalDrawer d=new NormalDrawer(scrollLog,c);
                 drawer=d;
                 requestCache(node.file,d);
-                P.d("using cached slides: "+node.file);
             }
             else {
                 if(Gdx.files.internal(node.file).exists()){

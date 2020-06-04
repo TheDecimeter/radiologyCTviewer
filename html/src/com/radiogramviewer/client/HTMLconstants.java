@@ -61,10 +61,16 @@ public class HTMLconstants implements Constants {
     public static void resetScrollsFor(int slideSet){
         Relay.resetScrollsFor(slideSet-1);
     }
+    public static void addViewMessage(int slideSet, String msg){
+        Relay.addViewMessage(slideSet-1,msg);
+    }
     public static void addClick(int slideSet, int x, int y, int slide){
         if(!validSlide(slide))return;
         float scale=1/SubViewer.getConfig().global.scale;
         Relay.addClick(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
+    }
+    public static void addInputMessage(int slideSet, String msg){
+        Relay.addInputMessage(slideSet-1,msg);
     }
     public static void addHighlight(int slideSet, int x, int y, int slide){
         if(!validSlide(slide))return;
@@ -178,19 +184,20 @@ public class HTMLconstants implements Constants {
     }
 
 
-    public static void setMode(int mode){
-        SubViewer.setSlideMode(mode,SubViewer.dont);
-        HTMLconstants.mode=mode;
-    }
+//    public static void setMode(int mode){
+//        SubViewer.setSlideMode(mode,SubViewer.dont);
+//        HTMLconstants.mode=mode;
+//    }
+
     public static void setModeAt(int mode, int at){
-        SubViewer.setSlideMode(mode,at-1);
+        SubViewer.setSlideMode(mode,optional(at,SubViewer.dont));
         HTMLconstants.mode=mode;
     }
     public static void setDragDistance(int distance){
         Controls.setDragDist(distance);
     }
     public static String getLastClick(){
-        return Controls.lastClick.toString(Controls.z,0);
+        return Controls.lastClick.toString(0);
     }
     public static int getCurrentSlide(){
         return controller.getCurrentSlide()+1;
@@ -200,8 +207,8 @@ public class HTMLconstants implements Constants {
     }
 
     public static void resetLastClick(){
-        Controls.lastClick=new ClickNode(0,0,0);
-        Controls.z=0;
+        Controls.lastClick=new ClickNode(0,0,0,0);
+//        Controls.z=0;
     }
 
 
@@ -213,7 +220,7 @@ public class HTMLconstants implements Constants {
         ShaderProgram p= WindowingShaders.generateShader(vertex,fragment);
         if(p==null||!p.isCompiled())
             return false;
-        ShaderLogger.log=optional(log);;
+        ShaderLogger.log=optional(log,true);
         ShaderManager.logger.add(ShaderLogger.custom,name,vertex,fragment);
         ShaderManager.addShader(name, p);
         ShaderLogger.log=true;
@@ -226,7 +233,7 @@ public class HTMLconstants implements Constants {
         ShaderProgram p= WindowingShaders.windowGray(level,width);
         if(p==null||!p.isCompiled())
             return false;
-        ShaderLogger.log=optional(log);;
+        ShaderLogger.log=optional(log,true);
         ShaderManager.logger.add(ShaderLogger.gray,name,level,width);
         ShaderManager.addShader(name, p);
         ShaderLogger.log=true;
@@ -238,7 +245,7 @@ public class HTMLconstants implements Constants {
         ShaderProgram p= WindowingShaders.windowValue(level,width);
         if(p==null||!p.isCompiled())
             return false;
-        ShaderLogger.log=optional(log);;
+        ShaderLogger.log=optional(log,true);
         ShaderManager.logger.add(ShaderLogger.value,name,level,width);
         ShaderManager.addShader(name, p);
         ShaderLogger.log=true;
@@ -252,14 +259,21 @@ public class HTMLconstants implements Constants {
         return true;
     }
 
+    public static void addShaderMessage(String msg){
+        boolean prev=ShaderLogger.log;
+        ShaderLogger.log=true;
+        ShaderManager.logger.message(msg);
+        ShaderLogger.log=prev;
+    }
+
     public static void removeShader(String name, boolean log){
-        ShaderLogger.log=optional(log);;
+        ShaderLogger.log=optional(log,true);
         ShaderManager.removeShader(name);
         ShaderLogger.log=true;
     }
 
     public static void setShader(String name, boolean log){
-        ShaderLogger.log=optional(log);
+        ShaderLogger.log=optional(log,true);
         ShaderManager.setShader(name);
         ShaderLogger.log=true;
     }
@@ -335,6 +349,14 @@ public class HTMLconstants implements Constants {
             case Input.Keys.NUM_5:
                 ShaderManager.removeShader("customPassKey1");
                 break;
+
+            case Input.Keys.NUM_7:
+                Relay.addInputMessage(2,"hidy ho");
+                break;
+            case Input.Keys.NUM_8:
+                P.d("CLICKS:\n"+Relay.getClicksAt(2,",","\n")+"\nLast Click: "+Controls.lastClick.toString(0));
+                Controls.lastClick=new ClickNode(0,0,0,0);
+                break;
         }
     }
 
@@ -343,12 +365,19 @@ public class HTMLconstants implements Constants {
         nativeFinishedReset();
     }
 
-    private static native boolean optional(boolean b)/*-{
+    private static native boolean optional(boolean b, boolean d)/*-{
             if (typeof b === "undefined" || b==null){
-                return true;
+                return d;
             }
             else
                 return b;
+            }-*/;
+    private static native int optional(int x, int d)/*-{
+            if (typeof x === "undefined" || x==null){
+                return d;
+            }
+            else
+                return x;
             }-*/;
 
 
@@ -467,8 +496,7 @@ public class HTMLconstants implements Constants {
        $wnd.viewerGetUpTime = $entry(@com.radiogramviewer.client.HTMLconstants::getUpTime());
        $wnd.viewerGetStartTime = $entry(@com.radiogramviewer.client.HTMLconstants::getStartTime());
 
-       $wnd.viewerSetSlide = $entry(@com.radiogramviewer.client.HTMLconstants::setMode(I));
-       $wnd.viewerSetSlideAt = $entry(@com.radiogramviewer.client.HTMLconstants::setModeAt(II));
+       $wnd.viewerSetSlide = $entry(@com.radiogramviewer.client.HTMLconstants::setModeAt(II));
 
        $wnd.viewerGetShaderLog = $entry(@com.radiogramviewer.client.HTMLconstants::getShaderLog(Ljava/lang/String;Ljava/lang/String;));
        $wnd.viewerGetClicksFor = $entry(@com.radiogramviewer.client.HTMLconstants::getClicksFor(ILjava/lang/String;Ljava/lang/String;));
@@ -476,6 +504,10 @@ public class HTMLconstants implements Constants {
        $wnd.viewerResetScrolls = $entry(@com.radiogramviewer.client.HTMLconstants::resetScrollsFor(I));
        $wnd.viewerResetClicks = $entry(@com.radiogramviewer.client.HTMLconstants::resetClicksFor(I));
        $wnd.viewerResetHighlights = $entry(@com.radiogramviewer.client.HTMLconstants::clearHighlightsFor(I));
+
+       $wnd.viewerLogClickMessage = $entry(@com.radiogramviewer.client.HTMLconstants::addInputMessage(ILjava/lang/String;));
+       $wnd.viewerLogScrollMessage = $entry(@com.radiogramviewer.client.HTMLconstants::addViewMessage(ILjava/lang/String;));
+       $wnd.viewerLogShaderMessage = $entry(@com.radiogramviewer.client.HTMLconstants::addShaderMessage(Ljava/lang/String;));
 
        $wnd.viewerSimulateClick = $entry(@com.radiogramviewer.client.HTMLconstants::addClick(IIII));
        $wnd.viewerAddHighlight = $entry(@com.radiogramviewer.client.HTMLconstants::addHighlight(IIII));

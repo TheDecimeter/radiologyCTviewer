@@ -3,7 +3,7 @@ package com.radiogramviewer.logging;
 import java.util.ArrayList;
 
 public class ShaderLogger {
-    public final static char custom='c',gray='g',value='v',remove='r', invoke='i';
+    public final static char custom='c',gray='g',value='v',remove='r', invoke='i', message='m';
 
     public static boolean log=true;
 
@@ -25,40 +25,46 @@ public class ShaderLogger {
         add(type, name,""+level, ""+width);
     }
     public void remove(String name){
-        add(remove,name,"","");
+        add(remove,name,null,null);
     }
     public void invoke(String name){
-        add(invoke,name,"","");
+        add(invoke,name,null,null);
+    }
+    public void message(String msg){
+        add(message,msg,null,null);
     }
 
     public String get(String cs, String vs){
         StringBuilder r=new StringBuilder();
         for(Node n : shaders){
-            n.appendSelf(r,cs);
-            r.append(vs);
+            n.append(r,cs,vs);
         }
         return r.toString();
     }
 
-    class Node{
+    class Node implements LogNode{
         final long time;
         final char type;
         final String v,f,name;
 
-        public Node(char type, String name, String v, String f, long time){
+        Node(char type, String name, String v, String f, long time){
             this.time=time;
             this.v=v;
             this.f=f;
             this.type=type;
             this.name=name;
         }
-        public void appendSelf(StringBuilder b, String cs){
+
+        @Override
+        public void append(StringBuilder b, String cs, String vs) {
             if(type==invoke)
-                b.append(type).append(cs).append(name).append(cs).append(time);
+                b.append(invoke).append(cs).append(name).append(cs).append(time).append(vs);
             else if(type==remove)
-                b.append(type).append(cs).append(name).append(cs).append(time);
+                b.append(remove).append(cs).append(name).append(cs).append(time).append(vs);
+            else if (type==message)
+                b.append(message).append(cs).append(name).append(cs).append(time).append(vs);
             else
-                b.append(type).append(cs).append(name).append(cs).append(v).append(cs).append(f).append(cs).append(time);
+                b.append(type).append(cs).append(name).append(cs).append(v).append(cs).append(f).append(cs).append(time).append(vs);
         }
     }
 }

@@ -41,8 +41,14 @@ public class Relay {
     public static void resetScrollsFor(int at){
         scrollTimes.get(at).reset();
     }
+    public static void addViewMessage(int at, String msg){
+        scrollTimes.get(at).logMessage(msg);
+    }
     public static void addClick(int at, int x, int y, int slide){
         click.get(at).updateClick(x,y,slide);
+    }
+    public static void addInputMessage(int at, String message){
+        click.get(at).addMessage(message);
     }
     public static void addHighlight(int at, int x, int y, int slide){
         click.get(at).addHighlight(x,y,slide);

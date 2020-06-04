@@ -5,6 +5,8 @@ import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.SubViewer;
 import com.radiogramviewer.graphics.shaders.ShaderManager;
 import com.radiogramviewer.graphics.shaders.WindowingShaders;
+import com.radiogramviewer.logging.ClickNode;
+import com.radiogramviewer.logging.Timing;
 import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.Controls;
 import com.radiogramviewer.relay.P;
@@ -125,6 +127,19 @@ public class PCconstants implements Constants {
             case Input.Keys.NUM_5:
                 ShaderManager.removeShader("customPassKey1");
                 break;
+            case Input.Keys.NUM_6:
+                P.d("Shader Log:\n"+ShaderManager.logger.get(",","\n"));
+                break;
+
+
+            case Input.Keys.NUM_7:
+                Relay.addInputMessage(2,"hidy ho");
+                break;
+            case Input.Keys.NUM_8:
+                P.d("CLICKS:\n"+Relay.getClicksAt(2,",","\n")+"\nLast Click: "+Controls.lastClick.toString(0));
+                Controls.lastClick=new ClickNode(0,0,0,0);
+                break;
+
             case Input.Keys.NUM_9:
                 Relay.getScrollTimesFor(3,",","\n");
                 break;
