@@ -104,11 +104,11 @@ public class Controls implements InputProcessor {
         screenY= Relay.getHeight()-(screenY+1);
 
         if(SubViewer.getSlideMode()!=SubViewer.none) {
-            click.updateClick(screenX, screenY, slides.getSlide());
             if(saveClick()) {
                 z = slides.getSlide()+1;
                 lastClick=new ClickNode(screenX,screenY, Timing.getMillis());
             }
+            click.updateClick(screenX, screenY, slides.getSlide());
         }
         else if(saveClick()){
             lastClick=new ClickNode(screenX,screenY,Timing.getMillis());
