@@ -54,7 +54,6 @@ public class Config {
         vp=getProperties("controls",vals);
         input=new ControlClass(getBool("wheel",vp),getBool("arrows",vp),getBool("wasd",vp),getFloat("holdTime",vp),getBool("drag",vp),getInt("dragDist",vp));
 
-        System.out.println("finished config");
     }
 
     private float getScale(Constants constants, int originalWindowWidth, boolean fakeDensity){
@@ -168,11 +167,14 @@ public class Config {
     }
 
     public class WindowClass{
-        public final int height, width, barWidth, barBorder;
+        public final int height, width, barWidth, barBorder, dimensionWidth, dimensionHeight;
         public final Color barColor, borderColor;
         WindowClass(int width, int height, int barWidth, int barBorder, Color barColor, Color borderColor){
             this.height=(int)(height*scale);
             this.width=(int)(width*scale);
+            this.dimensionWidth=width;
+            this.dimensionHeight=height;
+
             this.barWidth=(int)(barWidth*scale);
             this.barBorder=(int)(barBorder*scale);
             this.barColor=barColor;

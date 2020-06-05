@@ -52,6 +52,9 @@ public class HTMLconstants implements Constants {
     public static String getShaderLog(String cs, String vs) {
         return ShaderManager.logger.get(cs,vs);
     }
+    public static void resetShaderLog() {
+        ShaderManager.logger.reset();
+    }
 
     public static void resetEverything(){MainViewer.setToReset();}
 
@@ -197,7 +200,7 @@ public class HTMLconstants implements Constants {
         Controls.setDragDist(distance);
     }
     public static String getLastClick(){
-        return Controls.lastClick.toString(0);
+        return Controls.lastClick.toString();
     }
     public static int getCurrentSlide(){
         return controller.getCurrentSlide()+1;
@@ -311,10 +314,7 @@ public class HTMLconstants implements Constants {
         return Relay.getWidth();
     }
     public static double getViewerWidthInches(){
-        return pixelsToInches(Relay.getWidth());
-    }
-    public static double pixelsToInches(double px){
-        return px/(Gdx.graphics.getDensity()*160);
+        return Relay.getWidth()/(Gdx.graphics.getDensity()*160);
     }
     public static double getViewerDensityFactor(){
         return SubViewer.getConfig().global.scale;
@@ -492,7 +492,7 @@ public class HTMLconstants implements Constants {
        $wnd.viewerGetCurrentSlide = $entry(@com.radiogramviewer.client.HTMLconstants::getCurrentSlide());
        $wnd.viewerGetCurrentSet = $entry(@com.radiogramviewer.client.HTMLconstants::getCurrentMode());
 
-       $wnd.viewerDeleteAndReset = $entry(@com.radiogramviewer.client.HTMLconstants::resetEverything());
+       $wnd.viewerResetSize = $entry(@com.radiogramviewer.client.HTMLconstants::resetEverything());
        $wnd.viewerGetUpTime = $entry(@com.radiogramviewer.client.HTMLconstants::getUpTime());
        $wnd.viewerGetStartTime = $entry(@com.radiogramviewer.client.HTMLconstants::getStartTime());
 
@@ -504,6 +504,7 @@ public class HTMLconstants implements Constants {
        $wnd.viewerResetScrolls = $entry(@com.radiogramviewer.client.HTMLconstants::resetScrollsFor(I));
        $wnd.viewerResetClicks = $entry(@com.radiogramviewer.client.HTMLconstants::resetClicksFor(I));
        $wnd.viewerResetHighlights = $entry(@com.radiogramviewer.client.HTMLconstants::clearHighlightsFor(I));
+       $wnd.viewerResetShaderLog = $entry(@com.radiogramviewer.client.HTMLconstants::resetShaderLog());
 
        $wnd.viewerLogClickMessage = $entry(@com.radiogramviewer.client.HTMLconstants::addInputMessage(ILjava/lang/String;));
        $wnd.viewerLogScrollMessage = $entry(@com.radiogramviewer.client.HTMLconstants::addViewMessage(ILjava/lang/String;));
@@ -517,7 +518,5 @@ public class HTMLconstants implements Constants {
        $wnd.viewerAddWindowingShaderValue = $entry(@com.radiogramviewer.client.HTMLconstants::addWindowShaderValue(Ljava/lang/String;FFZ));
        $wnd.viewerRemoveShader = $entry(@com.radiogramviewer.client.HTMLconstants::removeShader(Ljava/lang/String;Z));
        $wnd.viewerSetShader = $entry(@com.radiogramviewer.client.HTMLconstants::setShader(Ljava/lang/String;Z));
-
-       $wnd.viewerUtilityPixelsToInches = $entry(@com.radiogramviewer.client.HTMLconstants::pixelsToInches(D));
     }-*/;
 }

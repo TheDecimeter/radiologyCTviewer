@@ -76,7 +76,7 @@ public class MainViewer extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		viewer.dispose();
-		SlideManager.disposeCompletely();
+		viewer.disposeCompletely();
 	}
 	@Override
 	protected void finalize() throws Throwable

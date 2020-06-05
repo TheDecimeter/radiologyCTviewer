@@ -28,23 +28,25 @@ public class Controls implements InputProcessor {
     private ClickFollower click; //keep track of click follower so clicks can be recorded
     private Config c;
 
-    public static ClickNode lastClick;
+    public static ClickNode lastClick=null;
     //public static int z;
-    private static int dragDist;
+    private static int dragDist=0;
     private boolean up, down;
 
-    private HashMap<Integer,Node> drag;
+    private HashMap<Integer,Node> drag=null;
 
     public Controls(SlideManager slides, Config c){
         this.slides=slides;
-        lastClick=new ClickNode(0,0,0,0);
+        if(lastClick==null)
+            lastClick=new ClickNode(0,0,0,0);
 //        z=0;
         up=false;
         down=false;
 
         this.c=c;
         drag=new HashMap<Integer, Node>();
-        dragDist=c.input.dragDist;
+        if(dragDist==0)
+            dragDist=c.input.dragDist;
     }
 
     public int getCurrentSlide(){

@@ -56,11 +56,13 @@ public class SubViewer {
         P.init(constants);
         this.constants=constants;
 
-        try {
+//        try {
             Gdx.graphics.setContinuousRendering(false); //this keeps the processor from constantly cycling on PC, does nothing in HTML
-            SlideIndex = dont;
 
-            LastSlideMode = SlideMode = constants.getMode();
+            if(click==null) {
+                LastSlideMode = SlideMode = constants.getMode();
+                SlideIndex = dont;
+            }
 
             //Get config file state
             c = new Config(constants);
@@ -70,7 +72,7 @@ public class SubViewer {
             //Get perferred dimensions (incase dynamically specified in JavaScript)
             int width = c.window.width;
             int height = c.window.height;
-            //println("using fixed pxl: width:" + width + " height:" + height, Constants.d);
+
             Relay.initMain(constants,width,height);
 
             controller = new Controls(null, c);
@@ -96,11 +98,11 @@ public class SubViewer {
             ShaderManager.init(slideBatch);
 
             Relay.changeLoadingState(Relay.loaded);
-        }
-        catch (Exception e){
-            Relay.changeLoadingState(Relay.error);
-            P.e(e.getMessage()+e);
-        }
+//        }
+//        catch (Exception e){
+//            Relay.changeLoadingState(Relay.error);
+//            P.e(e.getMessage()+e);
+//        }
 
         if(slideProcessor.done()){
             constants.processingState(0,1);
@@ -156,14 +158,20 @@ public class SubViewer {
         windowBatch.dispose();
         slideBatch.dispose();
 
+        if(SlideMode!=none)
+            SlideIndex=slideManagers.get(SlideMode-1).getSlide();
+
         scroll.dispose();
         for(SlideManager m : slideManagers)
             m.dispose();
 
-        ShaderManager.dispose();
-
         clickImg.dispose();
         clickHighlightImg.dispose();
+    }
+
+    public void disposeCompletely(){
+        SlideManager.disposeCompletely();
+        ShaderManager.dispose();
     }
 
 
@@ -195,21 +203,36 @@ public class SubViewer {
      * @param c the config file
      */
     private void setupSlideManagers(Config c){
-        click=new ArrayList<ClickFollower>();
-        scrollTimes=new ArrayList<ScrollFollower>();
+        boolean newScrollTimes=true;
+        ArrayList<ClickFollower> newclick=new ArrayList<ClickFollower>();
+
+        if(scrollTimes==null) {
+            scrollTimes = new ArrayList<ScrollFollower>();
+            newScrollTimes=false;
+        }
         SlideDimensions d=new SlideDimensions();
         int loadingState=0;
         Relay.changeLoadingState(loadingState);
         for(SlideDimensions.Node n : d.dims()){
-            ScrollFollower sf= new ScrollFollower(c,n.total);
-            scrollTimes.add(sf);
+            ScrollFollower sf;
+            if(newScrollTimes) {
+                sf = scrollTimes.get(loadingState);
+            }
+            else{
+                sf = new ScrollFollower(c, n.total);
+                scrollTimes.add(sf);
+            }
             SlideManager s=new SlideManager(n,sf,c);
             slideProcessor.add(s);
             slideManagers.add(s);
-            click.add(new ClickFollower(n.total,c.click.radius,c.click.depth,n.markClicks,clickImg,clickHighlightImg, c));
+            if(newScrollTimes)
+                newclick.add(new ClickFollower(n.total,n.markClicks,clickImg,clickHighlightImg, c, click.get(loadingState)));
+            else
+                newclick.add(new ClickFollower(n.total,n.markClicks,clickImg,clickHighlightImg, c,null));
 
             Relay.changeLoadingState(++loadingState);
         }
+        click=newclick;
         slideProcessor.invertWork();
     }
 
@@ -233,6 +256,7 @@ public class SubViewer {
 
         slideManager=slideManagers.get(SlideMode-1);
         //change to specified index if necessary
+
         if(SlideIndex!=dont)
             slideManager.goToSlide(SlideIndex);
         //select new click follower

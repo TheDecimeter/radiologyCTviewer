@@ -18,6 +18,8 @@ import com.radiogramviewer.relay.Relay;
  */
 public class PCconstants implements Constants {
 
+    private float width=555;
+    private boolean small=true;
 
     @Override
     public int getMode() {
@@ -87,8 +89,8 @@ public class PCconstants implements Constants {
     @Override
     public float getScale(int originalWidth) {
         //desired width/original width, for now, always return 1
-        return 1;
-        //return 555f/originalWidth;
+        //return 1;
+        return width/originalWidth;
     }
 
     @Override
@@ -107,9 +109,12 @@ public class PCconstants implements Constants {
 
     @Override
     public void passKey(int key) {
-        P.d("pass "+key);
         switch(key){
             case Input.Keys.NUM_0:
+                P.d("         RESET");
+                if(small)width=666;
+                else width=555;
+                small=!small;
                 MainViewer.setToReset();
                 break;
             case Input.Keys.NUM_1:
@@ -133,15 +138,19 @@ public class PCconstants implements Constants {
 
 
             case Input.Keys.NUM_7:
-                Relay.addInputMessage(2,"hidy ho");
+                P.d("SCROLLS:\n"+Relay.getScrollTimesFor(2,",","\n"));
                 break;
             case Input.Keys.NUM_8:
-                P.d("CLICKS:\n"+Relay.getClicksAt(2,",","\n")+"\nLast Click: "+Controls.lastClick.toString(0));
+                String s=Controls.lastClick.toString();
+                P.d("CLICKS:\n"+Relay.getClicksAt(2,",","\n")+"\nLast Click: "+s);
+                String[] t=s.split(",");
+                addHighlight(2,Integer.parseInt(t[0]),Integer.parseInt(t[1]),Integer.parseInt(t[2]));
                 Controls.lastClick=new ClickNode(0,0,0,0);
+
                 break;
 
             case Input.Keys.NUM_9:
-                Relay.getScrollTimesFor(3,",","\n");
+
                 break;
         }
     }
@@ -149,5 +158,11 @@ public class PCconstants implements Constants {
     @Override
     public void finishedResetting() {
         P.d("finished resetting state="+ Relay.loadingState());
+    }
+
+
+    private static void addHighlight(int slideSet, int x, int y, int slide){
+        float scale=1/SubViewer.getConfig().global.scale;
+        Relay.addHighlight(slideSet,(int)(x*scale),(int)(y*scale),slide-1);
     }
 }

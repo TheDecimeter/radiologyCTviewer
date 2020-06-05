@@ -8,6 +8,8 @@ import com.radiogramviewer.relay.P;
 import com.radiogramviewer.relay.Relay;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
@@ -17,7 +19,7 @@ public class ClickFollower {
 
     public static boolean clickLock=false;
 
-    private int radius,depth;
+    private int depth;
     private ArrayList<ArrayList<Node>> clicks; //each slide has its own list of clicks
     private ArrayList<ArrayList<Node>> highlights; //each slide has its own list of clicks
     private Texture click, highlight;
@@ -25,13 +27,22 @@ public class ClickFollower {
     private Config c;
     private TreeSet<ClickNode> orderedClicks;
 
-    public ClickFollower(int slices, int radius, int depth, boolean markClicks, Texture click, Texture highlight, Config c){
-        createClickList(slices);
-        updateRadius(radius,depth);
+    public ClickFollower(int slices, boolean markClicks, Texture click, Texture highlight, Config c, ClickFollower oldLog){
+        this.c=c;
+
+        if(oldLog!=null){
+            clicks=oldLog.clicks;
+            orderedClicks=oldLog.orderedClicks;
+            highlights=oldLog.highlights;
+            resetScreenPos();
+        }
+        else
+            createClickList(slices);
+
         this.click=click;
         this.highlight=highlight;
         this.markClicks=markClicks;
-        this.c=c;
+        this.depth=c.click.depth;
     }
 
     private void createClickList(int slices){
@@ -51,6 +62,65 @@ public class ClickFollower {
             highlights.add(new ArrayList<Node>());
     }
 
+    public void resetScreenPos(){
+        for(ArrayList<Node> nl : clicks)
+            for(Node n : nl) {
+                n.reset(c.click.radius);
+            }
+        for(ArrayList<Node> nl : highlights)
+            for(Node n : nl)
+                n.reset(c.click.highlightRadius);
+    }
+
+//    private void transferLogs(ClickFollower old){
+//        int slices=old.clicks.size();
+//        clicks=new ArrayList<ArrayList<Node>>(slices);
+//        for(ArrayList<Node> ol : old.clicks)
+//            clicks.add(new ArrayList<Node>(ol.size()));
+//
+//        orderedClicks=new TreeSet<ClickNode>();
+//
+//        float downScale=1/scale;
+//
+//        for(ClickNode o : old.orderedClicks){
+//            //message node's have no position data, so no need to rescale, just stick them in.
+//            if(o.p.x==-1 && o.p.y==-1){
+//                orderedClicks.add(o);
+//                continue;
+//            }
+//            //otherwise, scale old node up to config dimensions
+//            int x=sclUp(o.p.x,old.radius,old.scale);
+//            int y=sclUp(o.p.y,old.radius,old.scale);
+//
+//            //then scale down to new viewer dimensions
+//            x=sclDn(x,radius,downScale);
+//            y=sclDn(y,radius,downScale);
+//
+//            Node n=new Node(x,y,o.z,o.time);
+//            orderedClicks.add(n);
+//            add(n.z,n);
+//        }
+//
+//        highlights=new ArrayList<ArrayList<Node>>(slices);
+//        for(ArrayList<Node> ol : old.highlights) {
+//            ArrayList nl=new ArrayList<Node>(ol.size());
+//            highlights.add(nl);
+//            for (Node o : ol) {
+//                int x = sclUp(o.p.x, old.radius, old.scale);
+//                int y = sclUp(o.p.y, old.radius, old.scale);
+//
+//                //then scale down to new viewer dimensions
+//                x = sclDn(x, radius, downScale);
+//                y = sclDn(y, radius, downScale);
+//
+//                Node n = new Node(x, y, o.z, o.time);
+//                nl.add(n);
+//            }
+//        }
+//    }
+
+
+
 
     /**
      * Warning, this will clear all the previous clicks, make sure they are
@@ -59,11 +129,6 @@ public class ClickFollower {
      */
     public void reset(){
         createClickList(clicks.size());
-    }
-
-    private void updateRadius(int radius, int depth){
-        this.depth=depth;
-        this.radius=radius;
     }
 
     /**
@@ -77,21 +142,22 @@ public class ClickFollower {
         if(!markClicks || clickLock)
             return;
 
-        x-=radius;
-        y-=radius;
+        int ox=x-c.click.radius;
+        int oy=y-c.click.radius;
 
         for(int z=lo(slide); z<hi(slide); ++z) {
             ArrayList<Node> l = clicks.get(z);
             for (int i = 0; i < l.size(); ++i) {
-                if (overlap(x, y, l.get(i).p)) {
-                    Relay.clickRemoved(l.get(i).toString(radius));
+                if (overlap(ox, oy, l.get(i).sP)) {
+                    Relay.clickRemoved(l.get(i).toString());
                     remove(i, l);
                     return;
                 }
             }
         }
         Node n=new Node(x,y,slide,Timing.getMillis());
-        Relay.clickAdded(n.toString(radius));
+        n.reset(c.click.radius);
+        Relay.clickAdded(n.toString());
         add(slide,n);
     }
 
@@ -110,13 +176,16 @@ public class ClickFollower {
      * @param slide The slide on which the click occured
      */
     public void addHighlight(int x, int y, int slide){
-        x-=c.click.highlightRadius;
-        y-=c.click.highlightRadius;
+//        x-=highlightRadius;
+//        y-=highlightRadius;
         if(slide<0||slide>=highlights.size()){
             P.e("Highlight index out of range "+slide+", max size "+highlights.size());
             return;
         }
-        highlights.get(slide).add(new Node(x,y,slide,0));
+        Node n=new Node(x,y,slide,0);
+        n.reset(c.click.highlightRadius);
+        n.reset(c.click.highlightRadius);
+        highlights.get(slide).add(n);
     }
 
     /**
@@ -127,7 +196,7 @@ public class ClickFollower {
      * @return true if the two clicks overlap
      */
     private boolean overlap(int x, int y, Vector2 v){
-        return Vector2.dst(x,y,v.x,v.y)<radius;
+        return Vector2.dst(x,y,v.x,v.y)<c.click.radius;
     }
 
 
@@ -157,8 +226,8 @@ public class ClickFollower {
         if(!markClicks)
             return true;
         for(int i=lo(slide); i<hi(slide); ++i){
-            for(ClickNode n : clicks.get(i))
-                batch.draw(click, n.p.x, n.p.y);
+            for(Node n : clicks.get(i))
+                batch.draw(click, n.sP.x, n.sP.y);
         }
         return true;
     }
@@ -170,8 +239,8 @@ public class ClickFollower {
      */
     public boolean drawHighlights(SpriteBatch batch, int slide) {
         for(int i=lo(slide); i<hi(slide); ++i){
-            for(ClickNode n : highlights.get(i))
-                batch.draw(highlight, n.p.x, n.p.y);
+            for(Node n : highlights.get(i))
+                batch.draw(highlight, n.sP.x, n.sP.y);
         }
         return true;
     }
@@ -193,9 +262,15 @@ public class ClickFollower {
     }
 
     //Scale the absolute pixel coordinates to the config file pixels.
-    private int scl(float val){
-        return (int)Math.ceil((val+radius)*c.global.scale);
-    }
+//    private int scl(float val){
+//        return sclUp(val,radius, scale);
+//    }
+//    private int sclUp(float val, int radius, float upScale){
+//        return (int)Math.ceil((val+radius)*upScale);
+//    }
+//    private int sclDn(float val, int radius, float dnScale){
+//        return (int)Math.ceil((val-radius)*dnScale);
+//    }
 
     /**
      * @param index the clicked slide
@@ -221,19 +296,24 @@ public class ClickFollower {
     }
 
     class Node extends ClickNode{
+        public Vector2 sP;
         Node(int x, int y, int z, long time) {
             super(x, y, z, time);
         }
+//
+//        @Override
+//        public void append(StringBuilder b, String cs, String vs){
+//            b.append(scl(p.x)).append(cs).append(scl(p.y)).append(cs).append(z+1).append(cs).append(time).append(vs);
+//        }
 
-        @Override
-        public void append(StringBuilder b, String cs, String vs){
-            b.append(scl(p.x)).append(cs).append(scl(p.y)).append(cs).append(z+1).append(cs).append(time).append(vs);
+        public void reset(int offset){
+            sP=new Vector2(p.x*Relay.getWidth()-offset,p.y*Relay.getHeight()-offset);
         }
     }
     class MessageNode extends ClickNode{
         final String message;
         MessageNode(String msg) {
-            super(0, 0, Timing.getMillis());
+            super(-1, -1, Timing.getMillis());
             message=msg;
         }
 

@@ -17,13 +17,15 @@ public class ShaderManager{
     private static HashMap<String,ShaderProgram> shaders;
     private static SpriteBatch batch;
     private static String last;
-    public static ShaderProgram shader;
+    private static ShaderProgram shader;
 
     public static void init(SpriteBatch batch){
         ShaderManager.batch=batch;
-        last=off;
-        shader=null;
-        logger=new ShaderLogger();
+        if(logger==null) {
+            last = off;
+            shader = null;
+            logger = new ShaderLogger();
+        }
     }
 
     /**
@@ -41,12 +43,15 @@ public class ShaderManager{
         if(shaders==null)
             shaders=new HashMap<String, ShaderProgram>();
 
-        if(shaders.containsKey(key))
+        if(shaders.containsKey(key)) {
+            shaders.get(key).dispose();
             shaders.remove(key);
+        }
         shaders.put(key,value);
         if(last.equals(key))
             applyShader(value);
     }
+
     public static void removeShader(String key){
         if(shaders==null)
             return;
@@ -54,6 +59,7 @@ public class ShaderManager{
             return;
 
         logger.remove(key);
+        shaders.get(key).dispose();
         shaders.remove(key);
         if(last.equals(key))
         {

@@ -1,0 +1,10 @@
+;create shapes to use in the viewer
+; the format is:
+;  name (must be unique)
+;  width
+;  height
+;  depth
+;  type
+;  color
+dot,5,5,2circle,FFF
+box,5,5,2square,00F

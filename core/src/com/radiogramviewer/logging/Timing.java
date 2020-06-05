@@ -7,11 +7,13 @@ import com.badlogic.gdx.utils.TimeUtils;
  */
 public class Timing {
 
-    private static long startTime, calendarTime;
+    private static long startTime=0, calendarTime=0;
 
     public static void start(long startedCalanderTime){
-        startTime= TimeUtils.nanoTime();//System.currentTimeMillis();
-        calendarTime=startedCalanderTime;
+        if(calendarTime==0&&startTime==0) {
+            startTime = TimeUtils.nanoTime();//System.currentTimeMillis();
+            calendarTime = startedCalanderTime;
+        }
     }
 
     public static long getStartTime(){
