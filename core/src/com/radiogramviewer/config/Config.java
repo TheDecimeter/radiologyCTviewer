@@ -83,7 +83,7 @@ public class Config {
         for(String line : lines) {
             if(line.length()==0)
                 continue;
-            if(line.charAt(0)==';')
+            if(isComment(line))
                 continue;
             if(line.charAt(0)=='['){
                 String name=line.trim();
@@ -170,13 +170,13 @@ public class Config {
         public final int height, width, barWidth, barBorder, dimensionWidth, dimensionHeight;
         public final Color barColor, borderColor;
         WindowClass(int width, int height, int barWidth, int barBorder, Color barColor, Color borderColor){
-            this.height=(int)(height*scale);
-            this.width=(int)(width*scale);
+            this.height=(int)Math.ceil(height*scale);
+            this.width=(int)Math.ceil(width*scale);
             this.dimensionWidth=width;
             this.dimensionHeight=height;
 
-            this.barWidth=(int)(barWidth*scale);
-            this.barBorder=(int)(barBorder*scale);
+            this.barWidth=(int)Math.ceil(barWidth*scale);
+            this.barBorder=(int)Math.ceil(barBorder*scale);
             this.barColor=barColor;
             this.borderColor=borderColor;
         }
@@ -195,13 +195,13 @@ public class Config {
         public final Color color,highlightColor;
         ClickClass(int radius,int thickness, int depth, Color color,
                    Color highlightColor, int highlightRadius,int highlightThickness, boolean overwriteLastClick){
-            this.radius=(int)(radius*scale);
-            this.thickness=(int)(thickness*scale);
+            this.radius=(int)Math.ceil(radius*scale);
+            this.thickness=(int)Math.ceil(thickness*scale);
             this.depth=depth;
             this.color=color;
             this.highlightColor=highlightColor;
-            this.highlightRadius=(int)(highlightRadius*scale);
-            this.highlightThickness=(int)(highlightThickness*scale);
+            this.highlightRadius=(int)Math.ceil(highlightRadius*scale);
+            this.highlightThickness=(int)Math.ceil(highlightThickness*scale);
             this.overwriteLastClick=overwriteLastClick;
         }
     }
@@ -216,7 +216,7 @@ public class Config {
             this.wasd=wasd;
             this.holdTime=holdTime;
             this.drag=drag;
-            this.dragDist=(int)(dragDist*scale);
+            this.dragDist=(int)Math.ceil(dragDist*scale);
         }
     }
 
@@ -237,17 +237,13 @@ public class Config {
             this.scale=scale;
             this.densityIndepndant=densityIndepndant;
             this.gpuMaxTextureSize=gpuMaxTextureSize;
-            int tmp=(int)(overscan*Config.this.scale);
-            if(tmp>1)
-                this.overscan=tmp;
-            else
-                this.overscan=1;
+            this.overscan=(int)Math.ceil(overscan*scale);
             this.yieldMillis=yieldMillis;
             this.downscaleTexture=downscaleTexture;
         }
     }
 
-    public Color parseColor(String in){
+    public static Color parseColor(String in){
         String s=c(in);
         float r = 1, g = 1, b = 1, a = 1;
         try {
@@ -275,10 +271,14 @@ public class Config {
         return new Color(r,g,b,a);
     }
 
-    public String c(String s){
+    public static String c(String s){
         s=s.replaceAll("\"","");
         s=s.replaceAll("#","");
         s=s.trim();
         return s.toLowerCase();
+    }
+
+    public static boolean isComment(String s){
+        return s.charAt(0)=='/'||s.charAt(0)==';'||s.charAt(0)=='%'||s.charAt(0)=='#';
     }
 }

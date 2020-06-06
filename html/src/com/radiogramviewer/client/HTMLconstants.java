@@ -84,6 +84,19 @@ public class HTMLconstants implements Constants {
         Relay.clearHighlights(slideSet-1);
     }
 
+
+    public static boolean addShapeImage(String name, int slideSet, int x, int y, int slide){
+        if(!validSlide(slide))return false;
+        float scale=1/SubViewer.getConfig().global.scale;
+        return Relay.addImageshape(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1,name);
+    }
+    public static boolean addShapeUI(String name, int slideSet, int x, int y, int slide){
+        if(!validSlide(slide))return false;
+        float scale=1/SubViewer.getConfig().global.scale;
+        return Relay.addUIshape(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1,name);
+    }
+
+
     private static boolean validSlide(int slide){
         if(slide==0){
             P.e("Slides start at 1");
@@ -329,7 +342,6 @@ public class HTMLconstants implements Constants {
 
     @Override
     public void passKey(int key){
-        P.d("pass "+key);
         switch(key){
             case Input.Keys.NUM_0:
                 MainViewer.setToReset();
@@ -349,13 +361,39 @@ public class HTMLconstants implements Constants {
             case Input.Keys.NUM_5:
                 ShaderManager.removeShader("customPassKey1");
                 break;
+            case Input.Keys.NUM_6:
+                P.d("Shader Log:\n"+ShaderManager.logger.get(",","\n"));
+                break;
+
 
             case Input.Keys.NUM_7:
-                Relay.addInputMessage(2,"hidy ho");
+                P.d("SCROLLS:\n"+Relay.getScrollTimesFor(2,",","\n"));
                 break;
             case Input.Keys.NUM_8:
-                P.d("CLICKS:\n"+Relay.getClicksAt(2,",","\n")+"\nLast Click: "+Controls.lastClick.toString(0));
-                Controls.lastClick=new ClickNode(0,0,0,0);
+                String s=Controls.lastClick.toString();
+                P.d("CLICKS:\n"+Relay.getClicksAt(getCurrentMode(),",","\n")+"\nLast Click: "+s);
+                String[] t=s.split(",");
+                int x=Integer.parseInt(t[0]);
+                int y=Integer.parseInt(t[1]);
+                int z=Integer.parseInt(t[2]);
+
+                addHighlight(getCurrentSlide(),x,y,getCurrentSlide());
+                addShapeImage("mark",getCurrentMode(),x,y,getCurrentSlide());
+                resetClicksFor(getCurrentMode());
+                P.d("finished keypress");
+                break;
+
+            case Input.Keys.NUM_9:
+                s=Controls.lastClick.toString();
+                P.d("CLICKS:\n"+Relay.getClicksAt(getCurrentMode(),",","\n")+"\nLast Click: "+s);
+                t=s.split(",");
+                x=Integer.parseInt(t[0]);
+                y=Integer.parseInt(t[1]);
+                z=Integer.parseInt(t[2]);
+
+                addShapeUI("mark",getCurrentMode(),x,y,getCurrentSlide());
+                resetClicksFor(getCurrentMode());
+                P.d("finished keypress");
                 break;
         }
     }
@@ -512,6 +550,8 @@ public class HTMLconstants implements Constants {
 
        $wnd.viewerSimulateClick = $entry(@com.radiogramviewer.client.HTMLconstants::addClick(IIII));
        $wnd.viewerAddHighlight = $entry(@com.radiogramviewer.client.HTMLconstants::addHighlight(IIII));
+       $wnd.viewerAddShapeToImage = $entry(@com.radiogramviewer.client.HTMLconstants::addShapeImage(Ljava/lang/String;IIII));
+       $wnd.viewerAddShapeToUI = $entry(@com.radiogramviewer.client.HTMLconstants::addShapeUI(Ljava/lang/String;IIII));
 
        $wnd.viewerAddCustomShader = $entry(@com.radiogramviewer.client.HTMLconstants::addShader(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z));
        $wnd.viewerAddWindowingShaderGray = $entry(@com.radiogramviewer.client.HTMLconstants::addWindowShaderGray(Ljava/lang/String;FFZ));

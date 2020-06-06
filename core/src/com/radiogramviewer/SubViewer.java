@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.radiogramviewer.config.Config;
+import com.radiogramviewer.config.ShapeMaker;
 import com.radiogramviewer.config.SlideDimensions;
 import com.radiogramviewer.coroutine.CoroutineConstantRunner;
 import com.radiogramviewer.coroutine.CoroutineRunner;
@@ -48,6 +49,7 @@ public class SubViewer {
     private Texture clickImg, clickHighlightImg; //the circle to be drawn when the slide is clicked, and a highlight option
     private static ArrayList<ClickFollower> click; //all click trackers for each slide
     private static ClickFollower slideClick; //the current slide's click follower
+    private ShapeMaker shapes;
 
     private static ArrayList<ScrollFollower> scrollTimes; //all scroll trackers
 
@@ -84,13 +86,14 @@ public class SubViewer {
             slideBatch=new SpriteBatch();
 
             //Generate the images for indicating clicks and scroll bar
+            shapes=new ShapeMaker(c);
             clickImg = DrawShape.ring(c.click.color, c.click.radius, c.click.thickness);
             clickHighlightImg = DrawShape.ring(c.click.highlightColor, c.click.highlightRadius, c.click.highlightThickness);
             scroll = new Bar(c);
 
             slideManagers = new ArrayList<SlideManager>(20);
             setupSlideManagers(c);
-            Relay.initLogs(click,scrollTimes);
+            Relay.initLogs(click,scrollTimes,shapes);
 
             updateSlides = true;
             updateSlideMode();
@@ -143,10 +146,12 @@ public class SubViewer {
             ShaderManager.apply(slideBatch);
             slideBatch.begin();
             slideManager.draw(slideBatch);  //draw slide
+            slideClick.drawImageShapes(slideBatch,currentSlide);
             slideBatch.end();
 
             ShaderManager.remove(slideBatch);
             slideBatch.begin();
+            slideClick.drawUIshapes(slideBatch,currentSlide);
             slideClick.drawClicks(slideBatch, currentSlide);    //draw any relevant clicks
             slideClick.drawHighlights(slideBatch, currentSlide);    //draw any highlightedAreas
             if (totalSlides > 1)
@@ -167,6 +172,7 @@ public class SubViewer {
 
         clickImg.dispose();
         clickHighlightImg.dispose();
+        shapes.dispose();
     }
 
     public void disposeCompletely(){
@@ -226,9 +232,9 @@ public class SubViewer {
             slideProcessor.add(s);
             slideManagers.add(s);
             if(newScrollTimes)
-                newclick.add(new ClickFollower(n.total,n.markClicks,clickImg,clickHighlightImg, c, click.get(loadingState)));
+                newclick.add(new ClickFollower(n.total,n.markClicks,clickImg,clickHighlightImg, c, shapes, click.get(loadingState)));
             else
-                newclick.add(new ClickFollower(n.total,n.markClicks,clickImg,clickHighlightImg, c,null));
+                newclick.add(new ClickFollower(n.total,n.markClicks,clickImg,clickHighlightImg, c,shapes,null));
 
             Relay.changeLoadingState(++loadingState);
         }

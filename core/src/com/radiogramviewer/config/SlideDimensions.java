@@ -30,7 +30,7 @@ public class SlideDimensions {
         int lineNum=0;
         for(String line : lines){
             lineNum++;
-            if(isComment(line))
+            if(Config.isComment(line))
                 continue;
 
             String [] num=line.split(",");
@@ -93,9 +93,7 @@ public class SlideDimensions {
             dims.add(new Node(i+1));
     }
 
-    private boolean isComment(String s){
-        return s.charAt(0)=='/'||s.charAt(0)=='%'||s.charAt(0)=='#';
-    }
+
 
     public final class Node{
         public final int height, width, total;

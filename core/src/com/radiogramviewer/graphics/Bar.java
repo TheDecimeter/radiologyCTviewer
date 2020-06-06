@@ -21,12 +21,8 @@ public class Bar{
 
     public Bar(Config c){
         this.x=c.window.width;
-        this.width=(int)(c.window.barWidth);
-        if(this.width<1)
-            this.width=1;
+        this.width=c.window.barWidth;
         border=c.window.barBorder;
-        if(border<1)
-            border=1;
 
         this.height=c.window.height-border*2;
         maxHeight =height;

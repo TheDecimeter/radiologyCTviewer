@@ -44,7 +44,7 @@ public class ShaderManager{
             shaders=new HashMap<String, ShaderProgram>();
 
         if(shaders.containsKey(key)) {
-            shaders.get(key).dispose();
+            dispose(key);
             shaders.remove(key);
         }
         shaders.put(key,value);
@@ -59,7 +59,7 @@ public class ShaderManager{
             return;
 
         logger.remove(key);
-        shaders.get(key).dispose();
+        dispose(key);
         shaders.remove(key);
         if(last.equals(key))
         {
@@ -85,7 +85,13 @@ public class ShaderManager{
             applyShader(shaders.get(key));
         }
     }
-
+    private static void dispose(String key){
+        if(shaders==null)
+            return;
+        ShaderProgram s=shaders.get(key);
+        if(s!=null);
+            s.dispose();
+    }
 
     public static void dispose() {
         if(shaders!=null) {

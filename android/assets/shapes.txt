@@ -4,7 +4,7 @@
 ;  width
 ;  height
 ;  depth
-;  type
+;  weight (only used for ring, but always stick something there)
+;  type (valid shapes: circle, ring, square)
 ;  color
-dot,5,5,2circle,FFF
-box,5,5,2square,00F
+mark,30,30,4,8,t,ring,FFF

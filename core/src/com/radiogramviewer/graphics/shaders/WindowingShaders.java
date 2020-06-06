@@ -50,20 +50,21 @@ public class WindowingShaders {
             "}\n\n" +
             "void main()\n" +
             "{\n" +
-            "  vec3 color = rgb2hsv(texture2D(u_texture, v_texCoords).rgb);\n" +
-            "  vec3 finalRGB= hsv2rgb(vec3(color.xy,(color.z-lo)/(";
+            "  vec4 color = texture2D(u_texture, v_texCoords).rgba;\n" +
+            "  vec3 HSV = rgb2hsv(color.rgb);\n" +
+            "  vec3 finalRGB= hsv2rgb(vec3(HSV.xy,(HSV.z-lo)/(";
 
     private final static String fragmentShader3gray=
             ";\n" +
             "void main()\n" +
             "{\n" +
-            "  vec3 color = texture2D(u_texture, v_texCoords).rgb;\n" +
+            "  vec4 color = texture2D(u_texture, v_texCoords).rgba;\n" +
             "  vec3 finalRGB = vec3(((color.r-lo)/(";
 
     private final static String fragmentShader4=
             ")));\n"+
 
-            "  gl_FragColor = vec4(finalRGB, 1.0);\n"+
+            "  gl_FragColor = vec4(finalRGB, color.a);\n"+
             "}";
 
     /**

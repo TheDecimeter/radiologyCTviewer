@@ -2,6 +2,7 @@ package com.radiogramviewer.relay;
 
 import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.SubViewer;
+import com.radiogramviewer.config.ShapeMaker;
 import com.radiogramviewer.logging.ClickFollower;
 import com.radiogramviewer.logging.ScrollFollower;
 
@@ -15,6 +16,7 @@ public class Relay {
     private static List<ClickFollower> click;
     private static List<ScrollFollower> scrollTimes;
     private static Constants constants;
+    private static ShapeMaker shapes;
 
     private static int loadingState; //informs external javascript of loading state when it changes
 
@@ -24,9 +26,10 @@ public class Relay {
         Relay.viewWidth=width;
         Relay.viewHeight=height;
     }
-    public static void initLogs(List<ClickFollower> click, List<ScrollFollower> scrollTimes){
+    public static void initLogs(List<ClickFollower> click, List<ScrollFollower> scrollTimes, ShapeMaker shapes){
         Relay.click=click;
         Relay.scrollTimes=scrollTimes;
+        Relay.shapes=shapes;
     }
 
     public static String getClicksAt(int at, String compDiv, String itemDiv){
@@ -56,6 +59,23 @@ public class Relay {
     public static void clearHighlights(int at){
         click.get(at).resetHighlights();
     }
+
+    public static boolean addUIshape(int at, int x, int y, int slide, String name){
+        int shapeIndex=shapes.get(name);
+        if(shapeIndex==-1)
+            return false;
+        click.get(at).addUIshape(x,y,slide,shapeIndex);
+        return true;
+    }
+    public static boolean addImageshape(int at, int x, int y, int slide, String name){
+        int shapeIndex=shapes.get(name);
+        if(shapeIndex==-1)
+            return false;
+        click.get(at).addImageShape(x,y,slide,shapeIndex);
+        return true;
+    }
+
+
 
     public static void inputOccured(){
         constants.inputOccured();

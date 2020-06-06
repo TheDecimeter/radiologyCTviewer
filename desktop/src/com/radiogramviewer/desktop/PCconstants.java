@@ -144,7 +144,13 @@ public class PCconstants implements Constants {
                 String s=Controls.lastClick.toString();
                 P.d("CLICKS:\n"+Relay.getClicksAt(2,",","\n")+"\nLast Click: "+s);
                 String[] t=s.split(",");
-                addHighlight(2,Integer.parseInt(t[0]),Integer.parseInt(t[1]),Integer.parseInt(t[2]));
+                int x=Integer.parseInt(t[0]);
+                int y=Integer.parseInt(t[1]);
+                int z=Integer.parseInt(t[2]);
+
+                //addHighlight(2,x,y,z);
+                //addUIshape(2,x,y,z,"box");
+                addUIshape(2,x,y,z,"mark");
                 Controls.lastClick=new ClickNode(0,0,0,0);
 
                 break;
@@ -164,5 +170,9 @@ public class PCconstants implements Constants {
     private static void addHighlight(int slideSet, int x, int y, int slide){
         float scale=1/SubViewer.getConfig().global.scale;
         Relay.addHighlight(slideSet,(int)(x*scale),(int)(y*scale),slide-1);
+    }
+    private static void addUIshape(int slideSet, int x, int y, int slide, String name){
+        float scale=1/SubViewer.getConfig().global.scale;
+        Relay.addImageshape(slideSet,(int)(x*scale),(int)(y*scale),slide-1, name);
     }
 }
