@@ -152,6 +152,7 @@ public class Controls implements InputProcessor {
     private void handleKeyDown(int keycode){
         if(!c.input.arrow&&!c.input.wasd)
             return;
+
         if(SubViewer.getSlideMode()==SubViewer.none)
             return;
 
@@ -183,6 +184,7 @@ public class Controls implements InputProcessor {
     private void handleKeyUp(int keycode){
         if(!c.input.arrow&&!c.input.wasd)
             return;
+
         if(SubViewer.getSlideMode()==SubViewer.none)
             return;
 

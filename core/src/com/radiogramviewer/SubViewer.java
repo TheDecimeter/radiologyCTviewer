@@ -58,7 +58,7 @@ public class SubViewer {
         P.init(constants);
         this.constants=constants;
 
-//        try {
+        try {
             Gdx.graphics.setContinuousRendering(false); //this keeps the processor from constantly cycling on PC, does nothing in HTML
 
             if(click==null) {
@@ -101,16 +101,17 @@ public class SubViewer {
             ShaderManager.init(slideBatch);
 
             Relay.changeLoadingState(Relay.loaded);
-//        }
-//        catch (Exception e){
-//            Relay.changeLoadingState(Relay.error);
-//            P.e(e.getMessage()+e);
-//        }
 
-        if(slideProcessor.done()){
-            constants.processingState(0,1);
-            Relay.changeLoadingState(Relay.ready);
+            if(slideProcessor.done()){
+                constants.processingState(0,1);
+                Relay.changeLoadingState(Relay.ready);
+            }
         }
+        catch (Exception e){
+            Relay.changeLoadingState(Relay.error);
+            P.e(e.getMessage()+e);
+        }
+
     }
     public void render(){
         if(slideProcessor.runOne()) {

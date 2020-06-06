@@ -20,14 +20,14 @@ import com.radiogramviewer.relay.Relay;
 
 public class HTMLconstants implements Constants {
 
-    private final static int keyDown=0, keyUp=1;
+    private final static int keyPressDown =0, keyPressUp =1, keyScrollDown=-2, keyScrollUp=-1;
     private static int mode=SubViewer.none;
     private static Controls controller;
     private static StringBuilder packet;
 
     public HTMLconstants(){
         exportStaticMethods();
-        exportStaticVariables(Relay.ready, Relay.loaded, Relay.pending, Relay.error);
+        exportStaticVariables(Relay.ready, Relay.loaded, Relay.pending, Relay.error, keyScrollDown,keyScrollUp, keyPressDown, keyPressUp);
     }
 
     @Override
@@ -302,20 +302,22 @@ public class HTMLconstants implements Constants {
     }
     public static void pipeInput(int key, int eventType){
         if(controller!=null){
-            if(eventType==keyDown){
+            if(eventType== keyPressDown){
                 controller.keyDown(htmlToJavaKeyConverter(key));
             }
-            else if(eventType==keyUp){
+            else if(eventType== keyPressUp){
                 controller.keyUp(htmlToJavaKeyConverter(key));
             }
         }
     }
     private static int htmlToJavaKeyConverter(int htmlKey){
         switch(htmlKey){
+            case keyScrollUp: return Input.Keys.UP;
+            case keyScrollDown: return Input.Keys.DOWN;
             case 87: return Input.Keys.W;
             case 83: return Input.Keys.S;
-            case 40: return Input.Keys.UP;
-            case 38: return Input.Keys.DOWN;
+            case 38: return Input.Keys.UP;
+            case 40: return Input.Keys.DOWN;
         }
         return 0;
     }
@@ -506,11 +508,16 @@ public class HTMLconstants implements Constants {
             return Date.now();
             }-*/;
 
-    public static native void exportStaticVariables(int readyFlag, int loadedFlag, int pendingFlag, int failedFlag)/*-{
+    public static native void exportStaticVariables(int readyFlag, int loadedFlag, int pendingFlag, int failedFlag, int keyScrollDN, int keyScrollUP, int keyPressDN, int keyPressUp)/*-{
             $wnd.FLAGviewerReady=readyFlag;
             $wnd.FLAGviewerLoaded=loadedFlag;
             $wnd.FLAGviewerPendingUnknown=pendingFlag;
             $wnd.FLAGviewerFailedLoad=failedFlag;
+
+            $wnd.FLAGviewerKeyScrollUp=keyScrollUP;
+            $wnd.FLAGviewerKeyScrollDown=keyScrollDN;
+            $wnd.FLAGviewerKeyPressRelease=keyPressUp;
+            $wnd.FLAGviewerKeyPressDown=keyPressDN;
             }-*/;
 
     public static native void exportStaticMethods() /*-{
