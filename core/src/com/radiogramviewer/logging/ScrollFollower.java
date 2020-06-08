@@ -70,7 +70,7 @@ public class ScrollFollower {
 
     private void recordChange(int index, char transition){
         lastIndex=index;
-        slideTimes.add(new Node(index,Timing.getMillis(),transition));
+        slideTimes.add(new Node(index+1,Timing.getMillis(),transition));
     }
 
     /**
@@ -102,7 +102,7 @@ public class ScrollFollower {
 
         @Override
         public void append(StringBuilder b, String cs, String vs) {
-            b.append(slide+1).append(cs).append(time).append(cs).append(focus).append(vs);
+            b.append(slide).append(cs).append(time).append(cs).append(focus).append(vs);
         }
     }
 

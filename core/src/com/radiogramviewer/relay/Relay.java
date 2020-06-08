@@ -88,10 +88,10 @@ public class Relay {
     }
 
     public static void scrollMove(int index){
-        constants.scrollMove(index);
+        constants.scrollMove(index+1);
     }
     public static void scrollStuck(int index){
-        constants.scrollStuck(index);
+        constants.scrollStuck(index+1);
     }
 
     public static void addToTextureInfoPacket(String msg){

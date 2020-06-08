@@ -75,6 +75,6 @@ public class ClickNode implements Comparable<ClickNode>, LogNode{
 
     @Override
     public void append(StringBuilder b, String cs, String vs) {
-        b.append(x(p.x)).append(cs).append(y(p.y)).append(cs).append(z).append(cs).append(time).append(vs);
+        b.append(x(p.x)).append(cs).append(y(p.y)).append(cs).append(z+1).append(cs).append(time).append(vs);
     }
 }

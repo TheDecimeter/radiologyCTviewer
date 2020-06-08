@@ -21,4 +21,5 @@ public interface Constants {
     void runCoroutine();
     void passKey(int key);
     void finishedResetting();
+    void forceDraw();
 }

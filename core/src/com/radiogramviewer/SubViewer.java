@@ -59,7 +59,7 @@ public class SubViewer {
         this.constants=constants;
 
         try {
-            Gdx.graphics.setContinuousRendering(false); //this keeps the processor from constantly cycling on PC, does nothing in HTML
+            //Gdx.graphics.setContinuousRendering(false); //this keeps the processor from constantly cycling on PC, does nothing in HTML
 
             if(click==null) {
                 LastSlideMode = SlideMode = constants.getMode();
@@ -124,6 +124,7 @@ public class SubViewer {
         }
 
         coroutineRunner.run(); //note that in pc this will only run when responding to input
+
 
         //clear the last rendered image
         Gdx.gl.glClearColor(.5f, .5f, .5f, 1);

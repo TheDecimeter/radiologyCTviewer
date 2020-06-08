@@ -55,7 +55,25 @@ public class MainViewer extends ApplicationAdapter {
 	@Override
 	public void render () {
 		if(reset) reset();
+		//renderColor(1,0,0);
+		//renderColor(0,1,0);
+		//renderColor(0,0,1);
+
+
         viewer.render();
+	}
+
+	private void renderColor(float r, float g, float b){
+//		Gdx.gl.glClearColor(r,g,b, 1);
+//		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//		Gdx.gl.glFinish();
+////		super.render();
+//		constants.forceDraw();
+//		try {
+//			Thread.sleep(500);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	private void reset(){

@@ -405,6 +405,11 @@ public class HTMLconstants implements Constants {
         nativeFinishedReset();
     }
 
+    @Override
+    public void forceDraw() {
+        //TODO
+    }
+
     private static native boolean optional(boolean b, boolean d)/*-{
             if (typeof b === "undefined" || b==null){
                 return d;
