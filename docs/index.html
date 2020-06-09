@@ -194,7 +194,7 @@
                                                                                     </span><br>
                                                                                     <span id="demExpOther" class="formCheckBox">
                                                                                            <label> Other
-                                                                                                  <input type="checkbox" id="demExp4" name="demExp4" value="Other"onclick="clearChecks('demExp',5,5);isValidOther('demExp4','demExpOtherTxt',false);">
+                                                                                                  <input type="checkbox" id="demExp4" name="demExp4" value="Other" onclick="clearChecks('demExp',5,5);isValidOther('demExp4','demExpOtherTxt',false);">
                                                                                                   <span class="checkmark"></span>
                                                                                            </label>
 
@@ -331,7 +331,7 @@
                                                                                     <div style="line-height:1.2em;">
                                                                                            <b>Which abnormalities are present in this case (check all that apply)?</b><br>
                                                                                     </div>
-                                                                                    <div id="pSmpTrlAbShuffle"><!--shuffle the inputs (leave "Other" and "None" in their proper order at the bottom)-->
+                                                                                    <span id="pSmpTrlAbShuffle"><!--shuffle the inputs (leave "Other" and "None" in their proper order at the bottom)-->
                                                                                            <span class="formCheckBox">
                                                                                                   <label> Lung Nodule(s)
                                                                                                          <input type="checkbox" id="pSmpTrlAb1" name="pSmpTrlAb1" value="LungNodule(s)" onclick="clearChecks('pSmpTrlAb',5,5);isValidOther('pSmpTrlAb4','pSmpTrlAbOtherTxt');">
@@ -353,14 +353,11 @@
                                                                                                   </label>
                                                                                                   <br>
                                                                                            </span>
-                                                                                    </div>
+                                                                                    </span>
                                                                                     <span>
-                                                                                           <span id="pSmpTrlAbOtherUnspecified" class="errorMsg">
-                                                                                                  Please Specify Other Abnormalities <br>
-                                                                                           </span>
                                                                                            <span id="pSmpTrlAbOther" class="formCheckBox">
                                                                                                          <label> Other
-                                                                                                                <input type="checkbox" id="pSmpTrlAb4" name="pSmpTrlAb4" value="Other"onclick="clearChecks('pSmpTrlAb',5,5);isValidOther('pSmpTrlAb4','pSmpTrlAbOtherTxt',false);">
+                                                                                                                <input type="checkbox" id="pSmpTrlAb4" name="pSmpTrlAb4" value="Other" onclick="clearChecks('pSmpTrlAb',5,5);isValidOther('pSmpTrlAb4','pSmpTrlAbOtherTxt',false);">
                                                                                                                 <span class="checkmark"></span>
                                                                                                          </label>
 
