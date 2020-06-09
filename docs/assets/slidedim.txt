@@ -1,0 +1,12 @@
+#configure the dimensions for each slide
+# the format is:
+#    set num (starting at 1, max is 20)
+#    file num (starting at 1, max is 20)
+#    how many slides wide the image grid is
+#    how many slides tall the image grid is
+#    how many slides are in the image grid total
+#    mark clicks in the slide (true or false)
+#    file extension
+1,1,7,6,42,f,.jpg
+3,3,8,8,64,t,.jpg
+4,3,8,8,64,t,.jpg

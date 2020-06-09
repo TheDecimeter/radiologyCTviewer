@@ -1,0 +1,7 @@
+d:assets:0:application/unknown
+b:config.ini:495:application/unknown
+t:slidedim.txt:413:text/plain
+t:shapes.txt:251:text/plain
+d:slides:0:application/unknown
+i:slides/file03.jpg:2175938:image/jpeg
+i:slides/file01.jpg:1489715:image/jpeg

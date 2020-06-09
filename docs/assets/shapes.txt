@@ -1,0 +1,10 @@
+;create shapes to use in the viewer
+; the format is:
+;  name (must be unique)
+;  width
+;  height
+;  depth
+;  weight (only used for ring, but always stick something there)
+;  type (valid shapes: circle, ring, square)
+;  color
+mark,30,30,4,8,t,ring,FFF
