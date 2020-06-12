@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Images-Appearance CT Viewer
+        </title>
+        <link rel="shortcut icon" href="../favicon.ico">
+        <link href="../styles.css" rel="stylesheet" type="text/css">
+        <link href="styles.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <table style="width:100%;"><tr><td class="dispPad"></td><td class="dispMain">
+            <h1>Viewer Appearance</h1>
+            <br><br>
+            <a href="contents.html">Back to Contents</a>
+            <br><br><br><br>
+            First, make sure you have:
+            <ul class="li2">
+                <li><a href="viewerStart.html">A working build of the viewer</a></li>
+                <li>A program that can tile multiple images into one (<a href="https://imagemagick.org/index.php">The one used in the example</a>)</li>
+                <li>A program to edit images (<a href="https://www.gimp.org/">The one used in the example</a>)</li>
+                <li>A text editor you like, preferably with syntax highlighting for JavaScript and PHP (<a href="https://code.visualstudio.com/">The one used in the example</a>)</li>
+                <li>Some source for CT scans in a regular image format</li>
+            </ul>
+            <br><br>
+            (as of June 2020)
+            <br>
+            
+            <br>
+            <h2><b>Convert the slices to a common image format</b></h2>
+            I'm not going into detail on this step because it depends on whatever dicom viewer you have been using for previous experiments.
+            However, there are some extra factors to consider.
+            <br>
+            <ul class="li2">
+                <li>If you intend on using windowing, export the image with its full spectrum (HU level: 0, width 2000).</li>
+                <li>Try to export the image into something lossless like PNG at first.</li>
+            </ul>
+
+            <br><br>
+            <h2><b>Tile your images</b></h2>
+            Again, the exact process will depend on what software you use.
+            <br>
+            <ul class="li2">
+                <li class="li2">Make the final image collage as close to square as possible eg: 
+                    <ul>
+                        <li>7 x 7 if there are between 43 - 49 slices </li>
+                        <li>7 x 8 if there are between 50 - 56 slices </li>
+                        <li>8 x 8 if there are between 57 - 64 slices </li>
+                        <li>etc.</li>
+                        <li>It doesn't have to be perfect, but load time is shortened if we can chunk the whole image
+                             into the GPU and square collages will help with that.</li>
+                    </ul>
+                </li>
+                <li class="li2">If using Imagemagick something like <q>montage -mode concatenate -tile 8x *.jpg out.png</q>.
+                    <ul>
+                        <li>Note that for even slightly thin slices you will have to <a href="https://www.imagemagick.org/script/resources.php">
+                            increase the memory Imagemagick allows itself in <q>policy.xml</q></a>.</li>
+                    </ul>
+                </li>
+                <li class="li2">Again, this might not be the final image, so lossless formats (like PNG) are preferred.</li>
+            </ul>
+
+            <br><br>
+            <h2><b>Final compression</b></h2>
+            Again, the process depends on your image editing program.
+            <ul class="li2">
+               <li>Load the complete collage into an editor</li>
+               <li>Typically each slice in my images are 512 x 512 (so the full 8 x 8 example would be 4096 x 4096)</li>
+               <li>Scale the image to whatever you want, but make sure the final resolution is evenly divisible by the tile resolution
+                   <ul>
+                       <li>Before you scale the image, make sure empty portions of the image are a color similar to your slice's background
+                           <ul>
+                               <li>Imagemagick makes the empty parts white, when you scale the image the smoothing algorithm will blend this
+                                   white into neighboring slices (creating a white border along the bottom of some slices).
+                               </li>
+                           </ul>
+                       </li>
+                       <li>For example, 4096 / 8 = 512 exactly.</li>
+                       <li>If a dimension wasn't evenly divisible (eg 4095 / 8 = 511.875) the viewer will round off a pixel and the image will migrate
+                           slightly as it is scrolled.
+                       </li>
+                   </ul>
+               </li>
+               <li>Export the image. This is hopefully the final product and you will typically want it compressed (JPG).
+                   <ul>
+                       <li>Because these images are low on color you can typically get away with a lot of compression.</li>
+                       <li>If you are using windowing with very narrow widths you will want less compression.</li>
+                   </ul>
+               </li>
+            </ul>
+
+            <br><br>
+            <h2><b>Add your image to the viewer</b></h2>
+            <ul class="li2">
+               <li>Let's replace the simple trial's image with yours</li>
+               <li>Go to the build01 folder where you have your <q>index.html</q></li>
+               <li>Go to the <q>assets</q> folder and change 3 things:
+                   <ol>
+                        <li>Edit <q>assets.txt</q>
+                            <ol>
+                                <li>Find the size of your new image in bytes, let's pretend it was 1,234,756 bytes large.
+                                    <ul>
+                                        <li>Maybe right clicking will tell you, otherwise, search the Internet for how.</li>
+                                    </ul>
+                                </li>
+                                <li>Open <q>assets.txt</q> and find a line that looks like <q>i:slides/file01.jpg:1489715:image/jpeg</q></li>
+                                <li>This line contains the file name, size, and mime type (separated by colons):
+                                    <ul>
+                                        <li>If your image is a .jpg, you only have to change its file size, so the new line is: <q>i:slides/file01.jpg:1234567:image/jpeg</q></li>
+                                        <li>If your image is a .png, the new line is: <q>i:slides/file01.png:1234567:image/png</q></li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>Edit <q>slidedim.txt</q>
+                            <ol>
+                                <li>Open <q>slidedim.txt</q></li>
+                                <li>This file tells the viewer how to parse your image, more at <a href="viewerConfig.html#slideDim">Viewer Configuration</a>.
+                                    <ol>
+                                        <li>The first number is the index for the set of slides (think: a specific trial), no other rows can have this same index. This stays <q>1</q></li>
+                                        <li>The next number is the file number, we used <q>file01</q> in <q>assets.txt</q> so we'll keep this <q>1</q>. Trials can use the same file if
+                                            desired, this decreases download and image processing time (currently the reward <q>trial</q> is at index 4, and uses the same image as trial 3.
+                                            This gives us a separate place to use click states for the fireworks, while leaving the user's clicks untouched).</li>
+                                        <li>The next number is the width, in slides, our image is, let's say this was <q>8</q>, so change this number.</li>
+                                        <li>The next number is the height, in slides, our image is, let's say this was <q>7</q>, so change this number.</li>
+                                        <li>The next number is the total slides, our image is, let's say this was <q>53</q>, so change this number (Note this would mean we would have some
+                                            empty spaces in our image since 7*8 is 56, this is fine though, make sure to enter the actual number of slides <q>53</q>, and NOT total
+                                            possible slices <q>56</q>).</li>
+                                        <li>The next item is a boolean value indicating whether you wish to record clicks on that trial, change this to <q>t</q> and we can now
+                                            see clicks show up on our new image.</li>
+                                        <li>Lastly, we have the file extension, if the image was jpg, leave it as <q>.jpg</q>, if it was png, change it to <q>.png</q>. Case matters.</li>
+                                    </ol>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>Add your actual image
+                            <ol>
+                                <li>Go into the <q>slides</q> folder</li>
+                                <li>Rename or remove <q>file01.jpg</q></li>
+                                <li>Paste in your new image</li>
+                                <li>Name it <q>file01.jpg</q>, case probably matters (even if you are using Windows now, your final server will probably be Linux)</li>
+                                <li>You can have a total of 20 images with this naming scheme</li>
+                            </ol>
+                        </li>
+                   </ol>
+               </li>
+            </ul>
+
+            <br>
+            <h2><b>Optional: The image looks odd / transparent / inverted in the CT viewer.</b></h2>
+            <ul class="li2">
+                <li>Sometimes this happens with jpgs. I don't know where the issue originates from. To fix it:
+                    <ol>
+                        <li>Open one of the original files in your image editor, I used GIMP</li>
+                        <li>Scale that image to whatever dimensions your desired image has</li>
+                        <li>Open your image in the editor</li>
+                        <li>Select all of it (Ctrl + A), and copy it (Ctrl + C)</li>
+                        <li>Paste it into the original image you opened</li>
+                        <li>Make sure it is alligned to the corners</li>
+                        <li>Make sure it is its own layer</li>
+                        <li>Export it.</li>
+                    </ol>
+                </li>
+                <li>This new image should work. Name it the same as before and replace your image in the slides folder.</li>
+                <li>Note that the new image might not have the same file size as the previous one, so <q>assets.txt</q> might
+                    have to get edited again.</li>
+                
+            </ul>
+
+            <br><br>
+            <h2><b>Change the look of the click and highlight</b></h2>
+            <a href="viewerConfig.html#click">This is explained in the config file section</a>
+
+            <br><br>
+            <h2><b>Change the look of the ruler click</b></h2>
+            <a href="viewerConfig.html#shapes">This is explained in the config file section</a>
+
+            <br><br>
+            <h2><b>Change the look of the scroll bar</b></h2>
+            <a href="viewerConfig.html#window">This is explained in the config file section</a>
+
+            <br><br>
+            <h2><b>Change the look of the initial loading bar</b></h2>
+            <ul class="li1">
+                <li class="li2">Don't spend too much effort here. The viewer, and its loading bar, should be hidden while the user
+                    reads consent / instructions, and fills out demographics info. If everything goes correctly, 
+                    the viewer should be finished loading before it has a chance to be seen.</li>
+                <li class="li2">
+                    Basic Changes
+                    <ul>
+                        <li>
+                            In the root of the build folder there is a file called <q>styles.css</q>
+                            <ul>
+                                <li>In this file, there is a section called <q>Loading Bar</q></li>
+                                <li>There are five groups of values
+                                    <ol>
+                                        <li><q>&hellip;outer&hellip;</q> is the outline of the loading bar</li>
+                                        <li><q>&hellip;inner&hellip;</q> is the loading bar itself</li>
+                                        <li><q>&hellip;panel</q> is the entire surrounding panel the loading bar and image are in.</li>
+                                        <li><q>&hellip;panel > &hellip; > img</q> is the format of the image.</li>
+                                        <li><q>waitSpinner</q> is the spinner that appears when the user input blocks while
+                                            the viewer loads as well as when the user's data is submitted.</li>
+                                    </ol>
+                                </li>
+                                <li>Add whatever values / change whatever colors you want here.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            The CT viewer image is specified in <q>html/logo.png</q> You can change this to be whatever you want.
+                        </li>
+                    </ul>
+                </li>
+                <li class="li2">
+                    Advanced Changes (if you're familiar with html/JavaScript)
+                    <ul>
+                        <li>
+                            You can completely overwrite the loading screen by implementing two functions (check <q>scripts/viewerEvents.js</q> for skeleton code):
+                            <ol>
+                                <li><q>window.viewerCustomLoadingBar(panel)</q> is called when the loading bar is first created.
+                                    <ul>
+                                        <li>The parameter <q>panel</q> is the root panel to build everything inside of.</li>
+                                        <li>If you do not create an element here with the id <q>viewer-meter-inner-bar</q> you must create the function mentioned below as well.
+                                            Otherwise, the viewer tries to advance a loading bar which doesn't exist (and crashes the loader, so no ct viewer will appear ever).</li>
+                                    </ul>
+                                </li>
+                                <li><q>window.viewerLoadingBarAdvance(percent)</q> is called when the loading bar advances.
+                                    <ul>
+                                        <li>The parameter <q>percent</q> is a number between 0 and 1 indicating how much data is loaded.</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+
+        </td><td class="dispPad"></td></tr></table>
+    </body>
+
+</html>

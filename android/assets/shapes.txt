@@ -4,6 +4,7 @@
 ;  width
 ;  height
 ;  depth
+;  whether or not to fade the image out as you scroll away from its origin
 ;  weight (only used for ring, but always stick something there)
 ;  type (valid shapes: circle, ring, square)
 ;  color

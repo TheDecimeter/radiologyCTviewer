@@ -33,6 +33,10 @@ public class Controls implements InputProcessor {
     private static int dragDist=0;
     private boolean up, down;
 
+    private static float scrollSensitivity=-4;
+    private float currentScroll=0;
+    private static int maxScroll=1;
+
     private HashMap<Integer,Node> drag=null;
 
     public Controls(SlideManager slides, Config c){
@@ -45,8 +49,11 @@ public class Controls implements InputProcessor {
 
         this.c=c;
         drag=new HashMap<Integer, Node>();
-        if(dragDist==0)
-            dragDist=c.input.dragDist;
+        if(dragDist==0) {
+            dragDist = c.input.dragDist;
+            scrollSensitivity=c.input.scrollSensitivity;
+            maxScroll=c.input.scrollMax;
+        }
     }
 
     public int getCurrentSlide(){
@@ -135,11 +142,28 @@ public class Controls implements InputProcessor {
 
     @Override
     public boolean scrolled(int amount) {
-        
-//        System.out.println("scrolled "+amount);
+
         if(c.input.wheel && SubViewer.getSlideMode()!=SubViewer.none)
-            slides.advanceSlide(amount);
+            slides.advanceSlide(throttle(amount));
         return false;
+    }
+
+    private int throttle(int amount){
+        if(amount==0)
+            return 0;
+        float sign=Math.signum(amount);
+        amount=Math.abs(amount);
+        if(amount>maxScroll)
+            amount=maxScroll;
+        float in=amount*scrollSensitivity*sign;
+
+        currentScroll+=in;
+        if(Math.abs(currentScroll)>=1){
+            int out=(int)currentScroll;
+            currentScroll-=out;
+            return out;
+        }
+        return 0;
     }
 
     private boolean saveClick(){
@@ -213,6 +237,13 @@ public class Controls implements InputProcessor {
     }
 
 
+    //Reset scroll sensitivity
+    public static void setScrollSensitivity(float sensitivity){
+        scrollSensitivity=sensitivity;
+    }
+    public static void setScrollMax(int max){
+        maxScroll=max;
+    }
 
     //Drag methods
     public static void setDragDist(int dragDist){

@@ -116,10 +116,14 @@ public class ClickFollower {
      * @param y The position of the click
      * @param slide The slide on which the click occured
      */
-    public void updateClick(int x, int y, int slide){
+    public boolean updateClick(int x, int y, int slide){
+        if(slide<0||slide>=clicks.size()){
+            P.e("click slide out of range "+slide+", max size "+clicks.size());
+            return false;
+        }
         Relay.inputOccured();
         if(!markClicks || clickLock)
-            return;
+            return false;
 
         int ox=x-c.click.radius;
         int oy=y-c.click.radius;
@@ -130,7 +134,7 @@ public class ClickFollower {
                 if (overlap(ox, oy, l.get(i).sP)) {
                     Relay.clickRemoved(l.get(i).toString());
                     remove(i, l);
-                    return;
+                    return true;
                 }
             }
         }
@@ -138,6 +142,7 @@ public class ClickFollower {
         n.reset(c.click.radius,c.click.radius);
         Relay.clickAdded(n.toString());
         add(slide,n);
+        return false;
     }
 
     /**
@@ -168,23 +173,24 @@ public class ClickFollower {
     }
 
 
-    public void addUIshape(int x, int y, int slide, int shapeIndex){
-        addShape(x,y,slide,shapeIndex,uiShapes);
+    public boolean addUIshape(int x, int y, int slide, int shapeIndex){
+        return addShape(x,y,slide,shapeIndex,uiShapes);
     }
-    public void addImageShape(int x, int y, int slide, int shapeIndex){
-        addShape(x,y,slide,shapeIndex,imageShapes);
+    public boolean addImageShape(int x, int y, int slide, int shapeIndex){
+        return addShape(x,y,slide,shapeIndex,imageShapes);
     }
 
-    private void addShape(int x, int y, int slide, int shapeIndex, ArrayList<ArrayList<ShapeNode>> l){
+    private boolean addShape(int x, int y, int slide, int shapeIndex, ArrayList<ArrayList<ShapeNode>> l){
         if(slide<0||slide>=l.size()){
             P.e("shape index out of range "+slide+", max size "+l.size());
-            return;
+            return false;
         }
         ShapeNode n=new ShapeNode(x,y,slide,shapeIndex);
         int ox=(int)Math.ceil(shapes.get(n.shapeIndex).img(0).getWidth()/2);
         int oy=(int)Math.ceil(shapes.get(n.shapeIndex).img(0).getHeight()/2);
         n.reset(ox, oy);
         l.get(slide).add(n);
+        return true;
     }
 
 

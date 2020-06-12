@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            CT Viewer Start
+        </title>
+        <link rel="shortcut icon" href="../favicon.ico">
+        <link href="../styles.css" rel="stylesheet" type="text/css">
+        <link href="styles.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <table style="width:100%;"><tr><td class="dispPad"></td><td class="dispMain">
+            <h1>Getting Started</h1>
+            <br><br>
+            <a href="contents.html">Back to Contents</a>
+            <br><br><br><br>
+            First, make sure you have:
+            <ul class="li2">
+                <li><a href="https://github.com/TheDecimeter/radiologyCTviewer/releases">The latest release</a></li>
+                <li>A server which can handle PHP (<a href="https://www.php.net/manual/en/features.commandline.webserver.php">The one used in the example</a>)</li>
+                <li>A text editor you like, preferably with syntax highlighting for JavaScript and PHP (<a href="https://code.visualstudio.com/">The one used in the example</a>)</li>
+            </ul>
+            <br><br>
+            (as of June 2020)
+            <br><br>
+            <h2><b>Start the server</b></h2>(ignore if you are using your own server)
+            <ul class="li1">
+                <li><a href="https://www.php.net/manual/en/install.php">PHP's general instruction's for each OS</a> For what we're doing, there's a lot you can skip.</li>
+                <li>Steps I took in <b>Ubuntu Linux</b> 
+                    <ol class="li2">
+                        <li>Install: <q>sudo apt-get install php</q></li>
+                        <li>Verify it installed correctly: <q>php -v</q> should output some version information.</li>
+                        <li>Download and Unzip the CT viewer <a href="https://github.com/TheDecimeter/radiologyCTviewer/releases">release</a> somewhere.</li>
+                        <li>Right click and open a terminal in that new folder's location (where there is a file called <q>index.html</q>)</li>
+                        <li>Start the server with the terminal
+                            <ul>
+                                <li>If you are testing with a browser on the same computer (likely) type: <q>php -S localhost:8000</q></li>
+                                <li>If you are testing with a browser on a different computer type: <q>php -S 0.0.0.0:8000</q></li>
+                            </ul>
+                        </li>
+                        <li>The terminal should now say <q>Development Server Started</q> or something similar</li>
+                        <li>You can press Ctrl+C to close the server and return to the command prompt.</li>
+                    </ol>
+                </li>
+                <li>
+                    Steps I took in <b>Windows 10</b>
+                    <ol class="li2">
+                        <li>Get a built version of PHP: <a href="https://windows.php.net/download#php-7.4">Go to their download page.</a></li>
+                        <li>Choose the zip file (I chose the thread safe download, probably doesn't matter for our purposes)</li>
+                        <li>Make a folder somewhere, we'll name it <q>testFolder</q>. I recommend placing this in the root of the C drive, you'll navigate to it later from the command line.</li>
+                        <li>Place the newly downloaded zip in <q>testFolder</q> and extract it there.</li>
+                        <li>Download the <a href="https://github.com/TheDecimeter/radiologyCTviewer/releases">release</a>.</li>
+                        <li>Place the newly downloaded release zip in <q>testFolder</q> and extract it there.</li>
+                        <li>You should now have a <q>php.exe</q> file and a <q>build01</q> folder together (along with a mess of other files/folders</li>
+                        <li>Open a terminal (you can type <q>cmd</q> into the search bar in your start menu).</li>
+                        <li>Navigate in the terminal to your newly created folder.
+                            <ol>
+                                <li>You will likely want to use <q>cd ../</q> until your prompt says you are in the root of the C drive.</li>
+                                <li>Using <q>dir</q> should now show you the <q>testFolder</q> we created.</li>
+                                <li>Use <q>cd testFolder</q> to enter the folder you created.</li>
+                                <li>Using <q>dir</q> should now show you <q>php.exe</q> as well as <q>build01</q>.</li>
+                            </ol>
+                            <ul>
+                                <li><q>dir</q> shows you a list of the files and folders in your current directory.</li>
+                                <li><q>cd <i>directory name</i></q> will take you to a new folder in your current directory.</li>
+                                <li><q>cd ../</q> will take you to your parent directry (the direction of the slash doesn't matter).</li>
+                            </ul>
+                        </li>
+                        <li>Verify php installed correctly: <q>php.exe -v</q> should output some version information.</li>
+                        <li>Start the server with the terminal
+                            <ul>
+                                <li>If you are testing with a browser on the same computer (likely) type: <q>php.exe -S localhost:8000 -t build01/</q> (direction of slash doesn't matter)</li>
+                                <li>If you are testing with a browser on a different computer type: type: <q>php.exe -S 0.0.0.0:8000 -t build01/</q> (direction of slash doesn't matter) Note that your firewall might request permission.</li>
+                            </ul>
+                        </li>
+                        <li>The terminal should now say <q>Development Server Started</q> or something similar</li>
+                        <li>You can press Ctrl+C to close the server and return to the command prompt.</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <br>
+            <h2><b>Open the Demo Page</b></h2>
+            <ul class="li1">
+                <li class=li2><b>Ubuntu Linux</b>
+                    <ol>
+                        <li>Open a web browser.
+                            <ul>
+                                <li>If you are testing with a browser on the same computer (likely) type: <q>localhost:8000</q> in the URL bar</li>
+                                <li>If you are testing with a browser on a different computer:
+                                    <ol>
+                                        <li>Find the local address of the computer running the server
+                                            <ol>
+                                                <li>Maybe click on the network icon in the task bar.</li>
+                                                <li>Then click <q>Connection Information</q></li>
+                                                <li>It is likely called something like <q>IP Address</q></li>
+                                            </ol>
+                                        </li>
+                                        <li>Pretend the address you found was <q>192.168.0.5</q>, you would type <q>192.168.0.5:8000</q> in the other computer's browser's URL bar.</li>
+                                    </ol>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>You should see a white page with blue text saying <q>Go to Viewer</q> If you see a <q>Resource not found</q> or something similar, you probably opened the server in the wrong location.</li>
+                    </ol>
+                </li>
+                <li class=li2><b>Windows 10</b>
+                    <ol>
+                        <li>Open the page in a browser
+                            <ul>
+                                <li>If you are testing with a browser on the same computer (likely) type: <q>localhost:8000</q> in the URL bar</li>
+                                <li>If you are testing with a browser on a different computer:
+                                    <ol>
+                                        <li>Find the local address of the computer running the server
+                                            <ol>
+                                                <li>Click on the network icon in the task bar.</li>
+                                                <li>Then click <q>Properties</q> on your connected network.</li>
+                                                <li>Scroll down and find: <q>IPv4 Address</q> under <q>Properties</q>.</li>
+                                            </ol>
+                                        </li>
+                                        <li>Pretend the address you found was <q>192.168.0.5</q>, you would type <q>192.168.0.5:8000</q> in the other computer's browser's URL bar.</li>
+                                    </ol>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>You should see a white page with blue text saying <q>Go to Viewer</q>. If you see a <q>Resource not found</q> or something similar, you probably opened the server with the wrong path, or put the build folder in the wrong spot.</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <br>
+            <h2><b>Check the Demo Page</b></h2>
+            <ol class=li2>
+                <li>Ensure each time the page is refreshed the contents of <q>use.txt</q> alternates between 0 and 1</li>
+                <li>Ensure that each time a successful trial is completed a new data file is added to the <q>data</q> folder
+                    <ul>
+                        <li>Note that on Windows, this might not happen by default. The system time in the file name is separated by colons which aren't
+                            allowed in Windows.
+                            <ol>
+                                <li>First, make sure you alway have a backup of the build files, we'll use those as a starting point a lot.</li>
+                                <li>Open <q>process.php</q> in your favorite text editor for these sorts of things.</li>
+                                <li>If the text file appears as a single line, find a new text editor (the file uses unix line endings).</li>
+                                <li>Find the function <q>getName</q></li>
+                                <li>Change the part that says <q>date("H:i:s)</q> to <q>date("H-i-s)</q>.</li>
+                            </ol>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <br><br><br>
+            
+            The reason we are using this temporary server is because you will be making/testing many changes locally. 
+            It would take too long to upload small changes to your remote server every time.
+
+        </td><td class="dispPad"></td></tr></table>
+    </body>
+
+</html>

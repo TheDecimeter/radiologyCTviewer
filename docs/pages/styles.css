@@ -1,0 +1,41 @@
+.li1{
+    line-height: 2em;
+}
+
+.li2{
+    margin-bottom: 1em;
+    line-height: 1.5em;
+}
+
+body {
+    color: #EEE;
+}
+
+@media only screen and (min-width: 1280px) {
+    .dispMain {width: 100%;}
+    .dispPad {width:0%;}
+}
+@media only screen and (min-width: 1281px) {
+    .dispMain {width: 70%;}
+    .dispPad {width:15%;}
+}
+
+.disclaimNeutral{
+    border-radius: 1em;
+    padding: 1em;    
+}
+.disclaimHighlight{
+    border-radius: 2em;
+    padding: 1em;    
+    background-color: white;
+    color: black;
+}
+.disclaimHighlight a{
+    color: #966;
+}
+
+c {
+    color:#DDE;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+}

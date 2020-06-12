@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        CT Viewer Config
+    </title>
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link href="../styles.css" rel="stylesheet" type="text/css">
+    <link href="styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <table style="width:100%;"><tr><td class="dispPad"></td><td class="dispMain">
+        <h1>Configuring the Viewer</h1>
+        <br><br>
+        <a href="contents.html">Back to Contents</a>
+        <br><br><br><br>
+        First, make sure you have:
+        <ul class="li2">
+            <li><a href="viewerStart.html">A working build of the viewer</a></li>
+            <li>A text editor you like, preferably with syntax highlighting for JavaScript and PHP (<a href="https://code.visualstudio.com/">The one used in the example</a>)</li>
+        </ul>
+        <br><br>
+        (as of June 2020)
+        <br><br>
+        <h2><b>General Formatting</b></h2>
+        <ul class="li1">
+            <li class="li2"> The config files are found in the <q>assets</q> folder.</li>
+            <li class="li2"> Value Formats
+                <ul>
+                    <li>Numbers in config.ini and shapes.txt:
+                        <ul>
+                            <li>Coordinates:
+                                <ul>
+                                    <li>These are normally relative to the <q>width</q> specified in the <q>window</q> section.</li>
+                                    <li>So if the true viewer width = <q>window width</q>, all values will be their exact value as stated.</li>
+                                    <li>Normally the viewer will be set to scale to the screen size, the values in the config will scale with it</li>
+                                    <li>Even if the values scale, any coordinates going into or out of the viewer are relative to the
+                                        <q>width</q> and <q>height</q> specified in the <q>window</q> section.
+                                    </li>
+                                    <li>there are a few exceptions to this rule mentioned below.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                Times:
+                                <ul>
+                                    <li>These can be specified in milliseconds or seconds</li>
+                                    <li>If the number is greater than 5, the viewer assumes milliseconds, otherwise, it assumes seconds.</li>
+                                </ul>
+                            </li>
+                            <li>Special:
+                                <ul>
+                                    <li>the value at: <q>debug</q> <q>fakeTextureMax</q> is a pixel count which is never scaled</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Booleans:
+                        <ul>
+                            <li>Simple flags of <q>true</q> and <q>false</q> or <q>t</q> and <q>f</q> should work fine here, your preference</li>
+                        </ul>
+                    </li>
+                    <li>Colors:
+                        <ul>
+                            <li>These are specified in RGB or RGBA hex values with 1 or 2 digits of percision</li>
+                            <li>If you need 2 digits of percision, color can be 6 or 8 digits long, RRGGBB, or RRGGBBAA</li>
+                            <li>If you only need 1 digit of percision, color can be 3 or 4 digits long, RGB, or RGBA</li>
+                            <li><q>FFF</q>, <q>FFFF</q>, <q>FFFFFF</q>, and <q>FFFFFFFF</q> are all the same color (fully opaque)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="li2"> Drawing Order (from bottom to top)
+                <ul>
+                    <li> <q>image</q> (Effected by Shaders)
+                        <ol>
+                            <li>image slice</li>
+                            <li>shape defined in <q>shapes.txt</q> and invoked with <a href="viewerControl.html#viewerAddShapeToImage"><c>viewerAddShapeToImage</c></a></li>
+                        </ol>
+                    </li>
+                    <li> <q>UI</q> (NOT effected by Shaders)
+                        <ol start="3">
+                            <li>shape defined in <q>shapes.txt</q> and invoked with <a href="viewerControl.html#viewerAddShapeToUI"><c>viewerAddShapeToUI</c></a></li>
+                            <li>clicks</li>
+                            <li>highlights</li>
+                        </ol>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+
+        <br><br>
+        <h2><b>config.ini</b></h2>
+        <ul class="li1">
+            <li class="li2"> The <q>config.ini</q> file is found in the <q>assets</q> folder.</li>
+            <li class="li2"> Value Formats
+                <ul>
+                    <li>global:
+                        <ul>
+                            <li><q>fakeDensity</q>: One of three ways to specify viewer dimensions. If this is true, the viewer will be scaled as if
+                                it were displayed on a 160dpi screen. Use this to specify a fixed physical size (like inches) for the viewer.
+                                <ul>
+                                    <li>eg: if a dimension is 800px, the viewer will be 5 inches (<i>inches</i> &times; 160 = <i>pixels</i>)</li>
+                                    <li>This can not be used if you specify a custom width function in JavaScript.</li>
+                                </ul>
+                            </li>
+                            <li><q>overscan</q>: Like an old TV, specify how much of the image to crop off on each edge</li>
+                            <li><q>downscaleTexture</q>: Not Recommended. If for some reason you do not want your slides to be chopped up into tinyer images on graphics
+                                cards which can't support the image size you provided.
+                                <ul>
+                                    <li>This is a tiny bit faster than dividing up an image, but gerally produces unusable results.</li>
+                                    <li>If this is false, and the individual slice size is too large for the GPU, the viewer will first
+                                        give every slice its own texture, and then downscale each one anyway.
+                                    </li>
+                                    <li>You can call viewerGetTextureInfo() to see what all the viewer had to do to the image to get it to fit.</li>
+                                </ul>
+                            </li>
+                            <li><q>yield</q>: The milliseconds the viewer can spend processing images before returning control to the browser. 
+                                This is not an exact guarentee. The viewer processes an entire slide, and only checks <q>yield</q> time between
+                                each task. It is therefore almost guarenteed that the viewer will work longer than specified
+                                here. Firefox by default gives a script 10 seconds to yield control before telling the user it is slow.
+                                This is also the interval at which <a href="viewerEvents.html#viewerListenerProcessing"><c>window.viewerListenerProcessing</c></a> events are fired. The larger this value
+                                the faster the viewer will finish its work, but the progress updates will be less frequent. This only matters on
+                                older computers / mobile devices.
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="window">window:
+                        <ul>
+                            <li><q>height</q>: The viewer height, if using <q>fakeDensity</q> or specifying a custom width with 
+                                <a href="viewerEvents.html#viewerStatsWidth"><c>window.viewerStatsWidth()</c></a>
+                                then this value won't represent the true viewer height, however, it is still used to specify the aspect ratio. All coordinates
+                                provided to and received from the viewer will have their y value expressed in relation to this value.</li>
+                            <li><q>width</q>: Same as <q>height</q> above.</li>
+                            <li><q>barwidth</q>: The scroll bar width (thickness).</li>
+                            <li><q>barBorder</q>: How much thicker the outside of the scroll bar is compared to <q>barWidth</q></li>
+                            <li><q>barColor</q>: The color of the moving part of the scroll bar </li>
+                            <li><q>borderColor</q>: The color of the outer part of the scroll bar</li>
+                        </ul>
+                    </li>
+                    <li id="click">click:
+                        <ul>
+                            <li><q>radius</q>: The radius of the ring marking user clicks</li>
+                            <li><q>thickness</q>: The thickness of the ring marking user clicks, for a full circle, make <q>thickness</q> >= <q>radius</q></li>
+                            <li><q>depth</q>: How many slides in each direction a click or highlight shows (<q>depth</q> of 0 only shows on the slide clicked)</li>
+                            <li><q>color</q>: The color of the click marker</li>
+                            <li><q>highlightRadius</q>: The radius of the ring marking highlights clicks</li>
+                            <li><q>highlightThickness</q>: The thickness of the ring marking highlights</li>
+                            <li><q>highlightColor</q>: The color of the highlight</li>
+                            <li id="overwriteLastClick"><q>overwriteLastClick</q>: refers to <a href="viewerControl.html#viewerGetLastClick"><c>viewerGetLastClick()</c></a>, not click logging.
+                                <ul>
+                                    <li>if true, <a href="viewerControl.html#viewerGetLastClick"><c>viewerGetLastClick()</c></a> will always return the last click.</li>
+                                    <li>if false, <a href="viewerControl.html#viewerGetLastClick"><c>viewerGetLastClick()</c></a> will return the first click after 
+                                        <a href="viewerControl.html#viewerResetLastClick"><c>viewerResetLastClick()</c></a>, any clicks after this click will be discarded.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>record:
+                        <ul>
+                            <li><q>logScrolling</q>: whether or not scroll logs are kept.</li>
+                        </ul>
+                    </li>
+                    <li>controls:
+                        <ul>
+                            <li><q>wheel</q>: whether or not the scroll wheel is used to move through the image</li>
+                            <li id="scrollLimit"><q>scrollLimit</q>: the max scroll magnitude per scroll. 
+                                <ul>
+                                    <li>Some systems (typically with trackpads) give enormous values per scroll.
+                                        this caps them. Most systems don't have a magnitude greater than 1.</li>
+                                    <li>Custom client scroll limits can be set with <a href="viewerControl.html#viewerSetScrollLimit"><c>viewerSetScrollLimit</c></a></li>
+                                </ul>
+                            </li>
+                            <li id="scrollSensitivity"><q>scrollSensitivity</q>: how sensitive each scroll is. A value of 1 will not augment the scroll value provided by the OS.
+                                <ul>
+                                    <li>because slides have to progress in whole incriments, a fractional sensitivity
+                                        will be stored until they make a whole value.</li>
+                                    <li>eg a value of 0.2 means the scroll wheel will <q>click</q> 4 times with no effect, then on the 5<sup>th</sup> it will advance the slide.</li>
+                                    <li>a negative scroll value will invert the scroll wheel direction.</li>
+                                    <li>Custom client scroll sensitivity can be set with <a href="viewerControl.html#viewerSetScrollSensitivity"><c>viewerSetScrollSensitivity</c></a></li>
+                                </ul>
+                            </li>
+                            <li><q>arrows</q>: whether or not the arrow keys are used to move through the image</li>
+                            <li><q>wasd</q>: whether or not W and S are used to move through the image </li>
+                            <li><q>holdTime</q>: how long to hold a key for (in seconds) before it moves to the next slide.</li>
+                            <li><q>drag</q>: whether or not the image can be dragged with the mouse or touch screen to scroll through it.</li>
+                            <li><q>dragDist</q>: how far the image is drug before it is scrolled, note that this scales with the image by default, and is therefore
+                                not always the same physical distance.</li>
+                        </ul>
+                    </li>
+                    <li>debug:
+                        <ul>
+                            <li><q>quickKeys</q>: whether or not to allow some keyboard keys to perform debugging actions,
+                                Basically, 'M' will cycle through images</li>
+                            <li><q>fakeGPU</q>: whether or not to fake the texture size below</li>
+                            <li><q>fakeTextureMax</q>: simulate a maximum texture size on a GPU (to force dividing up the image/scaling it)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <br><br>
+        <h2 id="slideDim"><b>slideDim.txt</b></h2>
+        <ul class="li1">
+            <li class="li2"> The <q>slideDim.txt</q> file is found in the <q>assets</q> folder.</li>
+            <li class="li2"> Meanings of each value (eg <q>4,3,8,8,64,t,.jpg</q>), in order:
+                <ol>
+                    <li><q>4</q> - The index for the set of slides (think: a specific trial), no other rows can have this same index. This can be between 1-20 (inclusive).</li>
+                    <li><q>3</q> - The file number, for example, for <q>file01</q>, this would be <q>1</q>. This can be between 1-20 (inclusive).</li>
+                    <li><q>8</q> - The width, in slides.</li>
+                    <li><q>8</q> - The height, in slides.</li>
+                    <li><q>64</q> - The total number of slides NOT <q>length</q> &times; <q>width</q> (I realize in all of my examples these are the same number).</li>
+                    <li><q>t</q> - A boolean value indicating whether you wish to record clicks on that trial (<q>t</q> or <q>f</q> are fine)</li>
+                    <li><q>.jpg</q> - The file extension, (eg .jpg or .png) Case matters</li>
+                </ol>
+            </li>
+            <li class="li2"> Important Considerations:
+                <ul>
+                    <li>Every line flags an important image. Remove any lines for images you aren't using. Otherwise, the program will realize it didn't get an image
+                        it considered important, and signal a failure to load.
+                    </li>
+                    <li>
+                        Reuse images wherever possible rather than copying in a new image. The images are never modified, clicks and windowing are applied at render time,
+                        so multiple trials can use the same image. For example, the reward page is indexed at <q>4</q> but reuses image <q>3</q>. This might also be important
+                        if you are faking tumors with shapes. Reusing images decreases load and processing time.
+                    </li>
+                    <li>
+                        No two lines should have the same index (first) number. That's silly.
+                    </li>
+                    <li>
+                        Indices do not have to be in order, you can use only 1 and 20 if you are modifying a previous experiment (the demo only uses 1, 3, and 4).
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <br><br>
+        <h2 id="shapes"><b>shapes.txt</b></h2>
+        <ul class="li1">
+            <li class="li2"> The <q>shapes.txt</q> file is found in the <q>assets</q> folder.</li>
+            <li class="li2"> Meanings of each value (eg <q>mark,30,30,4,8,t,ring,FFF</q>), in order:
+                <ol>
+                    <li><q>mark</q> - The name of the shape to use when it is invoked with <a href="viewerControl.html#viewerAddShapeToImage"><c>viewerAddShapeToImage</c></a>
+                         and <a href="viewerControl.html#viewerAddShapeToUI"><c>viewerAddShapeToUI</c></a></li>
+                    <li><q>30</q> - The height of the shape.</li>
+                    <li><q>30</q> - The width, of the shape, height and width should be the same unless the shape is a <q>square</q>.</li>
+                    <li><q>4</q> - The depth of the shape (how many slices in front and behind the image to show)</li>
+                    <li><q>8</q> - The line thickness of the shape (only matters if the shape is a <q>ring</q>).</li>
+                    <li><q>t</q> - A boolean value indicating whether or not the image fades as it scrolls further from the origin point (<q>t</q> or <q>f</q> are fine)</li>
+                    <li><q>ring</q> - The shape of the &hellip; umm,&hellip; shape. This can be <q>ring</q>, <q>circle</q>, <q>square</q>.</li>
+                    <li><q>FFF</q> - The color of the shape</li>
+                </ol>
+            </li>
+            <li class="li2"> Important Considerations:
+                <ol>
+                    <li><q>square</q> only referrs to the angles, it's actually a rectangle.</li>
+                    <li>but <q>circle</q> and <q>ring</q> can not be ellipsis at the moment.</li>
+                </ol>
+            </li>
+        </ul>
+
+    </td><td class="dispPad"></td></tr></table>
+</body>
+
+</html>

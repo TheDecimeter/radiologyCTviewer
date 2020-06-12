@@ -67,10 +67,10 @@ public class HTMLconstants implements Constants {
     public static void addViewMessage(int slideSet, String msg){
         Relay.addViewMessage(slideSet-1,msg);
     }
-    public static void addClick(int slideSet, int x, int y, int slide){
-        if(!validSlide(slide))return;
+    public static boolean addClick(int slideSet, int x, int y, int slide){
+        if(!validSlide(slide))return false;
         float scale=1/SubViewer.getConfig().global.scale;
-        Relay.addClick(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
+        return Relay.addClick(slideSet-1,(int)(x*scale),(int)(y*scale),slide-1);
     }
     public static void addInputMessage(int slideSet, String msg){
         Relay.addInputMessage(slideSet-1,msg);
@@ -211,6 +211,12 @@ public class HTMLconstants implements Constants {
     }
     public static void setDragDistance(int distance){
         Controls.setDragDist(distance);
+    }
+    public static void setScrollMax(int max){
+        Controls.setScrollMax(max);
+    }
+    public static void setScrollSensitivity(float sensitivity){
+        Controls.setScrollSensitivity(sensitivity);
     }
     public static String getLastClick(){
         return Controls.lastClick.toString();
@@ -533,6 +539,8 @@ public class HTMLconstants implements Constants {
        $wnd.viewerGetTextureInfo = $entry(@com.radiogramviewer.client.HTMLconstants::getTextureInfoPacket());
 
        $wnd.viewerSetDragDistance = $entry(@com.radiogramviewer.client.HTMLconstants::setDragDistance(I));
+       $wnd.viewerSetScrollLimit = $entry(@com.radiogramviewer.client.HTMLconstants::setScrollMax(I));
+       $wnd.viewerSetScrollSensitivity = $entry(@com.radiogramviewer.client.HTMLconstants::setScrollSensitivity(F));
        $wnd.viewerPipeInput = $entry(@com.radiogramviewer.client.HTMLconstants::pipeInput(II));
        $wnd.viewerScrollLock = $entry(@com.radiogramviewer.client.HTMLconstants::scrollLock(Z));
        $wnd.viewerClickLock = $entry(@com.radiogramviewer.client.HTMLconstants::clickLock(Z));

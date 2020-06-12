@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
        <head>
-              <title>ct-viewer</title>
+              <title>ct viewer</title>
     	      <link rel="shortcut icon" href="favicon.ico">
               <meta name="robots" content="noindex">
               <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -57,7 +57,9 @@
 
                                                                       <!--CONSENT PAGE -->
                                                                       <div id="pConsent"    style="display:block;" class="formPage">
-                                                                             <br>
+                                                                             <br><br>
+                                                                             <!--<b>To use this viewer in your experiments, <a href="pages/contents.html">view the documentation</a>.</b>-->
+                                                                             <br><br>
                                                                              This could be a consent page.
                                                                              <br>
                                                                              <h3>BACKGROUND</h3>
@@ -125,8 +127,18 @@
                                                                       
                                                                              <b>Please keep the window open</b><br><br>Submitting Data
                                                                              <br><br>
-                                                                             Well, not really, github doesn't allow serverside code, so for
-                                                                             this demo, you can simulate success or failure.<br><br>
+                                                                             Well, not really, github doesn't allow server side code, so for
+                                                                             this demo, you can simulate success or failure.
+                                                                             <br><br>
+                                                                             If you want to see your data, I recommend simulating failure 3 times. This will take you to a page which provides the
+                                                                             users with their data and an email address to send it to. The data in the text box (that you can see) is only a
+                                                                             minimal portion of the data, if you click the link to load all of the data into your email client, you will
+                                                                             get all of the data (even scroll data).
+                                                                             Be aware that this is formated in JSON, which is less human readable than the php formatting you would do
+                                                                             in an actual experiment.
+                                                                             <br>
+                                                                             After viewing your data, simulate success to view the debriefing.
+                                                                             <br><br>
                                                                              <button onclick="fakeSuccess();" type="button">Simulate Success</button><br>
                                                                              <button onclick="fakeFail();" type="button">Sumulate Failure</button>
                                                                              <table><tr><td style="width:40%;"></td><td>
@@ -199,7 +211,9 @@
                                                                                            </label>
 
                                                                                            <input type="text" id="demExpOtherTxt" name="demExpOtherTxt" 
-                                                                                                  oninput="if(updateCheckOther(this,'demExp4'))clearChecks('demExp',5,5);isValidOther('demExp4','demExpOtherTxt');">
+                                                                                                  oninput="if(updateCheckOther(this,'demExp4'))clearChecks('demExp',5,5);isValidOther('demExp4','demExpOtherTxt');"
+                                                                                                  onfocus="useWASD=false;"
+                                                                                                  onblur="useWASD=true;">
                                                                                     </span><br>
                                                                                     <span class="formCheckBox">
                                                                                            <label> None
@@ -451,7 +465,9 @@
 
                                                                       <!--SUBMISSION SUCCESS PAGE with minor debrief-->
                                                                       <div id="pSuccess"    class="formPage">
-                                                                             <br>
+                                                                             <br><br>
+                                                                             <!--<b>To use this viewer in your experiments, <a href="pages/contents.html">view the documentation</a>.</b>-->
+                                                                             <br><br>
                                                                              <h2>Success</h2>
                                                                              Thankyou for participating.
                                                                              <br>
@@ -520,8 +536,7 @@
               
               function enterTrial(){
                      let t=trials[trialIndex];
-                     goToPageWithViewer(t[0],t[1],0);
-                     trialStartTime=viewerGetUpTime();
+                     goToPageWithViewer(t[0],t[1],0, function(){trialStartTime=viewerGetUpTime();});
                      advanceCounter();
               }
               function exitTrial(){

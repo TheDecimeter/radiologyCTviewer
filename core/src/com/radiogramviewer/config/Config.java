@@ -36,7 +36,7 @@ public class Config {
         boolean fakeDensity=getBool("fakeDensity",vp);
         scale=getScale(constants, originalWidth, fakeDensity);
 
-        global=new GlobalClass(fakeDensity,1/scale, debug.gpuMaxTextureSize, getInt("overscan",vp), getBool("downscaleTexture",vp), getInt("yield",vp));
+        global=new GlobalClass(fakeDensity,1/scale, debug.gpuMaxTextureSize, getInt("overscan",vp), getBool("downscaleTexture",vp), getIntTime("yield",vp));
 
         window=new WindowClass(originalWidth,getInt("height",vpWindow),
                 getInt("barWidth",vpWindow),getInt("barBorder",vpWindow)
@@ -52,7 +52,8 @@ public class Config {
                 getBool("overwritelastclick",vp));
 
         vp=getProperties("controls",vals);
-        input=new ControlClass(getBool("wheel",vp),getBool("arrows",vp),getBool("wasd",vp),getFloat("holdTime",vp),getBool("drag",vp),getInt("dragDist",vp));
+        input=new ControlClass(getBool("wheel",vp),getBool("arrows",vp),getBool("wasd",vp),getFloatTime("holdTime",vp),getBool("drag",vp),getInt("dragDist",vp),
+                getInt("scrollLimit",vp),getFloat("scrollSensitivity",vp));
 
     }
 
@@ -118,6 +119,18 @@ public class Config {
     private float getFloat(String s, HashMap<String,String> p){
         float r=Float.parseFloat(getProperty(s,p));
         return r;
+    }
+    private float getFloatTime(String s, HashMap<String,String> p){
+        float r=Float.parseFloat(getProperty(s,p));
+        if(r<=5)
+            return r;
+        return r/1000f;
+    }
+    private int getIntTime(String s, HashMap<String,String> p){
+        float r=Float.parseFloat(getProperty(s,p));
+        if(r<=5)
+            return (int)Math.ceil(r*1000);
+        return (int)Math.ceil(r);
     }
     private boolean getBool(String s, HashMap<String,String> p){
         return getBoolean(getProperty(s,p));
@@ -208,15 +221,22 @@ public class Config {
 
     public class ControlClass{
          public final boolean wheel,arrow,wasd,drag;
-         public final float holdTime;
-         public final int dragDist;
-         ControlClass(boolean wheel,boolean arrow,boolean wasd,float holdTime, boolean drag, int dragDist){
+         public final float holdTime, scrollSensitivity;
+         public final int dragDist, scrollMax;
+         ControlClass(boolean wheel,boolean arrow,boolean wasd,float holdTime, boolean drag, int dragDist, int scrollMax, float scrollSensitivity){
             this.wheel=wheel;
             this.arrow=arrow;
             this.wasd=wasd;
             this.holdTime=holdTime;
             this.drag=drag;
             this.dragDist=(int)Math.ceil(dragDist*scale);
+            if(scrollMax>0)
+                this.scrollMax=scrollMax;
+            else
+                this.scrollMax=1;
+            this.scrollSensitivity=scrollSensitivity;
+
+             System.out.println("holdTime "+this.holdTime);
         }
     }
 
@@ -239,6 +259,7 @@ public class Config {
             this.gpuMaxTextureSize=gpuMaxTextureSize;
             this.overscan=(int)Math.ceil(overscan*scale);
             this.yieldMillis=yieldMillis;
+            System.out.println("yield "+yieldMillis);
             this.downscaleTexture=downscaleTexture;
         }
     }
