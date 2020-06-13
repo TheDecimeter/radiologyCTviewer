@@ -54,12 +54,57 @@ public class WindowingShaders {
             "  vec3 HSV = rgb2hsv(color.rgb);\n" +
             "  vec3 finalRGB= hsv2rgb(vec3(HSV.xy,(HSV.z-lo)/(";
 
+
+    private final static String fragmentShader3hsvFull=
+            ";\n" +
+                    "vec3 rgb2hsv(vec3 c)\n" +
+                    "{\n" +
+                    "    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);\n" +
+                    "    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));\n" +
+                    "    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));\n" +
+                    "\n" +
+                    "    float d = q.x - min(q.w, q.y);\n" +
+                    "    float e = 1.0e-10;\n" +
+                    "    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);\n" +
+                    "}\n\n" +
+                    "vec3 hsv2rgb(vec3 c)\n" +
+                    "{\n" +
+                    "    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n" +
+                    "    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n" +
+                    "    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n" +
+                    "}\n\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "  vec4 color = texture2D(u_texture, v_texCoords).rgba;\n" +
+                    "  vec3 HSV = rgb2hsv(color.rgb);\n" +
+                    "  vec3 finalRGB= hsv2rgb(vec3(HSV.xy,(HSV.z * 2.048-lo)/(";
+
     private final static String fragmentShader3gray=
             ";\n" +
-            "void main()\n" +
-            "{\n" +
-            "  vec4 color = texture2D(u_texture, v_texCoords).rgba;\n" +
-            "  vec3 finalRGB = vec3(((color.r-lo)/(";
+                    "void main()\n" +
+                    "{\n" +
+                    "  vec4 color = texture2D(u_texture, v_texCoords).rgba;\n" +
+                    "  vec3 finalRGB = vec3(((color.r-lo)/(";
+
+    private final static String fragmentShader3grayFull=
+            ";\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "  vec4 color = texture2D(u_texture, v_texCoords).rgba;\n" +
+                    "  vec3 finalRGB = vec3(((color.r*2.048-lo)/(";
+
+
+    private final static String fragmentShader3gray16=
+            ";\n" +
+                    "float cbn(vec2 c)\n" +                 //So normally it is advised to render the dicoms where an
+                    "{\n" +                                 // HU of 1000 is white and -1000 is black. So to mimmic that
+                    "    return (c.x*255.0+c.y)*0.128;\n" + // scale the output is multiplied by 0.128 (256/2000).
+                    "}\n\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "  vec4 color = texture2D(u_texture, v_texCoords).rgba;\n" +
+                    "  vec3 finalRGB = vec3(((cbn(color.rg)-lo)/(";
+
 
     private final static String fragmentShader4=
             ")));\n"+
@@ -89,6 +134,16 @@ public class WindowingShaders {
      */
     public static ShaderProgram windowValue(float level, float width){
         return window(level,width,fragmentShader3hsv);
+    }
+
+    public static ShaderProgram windowGray16(float level, float width){
+        return window(level,width,fragmentShader3gray16);
+    }
+    public static ShaderProgram windowGrayFull(float level, float width){
+        return window(level,width,fragmentShader3grayFull);
+    }
+    public static ShaderProgram windowValueFull(float level, float width){
+        return window(level,width,fragmentShader3hsvFull);
     }
 
     private static ShaderProgram window(float level, float width, String guts){
@@ -133,8 +188,10 @@ public class WindowingShaders {
     private static ShaderProgram generateShader (String fragment){
         ShaderProgram r = new ShaderProgram(vertexShader,fragment);
 
-        if(r.isCompiled())
+        if(r.isCompiled()) {
+//            P.d("shader created "+r.getLog());
             return r;
+        }
         P.e("Failed to generate shader with default Vertex and \nFragment:\n"+fragment+"\nLog:\n"+r.getLog());
         return null;
     }

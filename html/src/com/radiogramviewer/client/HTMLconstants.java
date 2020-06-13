@@ -249,6 +249,19 @@ public class HTMLconstants implements Constants {
         return true;
     }
 
+    public static boolean addWindowShaderGray16(String name, float level, float width, boolean log){
+        if(illegalName(name))
+            return false;
+        ShaderProgram p= WindowingShaders.windowGray16(level,width);
+        if(p==null||!p.isCompiled())
+            return false;
+        ShaderLogger.log=optional(log,true);
+        ShaderManager.logger.add(ShaderLogger.highDepth,name,level,width);
+        ShaderManager.addShader(name, p);
+        ShaderLogger.log=true;
+        return true;
+    }
+
     public static boolean addWindowShaderGray(String name, float level, float width, boolean log){
         if(illegalName(name))
             return false;
@@ -257,6 +270,30 @@ public class HTMLconstants implements Constants {
             return false;
         ShaderLogger.log=optional(log,true);
         ShaderManager.logger.add(ShaderLogger.gray,name,level,width);
+        ShaderManager.addShader(name, p);
+        ShaderLogger.log=true;
+        return true;
+    }
+    public static boolean addWindowShaderGrayFull(String name, float level, float width, boolean log){
+        if(illegalName(name))
+            return false;
+        ShaderProgram p= WindowingShaders.windowGrayFull(level,width);
+        if(p==null||!p.isCompiled())
+            return false;
+        ShaderLogger.log=optional(log,true);
+        ShaderManager.logger.add(ShaderLogger.fullGray,name,level,width);
+        ShaderManager.addShader(name, p);
+        ShaderLogger.log=true;
+        return true;
+    }
+    public static boolean addWindowShaderValueFull(String name, float level, float width, boolean log){
+        if(illegalName(name))
+            return false;
+        ShaderProgram p= WindowingShaders.windowValueFull(level,width);
+        if(p==null||!p.isCompiled())
+            return false;
+        ShaderLogger.log=optional(log,true);
+        ShaderManager.logger.add(ShaderLogger.fullValue,name,level,width);
         ShaderManager.addShader(name, p);
         ShaderLogger.log=true;
         return true;
@@ -355,19 +392,28 @@ public class HTMLconstants implements Constants {
                 MainViewer.setToReset();
                 break;
             case Input.Keys.NUM_1:
-                SubViewer.setSlideMode(3,0);
+                if(SubViewer.getSlideMode()==6) {
+                    SubViewer.setSlideMode(5, 0);
+                    ShaderManager.setShader("customPassKey1");
+                }
+                else{
+                    SubViewer.setSlideMode(6, 0);
+                    ShaderManager.setShader("customPassKey2");
+                }
                 break;
             case Input.Keys.NUM_2:
-                ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray(.5f,-1));
+                addWindowShaderGray16("customPassKey1",.5f,1,true);
+                addWindowShaderGrayFull("customPassKey2",.5f,1,true);
                 break;
             case Input.Keys.NUM_3:
                 ShaderManager.setShader("customPassKey1");
                 break;
             case Input.Keys.NUM_4:
-                ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray(.5f,.5f));
+                addWindowShaderGray16("customPassKey1",.3f,.8f,true);
                 break;
             case Input.Keys.NUM_5:
-                ShaderManager.removeShader("customPassKey1");
+                ShaderManager.setShader("off");
+//                ShaderManager.removeShader("customPassKey1");
                 break;
             case Input.Keys.NUM_6:
                 P.d("Shader Log:\n"+ShaderManager.logger.get(",","\n"));
@@ -574,8 +620,11 @@ public class HTMLconstants implements Constants {
        $wnd.viewerAddShapeToUI = $entry(@com.radiogramviewer.client.HTMLconstants::addShapeUI(Ljava/lang/String;IIII));
 
        $wnd.viewerAddCustomShader = $entry(@com.radiogramviewer.client.HTMLconstants::addShader(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z));
+       $wnd.viewerAddWindowingShaderGray16 = $entry(@com.radiogramviewer.client.HTMLconstants::addWindowShaderGray16(Ljava/lang/String;FFZ));
        $wnd.viewerAddWindowingShaderGray = $entry(@com.radiogramviewer.client.HTMLconstants::addWindowShaderGray(Ljava/lang/String;FFZ));
+       $wnd.viewerAddWindowingShaderGrayFull = $entry(@com.radiogramviewer.client.HTMLconstants::addWindowShaderGrayFull(Ljava/lang/String;FFZ));
        $wnd.viewerAddWindowingShaderValue = $entry(@com.radiogramviewer.client.HTMLconstants::addWindowShaderValue(Ljava/lang/String;FFZ));
+       $wnd.viewerAddWindowingShaderValueFull = $entry(@com.radiogramviewer.client.HTMLconstants::addWindowShaderValueFull(Ljava/lang/String;FFZ));
        $wnd.viewerRemoveShader = $entry(@com.radiogramviewer.client.HTMLconstants::removeShader(Ljava/lang/String;Z));
        $wnd.viewerSetShader = $entry(@com.radiogramviewer.client.HTMLconstants::setShader(Ljava/lang/String;Z));
     }-*/;

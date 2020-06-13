@@ -3,7 +3,7 @@ package com.radiogramviewer.logging;
 import java.util.ArrayList;
 
 public class ShaderLogger {
-    public final static char custom='c',gray='g',value='v',remove='r', invoke='i', message='m';
+    public final static char custom='c',gray='g', fullGray='G',value='v', fullValue = 'V',highDepth='h',remove='r', invoke='i', message='m';
 
     public static boolean log=true;
 

@@ -93,8 +93,8 @@ public class PCconstants implements Constants {
     @Override
     public float getScale(int originalWidth) {
         //desired width/original width, for now, always return 1
-        //return 1;
-        return width/originalWidth;
+        return 1;
+        //return width/originalWidth;
     }
 
     @Override
@@ -122,19 +122,28 @@ public class PCconstants implements Constants {
                 MainViewer.setToReset();
                 break;
             case Input.Keys.NUM_1:
-                SubViewer.setSlideMode(3,0);
+                if(SubViewer.getSlideMode()==6) {
+                    SubViewer.setSlideMode(5, 0);
+                    ShaderManager.setShader("customPassKey1");
+                }
+                else{
+                    SubViewer.setSlideMode(6, 0);
+                    ShaderManager.setShader("customPassKey2");
+                }
                 break;
             case Input.Keys.NUM_2:
-                ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray(.5f,-1));
+                ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray16(.5f,1));
+                ShaderManager.addShader("customPassKey2", WindowingShaders.windowGray(.5f,1));
                 break;
             case Input.Keys.NUM_3:
                 ShaderManager.setShader("customPassKey1");
                 break;
             case Input.Keys.NUM_4:
-                ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray(.5f,.5f));
+                ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray16(.3f,.8f));
                 break;
             case Input.Keys.NUM_5:
-                ShaderManager.removeShader("customPassKey1");
+                ShaderManager.setShader("off");
+//                ShaderManager.removeShader("customPassKey1");
                 break;
             case Input.Keys.NUM_6:
                 P.d("Shader Log:\n"+ShaderManager.logger.get(",","\n"));
