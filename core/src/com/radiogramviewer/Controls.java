@@ -6,6 +6,7 @@ import com.radiogramviewer.config.Config;
 import com.radiogramviewer.graphics.SlideManager;
 import com.radiogramviewer.logging.ClickFollower;
 import com.radiogramviewer.logging.ClickNode;
+import com.radiogramviewer.logging.ScrollFollower;
 import com.radiogramviewer.logging.Timing;
 import com.radiogramviewer.relay.Constants;
 import com.radiogramviewer.relay.P;
@@ -131,7 +132,7 @@ public class Controls implements InputProcessor {
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         
         if(c.input.drag && SubViewer.getSlideMode()!=SubViewer.none)
-            slides.advanceSlide(drag(screenX,screenY,pointer));
+            slides.advanceSlide(drag(screenX,screenY,pointer),ScrollFollower.scrollDrag);
         return false;
     }
 
@@ -144,7 +145,7 @@ public class Controls implements InputProcessor {
     public boolean scrolled(int amount) {
 
         if(c.input.wheel && SubViewer.getSlideMode()!=SubViewer.none)
-            slides.advanceSlide(throttle(amount));
+            slides.advanceSlide(throttle(amount), ScrollFollower.scrollWheel);
         return false;
     }
 

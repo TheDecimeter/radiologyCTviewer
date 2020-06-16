@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.SubViewer;
+import com.radiogramviewer.graphics.SlideManager;
 import com.radiogramviewer.graphics.shaders.ShaderManager;
 import com.radiogramviewer.graphics.shaders.WindowingShaders;
 import com.radiogramviewer.logging.ClickNode;
@@ -182,7 +183,7 @@ public class PCconstants implements Constants {
                 break;
 
             case Input.Keys.NUM_9:
-
+                SlideManager.scrollLock=!SlideManager.scrollLock;
                 break;
         }
     }

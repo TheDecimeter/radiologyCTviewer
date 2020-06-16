@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Keep track of scrolling behavior
  */
 public class ScrollFollower {
-    private static final char focus='f',scroll='s', blur='b',message='m';
+    public static final char focus='f',scrollKeyboard='k',scrollDrag='d',scrollWheel='w', blur='b',message='m';
 
     private ArrayList<LogNode> slideTimes;
     private Config c;
@@ -53,11 +53,11 @@ public class ScrollFollower {
      * record an event where a new slide was scrolled to
      * @param slide the slide that is now visible
      */
-    public void logScroll(int slide){
+    public void logScroll(int slide, char source){
         if(!c.record.logScrolling)
             return;
         if(lastIndex!=slide) {//don't record focus being gained on a slide, and a scroll to it
-            recordChange(slide, scroll);
+            recordChange(slide, source);
         }
     }
 

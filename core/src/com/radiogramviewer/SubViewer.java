@@ -161,7 +161,7 @@ public class SubViewer {
             slideClick.drawUIshapes(slideBatch,currentSlide);
             slideClick.drawClicks(slideBatch, currentSlide);    //draw any relevant clicks
             slideClick.drawHighlights(slideBatch, currentSlide);    //draw any highlightedAreas
-            if (totalSlides > 1)
+            if (totalSlides > 1 && !SlideManager.scrollLock)
                 scroll.draw(slideBatch);                    //draw scroll bar, if more than 1 slide
             slideBatch.end();
 

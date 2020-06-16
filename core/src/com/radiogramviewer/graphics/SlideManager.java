@@ -179,9 +179,9 @@ public class SlideManager implements Disposable, Coroutine{
                 int d=(int)(holdTime/holdFor);
                 holdTime-=holdFor*d;
                 if(dir==up)
-                    advanceSlide(-d);
+                    advanceSlide(-d,ScrollFollower.scrollKeyboard);
                 else
-                    advanceSlide(d);
+                    advanceSlide(d,ScrollFollower.scrollKeyboard);
             }
         }
     }
@@ -206,8 +206,8 @@ public class SlideManager implements Disposable, Coroutine{
      * scroll to another slide
      * @param howMuch direction and magnitude of scroll
      */
-    public void advanceSlide(int howMuch){
-        drawer.advanceSlide(howMuch);
+    public void advanceSlide(int howMuch, char scrollType){
+        drawer.advanceSlide(howMuch,scrollType);
     }
 
     /**
@@ -259,7 +259,7 @@ public class SlideManager implements Disposable, Coroutine{
     private interface Drawer  extends Disposable, Coroutine{
         boolean draw(SpriteBatch batch);
         void goToSlide(int slide);
-        void advanceSlide(int howMuch);
+        void advanceSlide(int howMuch, char scrollType);
         int getSlide();
         int getTotal();
     }
@@ -660,7 +660,7 @@ public class SlideManager implements Disposable, Coroutine{
         }
 
         @Override
-        public void advanceSlide(int howFar){
+        public void advanceSlide(int howFar, char scrollType){
             if(scrollLock)
                 return;
 
@@ -686,7 +686,7 @@ public class SlideManager implements Disposable, Coroutine{
             }
             else{
                 Relay.scrollMove(nextIndex);
-                scrollLog.logScroll(getSlide());
+                scrollLog.logScroll(getSlide(),scrollType);
             }
         }
 
@@ -780,7 +780,7 @@ public class SlideManager implements Disposable, Coroutine{
         @Override
         public void goToSlide(int slide) {}
         @Override
-        public void advanceSlide(int howMuch) {}
+        public void advanceSlide(int howMuch, char scrollType) {}
         @Override
         public int getSlide() {return 0;}
         @Override

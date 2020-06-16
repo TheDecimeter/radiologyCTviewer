@@ -199,7 +199,9 @@
                                 <li>Each scroll can be flagged with 1 of 4 events.
                                     <ul>
                                         <li><c>f</c>: the focus event, happens when <c>viewerSetSlide</c> navigates to the image.</li>
-                                        <li><c>s</c>: the scroll event, happens when the user scrolls the image (but not when <c>viewerSetSlide</c> moves to another slide of the image).</li>
+                                        <li><c>w</c>: a scroll event, happens when the user scrolls the image with the mouse scroll wheel (but not when <c>viewerSetSlide</c> moves to another slide of the image).</li>
+                                        <li><c>d</c>: a scroll event, happens when the user scrolls the image by dragging with touch or mouse (but not when <c>viewerSetSlide</c> moves to another slide of the image).</li>
+                                        <li><c>k</c>: a scroll event, happens when the user scrolls the image with arrow keys or WASD (but not when <c>viewerSetSlide</c> moves to another slide of the image).</li>
                                         <li><c>b</c>: the blur event, happens when <c>viewerSetSlide</c> navigates away from the image.</li>
                                         <li><c>m</c>: the message event, you inject a message into the scroll log with <c>viewerLogScrollMessage</c>.</li>
                                     </ul>
