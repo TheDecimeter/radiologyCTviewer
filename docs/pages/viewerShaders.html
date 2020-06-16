@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        CT Viewer Windowing Shaders
+    </title>
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link href="../styles.css" rel="stylesheet" type="text/css">
+    <link href="styles.css" rel="stylesheet" type="text/css">
+    <script src="../scripts/common.js"></script>
+    <script>
+            function H(x){setTimeout(function() {$(x).className="disclaimHighlight";}, 600);}
+        </script>
+</head>
+<body>
+<table style="width:100%;"><tr><td class="dispPad"></td><td class="dispMain">
+    <h1>Viewer Windowing and Shaders</h1>
+    <br><br>
+    <a href="contents.html">Back to Contents</a>
+    <br><br><br><br>
+    First, make sure you have:
+    <ul class="li2">
+        <li><a href="viewerStart.html">A working build of the viewer</a></li>
+        <li>A text editor you like, preferably with syntax highlighting for JavaScript and PHP (<a href="https://code.visualstudio.com/">The one used in the example</a>)</li>
+    </ul>
+    <br><br>
+    (as of June 2020)
+
+    <br><br>
+    <h2 id="control"><b>Common Shader Control</b></h2>
+    <ul class="li1">
+        <li class="li2" id="controlResetting">Logging
+            <ul>
+                <li id="viewerResetShaderLog"><c>viewerResetShaderLog()</c>: Clear the shader log but not the shaders themselves. Shaders can be removed with <c>viewerRemoveShader(name)</c></li>
+                <li id="viewerGetShaderLog"><c>viewerGetShaderLog( separater1, separater2 )</c>: Get a string containing all of the shader changes for the entire viewer (shaders are not
+                    constrained to a particular image). The components of every shader change are separated by <c>separater1</c>, and every shader change
+                    is separated by <c>separater2</c>.
+                    <ul>
+                        <li>Every shader change will start with a flag indicating the change type</li>
+                        <li>There are 6 main shader change types
+                            <ul>
+                                <li><c>i</c>: Invoke - this message will have 2 extra components, the name of the shader invoked (might be <c>off</c>, of shaders are turned off),
+                                    and the time that shader was invoked.</li>
+                                <li><c>r</c>: Remove - this message will have 2 extra components, the name of the shader removed, and the time that it was removed.</li>
+                                <li><c>m</c>: Message - this message will have 2 extra components, the message itself, and the time it was logged.</li>
+                                <li><c>g</c>: Gray Window Creation - this message will have 4 extra components, the name of the newly created shader, the level, width,
+                                    and time it was created.</li>
+                                <li><c>v</c>: Value Window Creation - this message will have 4 extra components, the name of the newly created shader, the level, width,
+                                    and time it was created.</li>
+                                <li><c>c</c>: Custom Shader Creation - this message will have 4 extra components, the name of the newly created shader, the vertex shader,
+                                    fragment shader, and time it was created.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            There are other advanced shader change types (which almost no one will enounter)
+                            <ul>
+                                <li><c>G</c>: Full 12 bit (scaled to 8 bit) gray window shader creation</li>
+                                <li><c>V</c>: Full 12 bit (scaled to 8 bit) value window shader creation</li>
+                                <li><c>h</c>: High 16 bit (unscaled) gray window shader creation</li>
+                            </ul>
+                            <br><br>
+                        </li>
+                        <li>Logging Tips:
+                            <ul>
+                                <li>Creation of custom shaders log the entire shader code, it is recommended to not log these events, and log a message stating the shader's creation instead.
+                                    This will require less data to be passed back to the server and make your logs cleaner.
+                                </li>
+                                <li>Custom shaders are made of code with contain commas, semi-colons, and new lines. Because these would be common choices for separators, you will have
+                                    to become more creative. Remember that separators can be many characters long: <c>viewerGetShaderLog('2222222','5555555555')</c> is perfectly legal.
+                                    Not the most legable, but if you're autoparsing and need to return custom shaders in your log, you probably already gave up on legablity.
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <ul>
+        <li class="li2" id="windowing">Shader Creation
+            <ul>
+                <li>Notes:
+                    <ul>
+                        <li>The following functions all have the optional parameter <c>log</c>, if this is false, the change will not be logged, otherwise
+                            shader changes are logged by default.</li>
+                        <li>If you create an image windowed from -1000HU to 1000HU as recommended, any window with a high value over 1000 will not be <q>accurate</q>
+                            because values > 1000 are now = 1000. Normally this missing data will go unnoticed, but you should be aware of this.</li>
+                        <li>If a shader is added with the same <c>name</c> as a previous shader, the previous shader is overwritten. If that shader was currently
+                            active, the new shader will become active.<br><br><br></li>
+                    </ul>
+                </li>
+                <li>Custom Shader Creation:
+                    <ul>
+                        <li>Custom shaders are written in the WebGL varient of <a href="https://en.wikipedia.org/wiki/OpenGL_Shading_Language">glsl</a></li>
+                        <li>When referring to the pixel components in glsl, the values range from 0 to 1, not 0 to 255</li>
+                        <ul>
+                        <li id="viewerAddCustomShader"><c>viewerAddCustomShader( name, vertexShader, fragmentShader, <i>optional</i> log )</c>: Add a shader named <c>name</c> with the shader components defined
+                            as strings. You can set the <c>vertexShader</c> to <q>d</q> if you want to use a simple default vertex shader. However you always have to
+                            specify the <c>fragmentShader</c>. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                    </ul></ul>
+                    <br><br>
+                </li>
+                <li>8 bit <q>Zeroed</q> Window Shader Creation (Recommended for CT images):
+                    <ul>
+                        <li><b>It is <u>strongly</u> recommended that, for windowing purposes, you use only the default shaders.</b></li>
+                        <li>These shaders expect source images rendered at 8 bits per color with level at 0HU and width at 2000HU</li>
+                        <li>This seems to be common in CT viewers. Applying windows with the following functions appear to match
+                            the output of Microdicom (the viewer I used to check my output against)</li>
+                        <li>If you don't know your bits per color, but are outputing dicoms to png or jpg, it's safe to assume they are 8 bit.</li>
+                    <ul>
+                    <li id="viewerAddWindowingShaderGray"><c>viewerAddWindowingShaderGray( name, level, width, <i>optional</i> log )</c>: Create a windowing shader named <c>name</c> with the specified
+                        window <c>level</c> and <c>width</c>. This creates a grayscale shader which expects every pixel to have
+                        red = green = blue. If this is not the case, use value shading below (obviously you don't have to check every pixel, it won't break anything if this is
+                        off a little, CT images are grayscale).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                    <li id="viewerAddWindowingShaderValue"><c>viewerAddWindowingShaderValue( name, level, width, <i>optional</i> log )</c>: Create a windowing shader named <c>name</c> with the specified
+                        window <c>level</c> and <c>width</c>. This converts the pixel values to HSV, and only windows the <c>Value</c> component.
+                        This is better for non grayscale images.<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                    </ul></ul>
+                </li>
+
+                <li>8 bit Full Depth Window Width Shader Creation:
+                    <ul>
+                        <li>These shaders expect source images rendered with level at 1048HU and width at 4096HU (full 12 bit range)</li>
+                        <li>Dicoms tend to store data in 12 or 16 bits. This shader works with that range, but reduces
+                            the depth to 8 bits (so data is lost, but these images still work like regular images).</li>
+                        <li>Normally human bodies don't need to show any variety above 1000HU so it is generally advised
+                            to prepare your source images to work with the default shaders above.</li>
+                        <li>Because the usual contrast is roughly halved, the pixel values are expanded in these shaders to match
+                            the look of the default shader.</li>
+                        <li>If you don't know your bits per color, but are outputing dicoms to png or jpg, it's safe to assume they are 8 bit.</li>
+                    <ul>
+                        <li id="viewerAddWindowingShaderGrayFull"><c>viewerAddWindowingShaderGrayFull( name, level, width, <i>optional</i> log )</c>: Create a windowing shader named <c>name</c> with the specified
+                            window <c>level</c> and <c>width</c>. This creates a grayscale shader which expects every pixel to have
+                            red = green = blue. If this is not the case, use value shading below (obviously you don't have to check every pixel, it won't break anything if this is
+                            off a little, CT images are grayscale).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                        <li id="viewerAddWindowingShaderValueFull"><c>viewerAddWindowingShaderValueFull( name, level, width, <i>optional</i> log )</c>: Create a windowing shader named <c>name</c> with the specified
+                            window <c>level</c> and <c>width</c>. This converts the pixel values to HSV, and only windows the <c>Value</c> component
+                            this is better for non grayscale images.<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                    </ul></ul>
+                </li>
+                <li>16 bit Full Depth Color Window Shader Creation:
+                    <ul>
+                        <li><b><u>Never</u> use this shader unless you know exactly why you need it</b><br>
+                            I am only including it as a means to test contrast correctness for different windowing levels.
+                            If your trials need higher color depth, this viewer is probably not the right choice for you.
+                            If you don't know whether or not you need higher color depth, you don't.</li>
+                        <li>This shader expects images rendered as pngs with the highest 8 bits stored in the red component, and the lowest
+                            8 bits stored in the green.</li>
+                        <li>This shader combines 8 bits from the red and green components at runtime to show a 16 bit grayscale image.</li>
+                        <li>Because this contrast is 16 times higher, the pixel values are reduced in this shader to match
+                            the look of the default shader (the high contrast is still there, but it will never be noticable unless very
+                            narrow windows are used.</li>
+                        <li>No stand alone program will do these fairly specific conversions, you will have to rely on
+                            custom solutions.</li>
+                    <ul>
+                    <li id="viewerAddWindowingShaderGray16"><c>viewerAddWindowingShaderGray16( name, level, width, <i>optional</i> log )</c>: Create a windowing shader named <c>name</c> with the specified
+                        window <c>level</c> and <c>width</c>. This creates a grayscale shader which expects the red pixel to equal high bits, and green pixels to equal low bits
+                        (blue is ignored).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                    </ul></ul>
+                </li>
+            </ul>
+        </li>
+        <li class="li2">Shader Control:
+            <ul>
+                <li id="viewerRemoveShader"><c>viewerRemoveShader( name, <i>optional</i> log )</c>: Delete the shader with name <c>name</c>,
+                    if this is the active shader, no shader will be applied.<a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                <li id="viewerSetShader"><c>viewerSetShader( name, <i>optional</i> log )</c>: Activte the shader with the name <c>name</c>.
+                    Call <c>viewerSetShader( "off" );</c> to make no shader active. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+            </ul>
+        </li>
+    </ul>
+    <br>
+
+    <div id="windowingUnits">
+        *Windowing levels and widths are specified in decimal values which linearly progress along the gray/value scale from 0 (black) to 1 (white). However you will likely encounter
+        <a href="https://radiopaedia.org/articles/hounsfield-unit">Hounsfield Units (HU)</a>. Commonly, in CT scans, these values range from -1000 (black) to 1000 (white).
+        <br><br>
+        Conversion:
+        <table style="margin-left: 1em;">
+            <tr>
+                <td>&bull;</td><td> <i>level</i></td><td>= (1,000 + <i>HU level</i>) / 2000 </td><td style="width:2em;"></td>
+                <td><input type="number" style="width:4em;" oninput="quickConvertL(this)"> HU = </td>
+                <td><span id="quickConvertLans">0.5</span> viewer unit(s)</td>
+            </tr>
+            <tr>
+                <td>&bull;</td><td> <i>width</i> </td><td>= <i>HU width</i> / 2000 </td><td></td>
+                <td><input type="number" style="width:4em;" oninput="quickConvertW(this)"> HU = </td>
+                <td><span id="quickConvertWans">0</span> viewer unit(s)</td>
+            </tr>
+        </table>
+
+        <ul>
+            <li><a href="https://www.radiologycafe.com/medical-students/radiology-basics/ct-overview">Radiology Cafe has good images illustrating this (a third of the way down the page).</a> Just remember that
+            even though their images show the range topping off at 1000, HUs do technically go higher than this.</li>
+            <li>Some values will be above 1 and below 0. This is not an error (and is desired, it just means portions of the spectrum are discarded)</li>
+            <li>HUs do go above 1000, Dicoms tend to retain this extra range, but most windows discard it. These high values are very dense, yet we are
+                quite squishy.</li>
+            <li>Grainyness is common, but as the window width decreases, color difference increases, and the JPEG's compression defects will show.</li>
+        </ul>
+
+        <script>
+                    function quickConvertL(e){
+                        let n=Number(e.value);
+                        if(Number.isNaN(n))
+                            return;
+                        $('quickConvertLans').innerHTML=convertHUlevel(n);
+                    }
+                    function quickConvertW(e){
+                        let n=Number(e.value);
+                        if(Number.isNaN(n))
+                            return;
+                        $('quickConvertWans').innerHTML=convertHUwidth(n);
+                    }
+                </script>
+    </div>
+
+
+    <br><br><br>
+    <div id="returnSuccess">
+        <sup>1</sup> Returns true if the operation was successful, false if failed.
+    </div>
+
+    <br><br><br>
+    <br><br><br>
+
+
+
+    <br><br>
+    <h2 id="advanced"><b>Advanced Shader Control</b></h2>
+    This viewer offloads windowing to the GPU for speed. This requires images which have 8 bits per color.
+    Dicoms, on the other hand, often store 12 bits per color allowing them to show a much greater change in contrast. Because these
+    images are grayscale, where all colors are equal, we can store half of the bits in one color, and half
+    in another. The default way of doing this for the viewer is to store the top half of the bits as red, and
+    the bottom half as green (blue is unused).
+    <br><br>
+    Unfortunately, this means the images will have to be stored losslessly (as a png), and will be harder
+    to compress generally (about twice the size of a normal, grayscale, png). Because of this, it is recommended that
+    high bit depths are only used for internal testing, and never in practice.
+    <br><br>
+    If you do need a higher bit depth, it is recommended that you use a viewer designed for that, or
+    possibly make your own glsl shader which works better with jpeg's compression.
+    <br><br>
+    These are roughly the steps to go through to make high bit images to work in the the included
+    16 bit shader. This is loose guidance only, it is expected that if you go this route, you have your own means of
+    creating high bit depth images, so some of these steps will differ from your own.
+    <br><br><br>
+    First, make sure you have:
+    <ul class="li2">
+        <li><a href="viewerStart.html">A working build of the viewer</a></li>
+        <li>A text editor you like, preferably with syntax highlighting for bash and python (<a href="https://code.visualstudio.com/">The one used in the example</a>)</li>
+        <li>A means of converting dicoms into the correct sequence of images. The software used in the example:
+            <ul>
+                <li>Linux/XFCE/Thunar - because bash is used, also has a nice batch renaiming feature</li>
+                <li>Bash - calls the converter on each image, and turns the meta data into a useful, ordered, file name</li>
+                <li><a href="https://xmedcon.sourceforge.io/">XMedCon</a> - reads image metadata to get spatial location for ordering and converts dicom to ascii</li>
+                <li>Python - simple script to read values stored in ascii file and turn them into an image</li>
+                <li><a href="https://imagemagick.org/index.php">Image Magick</a> - to turn the final pngs into a grid of images</li>
+                <li><a href="https://www.gimp.org/">Gimp</a> - Not needed in the example, but sometimes nice for error correction</li>
+            </ul>
+        </li>
+    </ul>
+
+
+
+
+
+    <br><br><br>
+</td><td class="dispPad"></td></tr></table>
+</body>
+
+</html>

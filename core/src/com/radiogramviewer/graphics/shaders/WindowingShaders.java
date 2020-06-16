@@ -86,19 +86,19 @@ public class WindowingShaders {
                     "  vec4 color = texture2D(u_texture, v_texCoords).rgba;\n" +
                     "  vec3 finalRGB = vec3(((color.r-lo)/(";
 
-    private final static String fragmentShader3grayFull=
-            ";\n" +
-                    "void main()\n" +
-                    "{\n" +
-                    "  vec4 color = texture2D(u_texture, v_texCoords).rgba;\n" +
-                    "  vec3 finalRGB = vec3(((color.r*2.048-lo)/(";
-
+    private final static String fragmentShader3grayFull=                            //Note that this has a "bias" to offset
+            ";\n" +                                                                 // its values so that they are equal to
+                    "void main()\n" +                                               // a full window from -1000 HU to 1000 HU
+                    "{\n" +                                                         // This is why the pixel color is multiplied
+                    "  vec4 color = texture2D(u_texture, v_texCoords).rgba;\n" +    // by 2.0475 (4095/2000). This will allow
+                    "  vec3 finalRGB = vec3(((color.r*2.0475-lo)/(";                // the value at 124.54... (1000HU) to become
+                                                                                    // 255 (white) when L is .5 and W is 1
 
     private final static String fragmentShader3gray16=
             ";\n" +
-                    "float cbn(vec2 c)\n" +                 //So normally it is advised to render the dicoms where an
+                    "float cbn(vec2 c)\n" +                 //This contains a "bias" to offset its value to appear like
                     "{\n" +                                 // HU of 1000 is white and -1000 is black. So to mimmic that
-                    "    return (c.x*255.0+c.y)*0.128;\n" + // scale the output is multiplied by 0.128 (256/2000).
+                    "    return (c.x*255.0+c.y)*0.1275;\n" + // scale the output: multiply by 0.1275 (255/2000).
                     "}\n\n" +
                     "void main()\n" +
                     "{\n" +
@@ -147,11 +147,11 @@ public class WindowingShaders {
     }
 
     private static ShaderProgram window(float level, float width, String guts){
-        width/=2;
-        float hi=level+width;
-        float lo=level-width;
-        float range=hi-lo;
-        String fragment=fragmentShader1+f(lo)+guts+f(range)+fragmentShader4;
+//        width/=2;
+//        float hi=level+width;
+        float lo=level-width/2;
+//        float range=hi-lo;
+        String fragment=fragmentShader1+f(lo)+guts+f(width)+fragmentShader4;
         return generateShader(fragment);
     }
 

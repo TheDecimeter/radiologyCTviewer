@@ -456,7 +456,15 @@ public class SlideManager implements Disposable, Coroutine{
             }
 
             private void coStage0Init(){
-                orig = new Pixmap(Gdx.files.internal(node.file));
+                //Libgdx loads pixmaps with an alpha channel by default (RGBA8888), in
+                // grayscale images the "value" is interpreted as both color and alpha
+                // that makes the image partially transparent. So load it normally (with alpha)
+                // then draw it into a pixmap without an alpha channel.
+                Pixmap p= new Pixmap(Gdx.files.internal(node.file));
+                orig = new Pixmap(p.getWidth(),p.getHeight(), Pixmap.Format.RGB888);
+                orig.drawPixmap(p,0,0);
+                p.dispose();
+
                 maxTextureSize = c.global.gpuMaxTextureSize;
 
 

@@ -65,6 +65,9 @@ public class SubViewer {
                 LastSlideMode = SlideMode = constants.getMode();
                 SlideIndex = dont;
             }
+            else{
+                LastSlideMode=SlideMode;
+            }
 
             //Get config file state
             c = new Config(constants);
@@ -106,6 +109,9 @@ public class SubViewer {
                 constants.processingState(0,1);
                 Relay.changeLoadingState(Relay.ready);
             }
+            else{
+                constants.processingState(slideProcessor.remainingTasks(),0);
+            }
         }
         catch (Exception e){
             Relay.changeLoadingState(Relay.error);
@@ -123,7 +129,6 @@ public class SubViewer {
             return;
         }
 
-        coroutineRunner.run(); //note that in pc this will only run when responding to input
 
 
         //clear the last rendered image
@@ -159,6 +164,8 @@ public class SubViewer {
             if (totalSlides > 1)
                 scroll.draw(slideBatch);                    //draw scroll bar, if more than 1 slide
             slideBatch.end();
+
+            coroutineRunner.run(); //note that in pc this will only run when responding to input
         }
     }
     public void dispose(){
@@ -242,6 +249,11 @@ public class SubViewer {
         }
         click=newclick;
         slideProcessor.invertWork();
+
+        if(!newScrollTimes){
+            if(SlideMode!=none)
+                slideManager=slideManagers.get(SlideMode-1);
+        }
     }
 
     /**
@@ -252,8 +264,9 @@ public class SubViewer {
         updateSlides=false;
 
         //Record focus lost
-        if(LastSlideMode!=SlideMode&&LastSlideMode!=none)
-            scrollTimes.get(LastSlideMode-1).logClose(slideManager.getSlide());
+        if(LastSlideMode!=SlideMode&&LastSlideMode!=none) {
+            scrollTimes.get(LastSlideMode - 1).logClose(slideManager.getSlide());
+        }
 
         //if empty slide, don't do anything
         if(SlideMode==none){

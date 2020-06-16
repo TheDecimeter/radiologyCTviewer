@@ -235,8 +235,6 @@ public class Config {
             else
                 this.scrollMax=1;
             this.scrollSensitivity=scrollSensitivity;
-
-             System.out.println("holdTime "+this.holdTime);
         }
     }
 
@@ -259,7 +257,6 @@ public class Config {
             this.gpuMaxTextureSize=gpuMaxTextureSize;
             this.overscan=(int)Math.ceil(overscan*scale);
             this.yieldMillis=yieldMillis;
-            System.out.println("yield "+yieldMillis);
             this.downscaleTexture=downscaleTexture;
         }
     }

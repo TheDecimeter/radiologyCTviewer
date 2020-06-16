@@ -393,23 +393,33 @@ public class HTMLconstants implements Constants {
                 break;
             case Input.Keys.NUM_1:
                 if(SubViewer.getSlideMode()==6) {
-                    SubViewer.setSlideMode(5, 0);
+                    SubViewer.setSlideMode(5, -1);
                     ShaderManager.setShader("customPassKey1");
+                    P.d("slide 5 (16 bit)");
+                }
+                else if(SubViewer.getSlideMode()==7){
+                    SubViewer.setSlideMode(6, -1);
+                    ShaderManager.setShader("customPassKey2");
+                    P.d("slide 6  (8 bit winFull)");
                 }
                 else{
-                    SubViewer.setSlideMode(6, 0);
-                    ShaderManager.setShader("customPassKey2");
+                    SubViewer.setSlideMode(7, -1);
+                    ShaderManager.setShader("customPassKey3");
+                    P.d("slide 7  (8 bit win2000)");
                 }
                 break;
             case Input.Keys.NUM_2:
                 addWindowShaderGray16("customPassKey1",.5f,1,true);
                 addWindowShaderGrayFull("customPassKey2",.5f,1,true);
+                addWindowShaderGray("customPassKey3",.5f,1,true);
                 break;
             case Input.Keys.NUM_3:
                 ShaderManager.setShader("customPassKey1");
                 break;
             case Input.Keys.NUM_4:
-                addWindowShaderGray16("customPassKey1",.3f,.8f,true);
+                addWindowShaderGray16("customPassKey1", .515f,0.075f,true);
+                addWindowShaderGrayFull("customPassKey2", .515f,0.075f,true);
+                addWindowShaderGray("customPassKey3", .515f,0.075f,true);
                 break;
             case Input.Keys.NUM_5:
                 ShaderManager.setShader("off");

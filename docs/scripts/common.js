@@ -541,8 +541,8 @@
 		 formWidth=min/2;
 	 }
 	 
-	 viewerWidth=Math.floor(viewerWidth);
-	 formWidth=Math.floor(formWidth);
+	 viewerWidth=Math.ceil(viewerWidth);
+	 formWidth=Math.ceil(formWidth);
  
 	 initSizes();
  }
@@ -560,7 +560,7 @@
 		 $(viewer).style.height=px(viewerWidth);
 		 $(form).style.height=px(viewerWidth);
 	 }
-	 $(sidePadding).style.width=px((window.innerWidth-(viewerWidth+formWidth))/2);
+	 $(sidePadding).style.width=px(Math.ceil((window.innerWidth-(viewerWidth+formWidth))/2));
  }
  
  function setFeed(msg){

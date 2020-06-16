@@ -56,7 +56,7 @@
                 <li id="viewerLoadingBarAdvance"><c>window.viewerLoadingBarAdvance = function(percent){}</c>: Called every time the preloading bar advances with the <c>percent</c> loaded from 0 to 1.</li>
                 <li id="viewerCustomLoadingBar"><c>window.viewerCustomLoadingBar = function(panel){}</c>: Called once when the preloader is created. <c>panel</c> is the root object of the preloader
                     you can attach things to. If you use this function, be sure to use <c>window.viewerLoadingBarAdvance</c> as well, otherwise the preloader will try to
-                    advane a loading bar which may not exist.</li>
+                    advance a loading bar which may not exist.</li>
             </ul>
         </li>
         <li class="li2"> Initial functions:
@@ -68,14 +68,13 @@
                 <li id="viewerListenerProcessing"><c>window.viewerListenerProcessing = function(remaining,progress){}</c>: Called between image processing tasks. This will generally not be
                     called more often than the <q>yield</q> time in <q>config.ini</q>. The function informs you of the number of tasks <c>remaining</c>,
                     as well as the <c>progress</c> on the current task (a number between 0 and 1). When all processing is complete (even if there was none
-                    to do in the first place, this function will be called with 0 <c>remaining</c> tasks with the current progress at <c>1</c>.</li>
+                    to do in the first place, this function will be called with 0 <c>remaining</c> tasks with the current progress at 1.</li>
                 <li id="viewerListenerLoadingStateChanged"><c>window.viewerListenerLoadingStateChanged = function(state){}</c>: This function informs you when a loading state changes.
                     The state is a numeric flag:
                     <ul>
                         <li id="FLAGviewerReady"><c>FLAGviewerReady</c>: Indicates everything loaded properly and every image is processed and in the GPU.</li>
                         <li id="FLAGviewerLoaded"><c>FLAGviewerLoaded</c>: Indicates everything loaded properly, but there may still be images to be processed.</li>
-                        <li id="FLAGviewerFailedLoad"><c>FLAGviewerFailedLoad</c>: Indicates an error the viewer can't recover from (usually if the server goes down
-                            mid load.</li>
+                        <li id="FLAGviewerFailedLoad"><c>FLAGviewerFailedLoad</c>: Indicates an error the viewer can't recover from (usually if the server goes down).</li>
                     </ul>
                 </li>
             </ul>
@@ -92,7 +91,8 @@
                     <c>slideIndex</c> of the current slide.</li>
                 <li id="viewerListenerScrollFail"><c>window.viewerListenerScrollFail = function(slideIndex){}</c>: Called when the viewer tries to scroll to a new slide but fails
                     because it is either at the first or last available slide. Provides the <c>slideIndex</c> of the current slide.</li>
-                <li id="viewerCoroutine"><c>window.viewerCoroutine = function(){}</c>: Called everytime the screen renders before any changes or updates occur.</li>
+                <li id="viewerCoroutine"><c>window.viewerCoroutine = function(){}</c>: Called everytime the screen renders before any changes or updates occur
+                    (after drawing and updating). This will not run if the viewer image is set to 0.</li>
             </ul>
         </li>
         <li class="li2"> System:

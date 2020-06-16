@@ -132,25 +132,16 @@
             <h2><b>Check the Demo Page</b></h2>
             <ol class=li2>
                 <li>Ensure each time the page is refreshed the contents of <q>use.txt</q> alternates between 0 and 1</li>
-                <li>Ensure that each time a successful trial is completed a new data file is added to the <q>data</q> folder
-                    <ul>
-                        <li>Note that on Windows, this might not happen by default. The system time in the file name is separated by colons which aren't
-                            allowed in Windows.
-                            <ol>
-                                <li>First, make sure you alway have a backup of the build files, we'll use those as a starting point a lot.</li>
-                                <li>Open <q>process.php</q> in your favorite text editor for these sorts of things.</li>
-                                <li>If the text file appears as a single line, find a new text editor (the file uses unix line endings).</li>
-                                <li>Find the function <q>getName</q></li>
-                                <li>Change the part that says <q>date("H:i:s)</q> to <q>date("H-i-s)</q>.</li>
-                            </ol>
-                        </li>
-                    </ul>
-                </li>
+                <li>Ensure that each time a successful trial is completed a new data file is added to the <q>data</q> folder</li>
             </ol>
+            If these things aren't happening, check the terminal running the server for errors.
             <br><br><br>
             
-            The reason we are using this temporary server is because you will be making/testing many changes locally. 
-            It would take too long to upload small changes to your remote server every time.
+            This is not the server that will be running your program, you will want a remote webhost for that.
+            The reason we are using this temporary server is because you will be making/testing many changes.
+            It would take too long to upload small changes to your remote server for testing every time.
+            <br><br>
+            Remember you can always turn off the server by pressing ctrl+C in the terminal running the server.
 
         </td><td class="dispPad"></td></tr></table>
     </body>

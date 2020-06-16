@@ -53,6 +53,11 @@ public class CoroutineRunner {
         }
         return true;
     }
+    public int remainingTasks(){
+        if(done())
+            return 0;
+        return coroutines.size();
+    }
 
     public boolean runOne() {
         boolean ret=false;
