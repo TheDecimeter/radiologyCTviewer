@@ -643,7 +643,7 @@ public class SlideManager implements Disposable, Coroutine{
         @Override
         public boolean draw(SpriteBatch batch) {
             //MainViewer.println("draw width:"+MainViewer.getWidth()+" draw height:"+MainViewer.getHeight(),Constants.d);
-            batch.draw(img[y][x],-overscan,-overscan,Relay.getWidth()+overscan,Relay.getHeight()+overscan);
+            batch.draw(img[y][x],-overscan,-overscan,Relay.getWidth()+overscan*2,Relay.getHeight()+overscan*2);
             return true;
         }
 
