@@ -20,7 +20,7 @@
                 <li>A program that can tile multiple images into one (<a href="https://imagemagick.org/index.php">The one used in the example</a>)</li>
                 <li>A program to edit images (<a href="https://www.gimp.org/">The one used in the example</a>)</li>
                 <li>A text editor you like, preferably with syntax highlighting for JavaScript and PHP (<a href="https://code.visualstudio.com/">The one used in the example</a>)</li>
-                <li>Some source for CT scans in a regular image format</li>
+                <li>Some source for CT scans in a regular image format(<a href="files/dcm2png.7z">Here are the scripts I use, Linux Required</a>)</li>
             </ul>
             <br><br>
             (as of June 2020)
@@ -28,11 +28,11 @@
             
             <br>
             <h2><b>Convert the slices to a common image format</b></h2>
-            I'm not going into detail on this step because it depends on whatever dicom viewer you have been using for previous experiments.
+            I'm not going into detail on this step because it depends on whatever pipeline you have been using for previous experiments.
             However, there are some extra factors to consider.
             <br>
             <ul class="li2">
-                <li>If you intend on using windowing, export the image with its full spectrum (HU level: 0, width 2000).</li>
+                <li>If you intend on using windowing, export the image with the common spectrum (HU level: 0, width 2000).</li>
                 <li>Try to export the image into something lossless like PNG at first.</li>
             </ul>
 
@@ -51,7 +51,7 @@
                              into the GPU and square collages will help with that.</li>
                     </ul>
                 </li>
-                <li class="li2">If using Imagemagick something like <q>montage -mode concatenate -tile 8x *.png out.png</q>.
+                <li class="li2">If using Imagemagick something like <c>montage -mode concatenate -tile 8x *.png out.png</c>.
                     <ul>
                         <li>Note that for even slightly thin slices you will have to <a href="https://www.imagemagick.org/script/resources.php">
                             increase the memory Imagemagick allows itself in <q>policy.xml</q></a>.</li>
