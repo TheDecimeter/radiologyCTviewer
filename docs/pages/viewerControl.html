@@ -42,23 +42,24 @@
             <br><br>
             <h2 id="state"><b>State</b></h2>
             <ul class="li1">
-                <li class="li2"> The static(ish) size and scaling factors of the viewer.</li>
-                <ul>
-                    <li id="viewerGetViewerDensityFactor"><c>viewerGetViewerDensityFactor()</c>: <c><i>viewerGetWidth()</i></c> &times; <c><i>viewerGetViewerDensityFactor()</i></c> = <i>The <q>window width</q> in <q>config.ini</q></i> 
-                        Get a number to multiply by screen pixels to turn it into viewer pixels.<a href="#zoomDisclaimer" onclick="H('zoomDisclaimer');">*</a>
-                        <ul>
-                            <li>
-                                Generaly this is not needed because the viewer scales everything going in and out to match the width and height specified in the config file.
-                            </li>
-                        </ul>
-                    </li>
-                    <li id="viewerGetWidth"><c>viewerGetWidth()</c>: Gets the width of the viewer in pixels<a href="#zoomDisclaimer" onclick="H('zoomDisclaimer');">*</a></li>
-                    <li id="viewerGetWidthInches"><c>viewerGetWidthInches()</c>: Gets the width of the viewer in inches<a href="#zoomDisclaimer" onclick="H('zoomDisclaimer');">*</a></li>
-                    <li id="viewerGetHeight"><c>viewerGetHeight()</c>: Gets the height of the viewer in pixels<a href="#zoomDisclaimer" onclick="H('zoomDisclaimer');">*</a></li>
-                    <li id="viewerGetTextureInfo"><c>viewerGetTextureInfo()</c>: Get a message about any changes the viewer performed on the images to get them to work on the client's computer.</li>
-                    <li id="viewerGetStartTime"><c>viewerGetStartTime()</c>: Get the time, measured by JavaScript's <c>Date.now</c> of when the viewer first loaded. viewerGetUpTime() counts upwards
-                        from this point onward.</li>
-                </ul>
+                <li class="li2"> The static(ish) size and scaling factors of the viewer.
+                    <ul>
+                        <li id="viewerGetViewerDensityFactor"><c>viewerGetViewerDensityFactor()</c>: <c><i>viewerGetWidth()</i></c> &times; <c><i>viewerGetViewerDensityFactor()</i></c> = <i>The <q>window width</q> in <q>config.ini</q></i>
+                            Get a number to multiply by screen pixels to turn it into viewer pixels.<a href="#zoomDisclaimer" onclick="H('zoomDisclaimer');">*</a>
+                            <ul>
+                                <li>
+                                    Generaly this is not needed because the viewer scales everything going in and out to match the width and height specified in the config file.
+                                </li>
+                            </ul>
+                        </li>
+                        <li id="viewerGetWidth"><c>viewerGetWidth()</c>: Gets the width of the viewer in pixels<a href="#zoomDisclaimer" onclick="H('zoomDisclaimer');">*</a></li>
+                        <li id="viewerGetWidthInches"><c>viewerGetWidthInches()</c>: Gets the width of the viewer in inches<a href="#zoomDisclaimer" onclick="H('zoomDisclaimer');">*</a></li>
+                        <li id="viewerGetHeight"><c>viewerGetHeight()</c>: Gets the height of the viewer in pixels<a href="#zoomDisclaimer" onclick="H('zoomDisclaimer');">*</a></li>
+                        <li id="viewerGetTextureInfo"><c>viewerGetTextureInfo()</c>: Get a message about any changes the viewer performed on the images to get them to work on the client's computer.</li>
+                        <li id="viewerGetStartTime"><c>viewerGetStartTime()</c>: Get the time, measured by JavaScript's <c>Date.now</c> of when the viewer first loaded. viewerGetUpTime() counts upwards
+                            from this point onward.</li>
+                    </ul>
+                </li>
             </ul>
             <div id="zoomDisclaimer">
                 *This is thrown off if the viewer zooms the page.
@@ -68,109 +69,104 @@
             <br><br>
             <h2><b>Input</b></h2>
             <ul class="li1">
-                <li class="li2"> On the fly control of the viewer.</li>
-                <ul>
-                    <li id="viewerSetDragDistance"><c>viewerSetDragDistance( newDistance )</c>: The drag distance by default scales to the viewer's pixels, if you want to reset it yourself (to conform to inches or something
-                        you can reset it here.</li>
-                    <li id="viewerSetScrollLimit"><c>viewerSetScrollLimit( newLimit )</c>: The maximum amount of <q>scroll</q> allowed per scroll event. 
-                        Unless different custom values are needed per client it is best to set this in the <a href="viewerConfig.html#scrollLimit">config</a> file.</li>
-                    <li id="viewerSetScrollSensitivity"><c>viewerSetScrollSensitivity( newSensitivity )</c>: The sensitivity of the scroll wheel.
-                        Unless different custom values are needed per client it is best to set this in the <a href="viewerConfig.html#scrollSensitivity">config</a> file.</li>
-                    <li id="viewerPipeInput"><c>viewerPipeInput(keyCode, pressType)</c>: Direct input the viewer. This is important because browsers don't do the best job giving canvas elements focus.
-                        <ul>
-                            <li>keyCode is a number, you can use the event flag from event.keyCode (which is becomming obsolete, but still fairly well supported), or use
-                                <c>FLAGviewerKeyScrollUp</c> or <c>FLAGviewerKeyScrollDown</c>.
-                            </li>
-                            <li>pressType is a number to tell whether the key was pressed down, or released, use
-                                <c>FLAGviewerKeyPressRelease</c> or <c>FLAGviewerKeyPressDown</c>.
-                            </li>
-                        </ul>
-                    </li>
-                    <li id="viewerScrollLock"><c>viewerScrollLock( true or false )</c>: disable or enable scrolling</li>
-                    <li id="viewerClickLock"><c>viewerClickLock( true or false )</c>: disable or enable clicking. This means events
-                        <c>window.viewerListenerClickAdded</c> and <c>window.viewerListenerClickRemoved</c>
-                        won't fire, however the last click will still be set, and <c>window.viewerListenerInput</c>
-                        will still fire.
-                    </li>
-                    <li id="viewerSetSlide"><c>viewerSetSlide( setIndex, <i>optinal</i> slideIndex)</c>: Tell the viewer to show a specific set of slides. Optionally at a specific index.
-                        Note: <c>viewerSetSlide(4, 0)</c> = <c>viewerSetSlide(4)</c>. Note that this will log a <c>blur</c> event on the previous image,
-                        and a <c>focus</c> event on the new image, assuming they are not the same. If they are the same, and you use this to scroll to another
-                        slide, it will NOT be logged. If you wish for that event to be logged, add a message with <c>viewerLogScrollMessage(index,message)</c>
-                        <a href="#returnSuccess" onclick="H('notImmediate');"><sup>2</sup></a></li>
-                </ul>
+                <li class="li2"> On the fly control of the viewer.
+                    <ul>
+                        <li id="viewerSetDragDistance"><c>viewerSetDragDistance( newDistance )</c>: The drag distance by default scales to the viewer's pixels, if you want to reset it yourself (to conform to inches or something
+                            you can reset it here.</li>
+                        <li id="viewerSetScrollLimit"><c>viewerSetScrollLimit( newLimit )</c>: The maximum amount of <q>scroll</q> allowed per scroll event.
+                            Unless different custom values are needed per client it is best to set this in the <a href="viewerConfig.html#scrollLimit">config</a> file.</li>
+                        <li id="viewerSetScrollSensitivity"><c>viewerSetScrollSensitivity( newSensitivity )</c>: The sensitivity of the scroll wheel.
+                            Unless different custom values are needed per client it is best to set this in the <a href="viewerConfig.html#scrollSensitivity">config</a> file.</li>
+                        <li id="viewerPipeInput"><c>viewerPipeInput(keyCode, pressType)</c>: Direct input the viewer. This is important because browsers don't do the best job giving canvas elements focus.
+                            <ul>
+                                <li>keyCode is a number, you can use the event flag from event.keyCode (which is becomming obsolete, but still fairly well supported), or use
+                                    <c>FLAGviewerKeyScrollUp</c> or <c>FLAGviewerKeyScrollDown</c>.
+                                </li>
+                                <li>pressType is a number to tell whether the key was pressed down, or released, use
+                                    <c>FLAGviewerKeyPressRelease</c> or <c>FLAGviewerKeyPressDown</c>.
+                                </li>
+                            </ul>
+                        </li>
+                        <li id="viewerScrollLock"><c>viewerScrollLock( true or false )</c>: disable or enable scrolling</li>
+                        <li id="viewerClickLock"><c>viewerClickLock( true or false )</c>: disable or enable clicking. This means events
+                            <c>window.viewerListenerClickAdded</c> and <c>window.viewerListenerClickRemoved</c>
+                            won't fire, however the last click will still be set, and <c>window.viewerListenerInput</c>
+                            will still fire.
+                        </li>
+                        <li id="viewerSetSlide"><c>viewerSetSlide( setIndex, <i>optinal</i> slideIndex)</c>: Tell the viewer to show a specific set of slides. Optionally at a specific index.
+                            Note: <c>viewerSetSlide(4, 0)</c> = <c>viewerSetSlide(4)</c>. Note that this will log a <c>blur</c> event on the previous image,
+                            and a <c>focus</c> event on the new image, assuming they are not the same. If they are the same, and you use this to scroll to another
+                            slide, it will NOT be logged. If you wish for that event to be logged, add a message with <c>viewerLogScrollMessage(index,message)</c>
+                            <a href="#returnSuccess" onclick="H('notImmediate');"><sup>2</sup></a></li>
+                    </ul>
+                </li>
             </ul>
 
             <br><br>
             <h2><b>Present Status</b></h2>
             <ul class="li1">
-                <li class="li2"> Current (but changing) status of the viewer.</li>
-                <ul>
-                    <li id="viewerGetLastClick"><c>viewerGetLastClick()</c>: Get the last click, <a href="viewerConfig.html#overwriteLastClick">see the config file's overwrite last click setting</a>.
-                        <ul>
-                            <li>This is formatted as <i>x</i>,<i>y</i>,<i>slide</i>,<i>time</i></li>
-                            <li>This will be <i>0</i>,<i>0</i>,<i>0</i>,<i>0</i> if no click occured since the last <c>viewerResetLastClick</c></li>
-                        </ul>
-                    </li>
-                    <li id="viewerGetCurrentSlide"><c>viewerGetCurrentSlide()</c>: Get the index for the current slide.</li>
-                    <li id="viewerGetCurrentSet"><c>viewerGetCurrentSet()</c>: Get the index for the current set</li>
-                    <li id="viewerGetUpTime"><c>viewerGetUpTime()</c>: Get the milliseconds the viewer has been active. This is the same timing method
-                        used in the viewer's logs.</li>
-                </ul>
+                <li class="li2"> Current (but changing) status of the viewer.
+                    <ul>
+                        <li id="viewerGetLastClick"><c>viewerGetLastClick()</c>: Get the last click, <a href="viewerConfig.html#overwriteLastClick">see the config file's overwrite last click setting</a>.
+                            <ul>
+                                <li>This is formatted as <i>x</i>,<i>y</i>,<i>slide</i>,<i>time</i></li>
+                                <li>This will be <i>0</i>,<i>0</i>,<i>0</i>,<i>0</i> if no click occured since the last <c>viewerResetLastClick</c></li>
+                            </ul>
+                        </li>
+                        <li id="viewerGetCurrentSlide"><c>viewerGetCurrentSlide()</c>: Get the index for the current slide.</li>
+                        <li id="viewerGetCurrentSet"><c>viewerGetCurrentSet()</c>: Get the index for the current set</li>
+                        <li id="viewerGetUpTime"><c>viewerGetUpTime()</c>: Get the milliseconds the viewer has been active. This is the same timing method
+                            used in the viewer's logs.</li>
+                    </ul>
+                </li>
             </ul>
 
             <br><br>
             <h2 id="control"><b>Control</b></h2>
             <ul class="li1">
-                <li class="li2"> Changing states in the viewer.</li>
-                <ul>
-                    <li id="controlResetting">Resetting
-                        <ul>
-                            <li id="viewerResetLastClick"><c>viewerResetLastClick()</c>: Reset the last click, <a href="viewerConfig.html#overwriteLastClick">see the config file's overwrite last click setting</a>.</li>
-                            <li id="viewerResetSize"><c>viewerResetSize()</c>: Reset the viewer's size if a new value is provided through <c>window.viewerStatsWidth</c>, Otherwise, the viewer will recreate itself
-                                with the same size, which is a lot of expense for no gain.<a href="#returnSuccess" onclick="H('notImmediate');"><sup>2</sup></a></li>
-                            <li id="viewerResetScrolls"><c>viewerResetScrolls( index )</c>: Reset the scroll log at a specific image's <c>index</c></li>
-                            <li id="viewerResetClicks"><c>viewerResetClicks( index)</c>: Reset the clicks (log, and displayed clicks) at a specific image's <c>index</c></li>
-                            <li id="viewerResetHighlights"><c>viewerResetHighlights( index )</c>: Reset all of the highlights and shapes (both UI and image) at a specific image's <c>index</c></li>
-                            <li id="viewerResetShaderLog"><c>viewerResetShaderLog()</c>: Clear the shader log but not the shaders themselves. Shaders can be removed with <c>viewerRemoveShader(name)</c></li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul>
-                    <li>Creation
-                        <ul>
-                            <li id="viewerSimulateClick"><c>viewerSimulateClick( index, x, y, slide )</c>: Simulate a click for the image at <c>index</c>, at the position <c>x</c>, <c>y</c>,<c>slide</c>.
-                                Note that this could add or remove a click (if one was already nearby). <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a>
-                                <ul>
-                                    <li>These clicks are logged.</li>
-                                    <li>These clicks fire the <c>window.viewerListenerInput</c> event.</li>
-                                    <li>These clicks fire the <c>window.viewerListenerClickAdded</c> or <c>window.viewerListenerClickRemoved</c> event.</li>
-                                    <li>These clicks <b>do not</b> set the click retrieved by viewerGetLastClick().</li>
-                                </ul>
-                            </li>
-                            <li id="viewerAddHighlight"><c>viewerAddHighlight( index, x, y, slide )</c>: Add a highlight marker for the image at <c>index</c>, at the position <c>x</c>, <c>y</c>,<c>slide</c>.</li>
-                            <li id="viewerAddShapeToImage"><c>viewerAddShapeToImage( name, index, x, y, slide )</c>: Add a shape named <c>name</c> from <c>shapes.txt</c> to the image at
-                                    <c>index</c>, at the position <c>x</c>, <c>y</c>,<c>slide</c>. Note, these shapes are effected by shaders. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
-                            <li id="viewerAddShapeToUI"><c>viewerAddShapeToUI( name, index, x, y, slide )</c>: Add a shape named <c>name</c> from <c>shapes.txt</c> to the image at
-                                <c>index</c>, at the position <c>x</c>, <c>y</c>,<c>slide</c>. Note, these shapes are <b>not</b> effected by shaders. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul>
-                    <li id="windowing">Shaders (Windowing)
-                        <br>
-                        Look in <a href="viewerShaders.html">the shader page </a> for details on the following functions:
-                        <ul>
-                            <li><a href="viewerShaders.html#viewerAddCustomShader"><c>viewerAddCustomShader( name, vertexShader, fragmentShader, <i>optional</i> log )</c></a></li>
-                            <li><a href="viewerShaders.html#viewerAddWindowingShaderGray"><c>viewerAddWindowingShaderGray( name, level, width, <i>optional</i> log )</c></a></li>
-                            <li><a href="viewerShaders.html#viewerAddWindowingShaderValue"><c>viewerAddWindowingShaderValue( name, level, width, <i>optional</i> log )</c></a></li>
-                            <li><a href="viewerShaders.html#viewerAddWindowingShaderGrayFull"><c>viewerAddWindowingShaderGrayFull( name, level, width, <i>optional</i> log )</c></a></li>
-                            <li><a href="viewerShaders.html#viewerAddWindowingShaderValueFull"><c>viewerAddWindowingShaderValueFull( name, level, width, <i>optional</i> log )</c></a></li>
-                            <li><a href="viewerShaders.html#viewerAddWindowingShaderGray16"><c>viewerAddWindowingShaderGray16( name, level, width, <i>optional</i> log )</c></a></li>
-                            <li><a href="viewerShaders.html#viewerSetveShader"><c>viewerSetveShader( name, <i>optional</i> log )</c></a></li>
-                            <li><a href="viewerShaders.html#viewerRemoveShader"><c>viewerRemoveShader( name, <i>optional</i> log )</c></a></li>
-                        </ul>
-                    </li>
-                </ul>
+                <li class="li2"> Resetting.
+                    <ul>
+                        <li id="viewerResetLastClick"><c>viewerResetLastClick()</c>: Reset the last click, <a href="viewerConfig.html#overwriteLastClick">see the config file's overwrite last click setting</a>.</li>
+                        <li id="viewerResetSize"><c>viewerResetSize()</c>: Reset the viewer's size if a new value is provided through <c>window.viewerStatsWidth</c>, Otherwise, the viewer will recreate itself
+                            with the same size, which is a lot of expense for no gain.<a href="#returnSuccess" onclick="H('notImmediate');"><sup>2</sup></a></li>
+                        <li id="viewerResetScrolls"><c>viewerResetScrolls( index )</c>: Reset the scroll log at a specific image's <c>index</c></li>
+                        <li id="viewerResetClicks"><c>viewerResetClicks( index)</c>: Reset the clicks (log, and displayed clicks) at a specific image's <c>index</c></li>
+                        <li id="viewerResetHighlights"><c>viewerResetHighlights( index )</c>: Reset all of the highlights and shapes (both UI and image) at a specific image's <c>index</c></li>
+                        <li id="viewerResetShaderLog"><c>viewerResetShaderLog()</c>: Clear the shader log but not the shaders themselves. Shaders can be removed with <c>viewerRemoveShader(name)</c></li>
+                    </ul>
+                </li>
+                <li>Creation
+                    <ul>
+                        <li id="viewerSimulateClick"><c>viewerSimulateClick( index, x, y, slide )</c>: Simulate a click for the image at <c>index</c>, at the position <c>x</c>, <c>y</c>,<c>slide</c>.
+                            Note that this could add or remove a click (if one was already nearby). <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a>
+                            <ul>
+                                <li>These clicks are logged.</li>
+                                <li>These clicks fire the <c>window.viewerListenerInput</c> event.</li>
+                                <li>These clicks fire the <c>window.viewerListenerClickAdded</c> or <c>window.viewerListenerClickRemoved</c> event.</li>
+                                <li>These clicks <b>do not</b> set the click retrieved by viewerGetLastClick().</li>
+                            </ul>
+                        </li>
+                        <li id="viewerAddHighlight"><c>viewerAddHighlight( index, x, y, slide )</c>: Add a highlight marker for the image at <c>index</c>, at the position <c>x</c>, <c>y</c>,<c>slide</c>.</li>
+                        <li id="viewerAddShapeToImage"><c>viewerAddShapeToImage( name, index, x, y, slide )</c>: Add a shape named <c>name</c> from <c>shapes.txt</c> to the image at
+                                <c>index</c>, at the position <c>x</c>, <c>y</c>,<c>slide</c>. Note, these shapes are effected by shaders. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                        <li id="viewerAddShapeToUI"><c>viewerAddShapeToUI( name, index, x, y, slide )</c>: Add a shape named <c>name</c> from <c>shapes.txt</c> to the image at
+                            <c>index</c>, at the position <c>x</c>, <c>y</c>,<c>slide</c>. Note, these shapes are <b>not</b> effected by shaders. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                    </ul>
+                </li>
+                <li id="windowing">Shaders (Windowing)
+                    <br>
+                    Look in <a href="viewerShaders.html">the shader page </a> for details on the following functions:
+                    <ul>
+                        <li><a href="viewerShaders.html#viewerAddCustomShader"><c>viewerAddCustomShader( name, vertexShader, fragmentShader, <i>optional</i> log )</c></a></li>
+                        <li><a href="viewerShaders.html#viewerAddWindowingShaderGray"><c>viewerAddWindowingShaderGray( name, level, width, <i>optional</i> log )</c></a></li>
+                        <li><a href="viewerShaders.html#viewerAddWindowingShaderValue"><c>viewerAddWindowingShaderValue( name, level, width, <i>optional</i> log )</c></a></li>
+                        <li><a href="viewerShaders.html#viewerAddWindowingShaderGrayFull"><c>viewerAddWindowingShaderGrayFull( name, level, width, <i>optional</i> log )</c></a></li>
+                        <li><a href="viewerShaders.html#viewerAddWindowingShaderValueFull"><c>viewerAddWindowingShaderValueFull( name, level, width, <i>optional</i> log )</c></a></li>
+                        <li><a href="viewerShaders.html#viewerAddWindowingShaderGray16"><c>viewerAddWindowingShaderGray16( name, level, width, <i>optional</i> log )</c></a></li>
+                        <li><a href="viewerShaders.html#viewerSetveShader"><c>viewerSetveShader( name, <i>optional</i> log )</c></a></li>
+                        <li><a href="viewerShaders.html#viewerRemoveShader"><c>viewerRemoveShader( name, <i>optional</i> log )</c></a></li>
+                    </ul>
+                </li>
             </ul>
             
             <br><br>
@@ -226,7 +222,6 @@
                         <li id="viewerLogScrollMessage"><c>viewerLogScrollMessage( index, message )</c>: inject a <c>message</c> into the scroll log for the image at <c>index</c>.</li>
                         <li id="viewerLogShaderMessage"><c>viewerLogShaderMessage( message )</c>: inject a <c>message</c> into the shader log.</li>
                     </ul>
-                </li>
                 </li>
             </ul>
 
