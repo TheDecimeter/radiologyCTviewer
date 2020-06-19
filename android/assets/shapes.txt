@@ -4,8 +4,8 @@
 ;  width
 ;  height
 ;  depth
-;  whether or not to fade the image out as you scroll away from its origin
 ;  weight (only used for ring, but always stick something there)
+;  whether or not to fade the image out as you scroll away from its origin (true or false)
 ;  type (valid shapes: circle, ring, square)
 ;  color
 mark,30,30,4,8,t,ring,FFF
