@@ -180,10 +180,13 @@
                 <li class="li2"> <a href="#controlResetting">Look in the <q>controls</q> section above for functions to reset logs.</a></li>
                 <li class="li2">Get:
                     <ul>
-                        <li id="viewerGetClicksFor"><c>viewerGetClicksFor( index, separater1, separater2 )</c>: Get a string containing all of the clicks performed for the image at <c>index</c>. The components
+                        <li id="viewerGetClicksFor"><c>viewerGetClicksFor( index, separater1, separater2 )</c>: Get a string containing all of the current clicks for the image at <c>index</c>. The components
                             (eg: x, y, slide, time) of every click are separated by <c>separater1</c>, and every click is separated by <c>separater2</c>.
                             <ul>
-                                <li>A recorded click does not have any sort of <c>type</c> identifyer.</li>
+                                <li>This list doesn't contain every click ever performed, any clicks which have been removed are not reported in the log, if you want those, save them
+                                    when they trigger <a href="viewerEvents.html#viewerListenerClickAdded"><c>viewerListenerClickAdded</c></a> and
+                                    <a href="viewerEvents.html#viewerListenerClickRemoved"><c>viewerListenerClickRemoved</c></a></li>
+                                <li>A recorded click does not have any sort of <c>type</c> identifier.</li>
                                 <li>Clicks have 4 components: x, y, slide, time of click</li>
                                 <li>Click Messages have 2 components: message, time of message
                                     <ul>
@@ -213,31 +216,7 @@
                         </li>
                         <li id="viewerGetShaderLog"><c>viewerGetShaderLog( separater1, separater2 )</c>: Get a string containing all of the shader changes for the entire viewer (shaders are not
                             constrained to a particular image). The components of every shader change are separated by <c>separater1</c>, and every shader change
-                            is separated by <c>separater2</c>.
-                            <ul>
-                                <li>Every shader change will start with a flag indicating the change type</li>
-                                <li>There are 6 shader change types
-                                    <ul>
-                                        <li><c>i</c>: Invoke - this message will have 2 extra components, the name of the shader invoked (might be <c>off</c>, of shaders are turned off),
-                                            and the time that shader was invoked.</li>
-                                        <li><c>r</c>: Remove - this message will have 2 extra components, the name of the shader removed, and the time that it was removed.</li>
-                                        <li><c>m</c>: Message - this message will have 2 extra components, the message itself, and the time it was logged.</li>
-                                        <li><c>g</c>: Gray Window Creation - this message will have 4 extra components, the name of the newly created shader, the level, width,
-                                            and time it was created.</li>
-                                        <li><c>v</c>: Value Window Creation - this message will have 4 extra components, the name of the newly created shader, the level, width,
-                                            and time it was created.</li>
-                                        <li><c>c</c>: Custom Shader Creation - this message will have 4 extra components, the name of the newly created shader, the vertex shader,
-                                            fragment shader, and time it was created.</li>
-                                    </ul>
-                                </li>
-                                <li>Creation of custom shaders log the entire shader code, it is recommended to not log these events, and log a message stating the shader's creation instead.
-                                    This will require less data to be passed back to the server and make your logs cleaner.
-                                </li>
-                                <li>Custom shaders are made of code with contain commas, semi-colons, and new lines. Because these would be common choices for separators, you will have
-                                    to become more creative. Remember that separators can be many characters long: <c>viewerGetShaderLog('2222222','5555555555')</c> is perfectly legal.
-                                    Not the most legable, but if you're autoparsing and need to return custom shaders in your log, you probably already gave up on legablity.
-                                </li>
-                            </ul>
+                            is separated by <c>separater2</c>. More in <a href="viewerShaders.html#viewerGetShaderLog">The shader documentation</a>
                         </li>
                     </ul>
                 </li>
