@@ -29,7 +29,8 @@ public class SlideManager implements Disposable, Coroutine{
     public final static int up=1, down=-1, stay=0;
 
     private int dir;
-    private float holdTime=0, holdFor;
+    private float holdTime=0;
+    public static float holdFor =Float.NaN;
     private boolean buttons, discardDelta=false;
     private Drawer drawer;
 
@@ -39,7 +40,8 @@ public class SlideManager implements Disposable, Coroutine{
     public SlideManager(SlideDimensions.Node node, ScrollFollower scrollLog, Config c){
 
         dir=stay;
-        holdFor=c.input.holdTime;
+        if(Float.isNaN(holdFor))
+            holdFor=c.input.holdTime;
         buttons=c.input.wasd||c.input.arrow;
 
         if(previousCache==null)
@@ -63,7 +65,8 @@ public class SlideManager implements Disposable, Coroutine{
 
                     NormalDrawer d=new NormalDrawer(node, scrollLog, c);
                     drawer=d;
-                    cache(node.file,d);
+                    if(node.necessary)
+                        cache(node.file,d);
                 }
                 else{
                     if(node.necessary) {

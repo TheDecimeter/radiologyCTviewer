@@ -31,32 +31,32 @@
     <ul class="li1">
         <li class="li2" id="controlResetting">Logging
             <ul>
-                <li id="viewerResetShaderLog"><c>viewerResetShaderLog()</c>: Clear the shader log but not the shaders themselves. Shaders can be removed with <c>viewerRemoveShader(name)</c></li>
-                <li id="viewerGetShaderLog"><c>viewerGetShaderLog( separater1, separater2 )</c>: Get a string containing all of the shader changes for the entire viewer (shaders are not
-                    constrained to a particular image). The components of every shader change are separated by <c>separater1</c>, and every shader change
-                    is separated by <c>separater2</c>.
+                <li id="viewerResetShaderLog"><code>viewerResetShaderLog()</code>: Clear the shader log but not the shaders themselves. Shaders can be removed with <code>viewerRemoveShader(name)</code></li>
+                <li id="viewerGetShaderLog"><code>viewerGetShaderLog( separater1, separater2 )</code>: Get a string containing all of the shader changes for the entire viewer (shaders are not
+                    constrained to a particular image). The components of every shader change are separated by <code>separater1</code>, and every shader change
+                    is separated by <code>separater2</code>.
                     <ul>
                         <li>Every shader change will start with a flag indicating the change type</li>
                         <li>There are 6 main shader change types
                             <ul>
-                                <li><c>i</c>: Invoke - this message will have 2 extra components, the name of the shader invoked (might be <c>off</c>, of shaders are turned off),
+                                <li><code>i</code>: Invoke - this message will have 2 extra components, the name of the shader invoked (might be <code>off</code>, of shaders are turned off),
                                     and the time that shader was invoked.</li>
-                                <li><c>r</c>: Remove - this message will have 2 extra components, the name of the shader removed, and the time that it was removed.</li>
-                                <li><c>m</c>: Message - this message will have 2 extra components, the message itself, and the time it was logged.</li>
-                                <li><c>g</c>: Gray Window Creation - this message will have 4 extra components, the name of the newly created shader, the level, width,
+                                <li><code>r</code>: Remove - this message will have 2 extra components, the name of the shader removed, and the time that it was removed.</li>
+                                <li><code>m</code>: Message - this message will have 2 extra components, the message itself, and the time it was logged.</li>
+                                <li><code>g</code>: Gray Window Creation - this message will have 4 extra components, the name of the newly created shader, the level, width,
                                     and time it was created.</li>
-                                <li><c>v</c>: Value Window Creation - this message will have 4 extra components, the name of the newly created shader, the level, width,
+                                <li><code>v</code>: Value Window Creation - this message will have 4 extra components, the name of the newly created shader, the level, width,
                                     and time it was created.</li>
-                                <li><c>c</c>: Custom Shader Creation - this message will have 4 extra components, the name of the newly created shader, the vertex shader,
+                                <li><code>c</code>: Custom Shader Creation - this message will have 4 extra components, the name of the newly created shader, the vertex shader,
                                     fragment shader, and time it was created.</li>
                             </ul>
                         </li>
                         <li>
                             There are other advanced shader change types (which almost no one will enounter)
                             <ul>
-                                <li><c>G</c>: Full 12 bit (scaled to 8 bit) gray window shader creation</li>
-                                <li><c>V</c>: Full 12 bit (scaled to 8 bit) value window shader creation</li>
-                                <li><c>h</c>: High 16 bit (unscaled) gray window shader creation</li>
+                                <li><code>G</code>: Full 12 bit (scaled to 8 bit) gray window shader creation</li>
+                                <li><code>V</code>: Full 12 bit (scaled to 8 bit) value window shader creation</li>
+                                <li><code>h</code>: High 16 bit (unscaled) gray window shader creation</li>
                             </ul>
                             <br><br>
                         </li>
@@ -66,7 +66,7 @@
                                     This will require less data to be passed back to the server and make your logs cleaner.
                                 </li>
                                 <li>Custom shaders are made of code with contain commas, semi-colons, and new lines. Because these would be common choices for separators, you will have
-                                    to become more creative. Remember that separators can be many characters long: <c>viewerGetShaderLog('2222222','5555555555')</c> is perfectly legal.
+                                    to become more creative. Remember that separators can be many characters long: <code>viewerGetShaderLog('2222222','5555555555')</code> is perfectly legal.
                                     Not the most legable, but if you're autoparsing and need to return custom shaders in your log, you probably already gave up on legablity.
                                 </li>
                             </ul>
@@ -81,11 +81,11 @@
             <ul>
                 <li>Notes:
                     <ul>
-                        <li>The following functions all have the optional parameter <c>log</c>, if this is false, the change will not be logged, otherwise
+                        <li>The following functions all have the optional parameter <code>log</code>, if this is false, the change will not be logged, otherwise
                             shader changes are logged by default.</li>
                         <li>If you create an image windowed from -1000HU to 1000HU as recommended, any window with a high value over 1000 will not be <q>accurate</q>
                             because values > 1000 are now = 1000. Normally this missing data will go unnoticed, but you should be aware of this.</li>
-                        <li>If a shader is added with the same <c>name</c> as a previous shader, the previous shader is overwritten. If that shader was currently
+                        <li>If a shader is added with the same <code>name</code> as a previous shader, the previous shader is overwritten. If that shader was currently
                             active, the new shader will become active.<br><br><br></li>
                     </ul>
                 </li>
@@ -94,9 +94,9 @@
                         <li>Custom shaders are written in the WebGL varient of <a href="https://en.wikipedia.org/wiki/OpenGL_Shading_Language">glsl</a></li>
                         <li>When referring to the pixel components in glsl, the values range from 0 to 1, not 0 to 255</li>
                         <ul>
-                        <li id="viewerAddCustomShader"><c>viewerAddCustomShader( name, vertexShader, fragmentShader, <i>optional</i> log )</c>: Add a shader named <c>name</c> with the shader components defined
-                            as strings. You can set the <c>vertexShader</c> to <q>d</q> if you want to use a simple default vertex shader. However you always have to
-                            specify the <c>fragmentShader</c>. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                        <li id="viewerAddCustomShader"><code>viewerAddCustomShader( name, vertexShader, fragmentShader, <i>optional</i> log )</code>: Add a shader named <code>name</code> with the shader components defined
+                            as strings. You can set the <code>vertexShader</code> to <q>d</q> if you want to use a simple default vertex shader. However you always have to
+                            specify the <code>fragmentShader</code>. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
                     </ul></ul>
                     <br><br>
                 </li>
@@ -108,12 +108,12 @@
                             the output of Microdicom (the viewer I used to check my output against)</li>
                         <li>If you don't know your bits per color, but are outputing dicoms to png or jpg, it's safe to assume they are 8 bit.</li>
                     <ul>
-                    <li id="viewerAddWindowingShaderGray"><c>viewerAddWindowingShaderGray( name, level, width, <i>optional</i> log )</c>: Create a windowing shader named <c>name</c> with the specified
-                        window <c>level</c> and <c>width</c>. This creates a grayscale shader which expects every pixel to have
+                    <li id="viewerAddWindowingShaderGray"><code>viewerAddWindowingShaderGray( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
+                        window <code>level</code> and <code>width</code>. This creates a grayscale shader which expects every pixel to have
                         red = green = blue. If this is not the case, use value shading below (obviously you don't have to check every pixel, it won't break anything if this is
                         off a little, CT images are grayscale).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
-                    <li id="viewerAddWindowingShaderValue"><c>viewerAddWindowingShaderValue( name, level, width, <i>optional</i> log )</c>: Create a windowing shader named <c>name</c> with the specified
-                        window <c>level</c> and <c>width</c>. This converts the pixel values to HSV, and only windows the <c>Value</c> component.
+                    <li id="viewerAddWindowingShaderValue"><code>viewerAddWindowingShaderValue( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
+                        window <code>level</code> and <code>width</code>. This converts the pixel values to HSV, and only windows the <code>Value</code> component.
                         This is better for non grayscale images.<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
                     </ul></ul>
                 </li>
@@ -129,12 +129,12 @@
                             the look of the default shader.</li>
                         <li>If you don't know your bits per color, but are outputing dicoms to png or jpg, it's safe to assume they are 8 bit.</li>
                     <ul>
-                        <li id="viewerAddWindowingShaderGrayFull"><c>viewerAddWindowingShaderGrayFull( name, level, width, <i>optional</i> log )</c>: Create a windowing shader named <c>name</c> with the specified
-                            window <c>level</c> and <c>width</c>. This creates a grayscale shader which expects every pixel to have
+                        <li id="viewerAddWindowingShaderGrayFull"><code>viewerAddWindowingShaderGrayFull( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
+                            window <code>level</code> and <code>width</code>. This creates a grayscale shader which expects every pixel to have
                             red = green = blue. If this is not the case, use value shading below (obviously you don't have to check every pixel, it won't break anything if this is
                             off a little, CT images are grayscale).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
-                        <li id="viewerAddWindowingShaderValueFull"><c>viewerAddWindowingShaderValueFull( name, level, width, <i>optional</i> log )</c>: Create a windowing shader named <c>name</c> with the specified
-                            window <c>level</c> and <c>width</c>. This converts the pixel values to HSV, and only windows the <c>Value</c> component
+                        <li id="viewerAddWindowingShaderValueFull"><code>viewerAddWindowingShaderValueFull( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
+                            window <code>level</code> and <code>width</code>. This converts the pixel values to HSV, and only windows the <code>Value</code> component
                             this is better for non grayscale images.<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
                     </ul></ul>
                 </li>
@@ -153,8 +153,8 @@
                         <li>No stand alone program will do these fairly specific conversions, you will have to rely on
                             custom solutions.</li>
                     <ul>
-                    <li id="viewerAddWindowingShaderGray16"><c>viewerAddWindowingShaderGray16( name, level, width, <i>optional</i> log )</c>: Create a windowing shader named <c>name</c> with the specified
-                        window <c>level</c> and <c>width</c>. This creates a grayscale shader which expects the red pixel to equal high bits, and green pixels to equal low bits
+                    <li id="viewerAddWindowingShaderGray16"><code>viewerAddWindowingShaderGray16( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
+                        window <code>level</code> and <code>width</code>. This creates a grayscale shader which expects the red pixel to equal high bits, and green pixels to equal low bits
                         (blue is ignored).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
                     </ul></ul>
                 </li>
@@ -162,10 +162,10 @@
         </li>
         <li class="li2">Shader Control:
             <ul>
-                <li id="viewerRemoveShader"><c>viewerRemoveShader( name, <i>optional</i> log )</c>: Delete the shader with name <c>name</c>,
+                <li id="viewerRemoveShader"><code>viewerRemoveShader( name, <i>optional</i> log )</code>: Delete the shader with name <code>name</code>,
                     if this is the active shader, no shader will be applied.<a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
-                <li id="viewerSetShader"><c>viewerSetShader( name, <i>optional</i> log )</c>: Activte the shader with the name <c>name</c>.
-                    Call <c>viewerSetShader( "off" );</c> to make no shader active. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                <li id="viewerSetShader"><code>viewerSetShader( name, <i>optional</i> log )</code>: Activte the shader with the name <code>name</code>.
+                    Call <code>viewerSetShader( "off" );</code> to make no shader active. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
             </ul>
         </li>
     </ul>
@@ -260,8 +260,23 @@
         </li>
     </ul>
 
+    <br><br><br>
+    <br><br><br>
 
 
+
+    <br><br>
+    <h2 id="lostData"><b>The Lost Information</b></h2>
+    <br>
+    These two images both use a window where level is 0 and width is 2000. Which one is correct?<br>
+    <img src="images/noIntercept.png" alt="ct image slice">
+    <img src="images/withIntercept.png" alt="ct image slice">
+    <br>
+    I'm pretty sure it's the one on the right. Dicoms typically store 24 values that are less dense then air.
+    I think that means the proper way to render them is by making all of these values black.
+    So the "full" window expects these values to blend together (even in the "lossless" 16 bit
+    version). If you want to keep this data around, you can, but your image will be slightly brighter
+    (the image on the left).
 
 
     <br><br><br>

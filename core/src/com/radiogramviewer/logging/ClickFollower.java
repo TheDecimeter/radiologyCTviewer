@@ -142,7 +142,7 @@ public class ClickFollower {
         n.reset(c.click.radius,c.click.radius);
         Relay.clickAdded(n.toString());
         add(slide,n);
-        return false;
+        return true;
     }
 
     /**

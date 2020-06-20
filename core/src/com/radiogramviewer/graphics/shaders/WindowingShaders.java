@@ -21,9 +21,9 @@ public class WindowingShaders {
             "   gl_Position =  u_projTrans * a_position;\n"      +
             "}\n" ;
     private final static String fragmentShader1 =
-            "#ifdef GL_ES\n" +
+//            "#ifdef GL_ES\n" +
             "precision mediump float;\n" +
-            "#endif\n" +
+//            "#endif\n" +
             "varying vec4 v_color;\n" +
             "varying vec2 v_texCoords;\n" +
             "uniform sampler2D u_texture;\n" +
@@ -98,7 +98,7 @@ public class WindowingShaders {
             ";\n" +
                     "float cbn(vec2 c)\n" +                 //This contains a "bias" to offset its value to appear like
                     "{\n" +                                 // HU of 1000 is white and -1000 is black. So to mimmic that
-                    "    return (c.x*255.0+c.y)*0.1275;\n" + // scale the output: multiply by 0.1275 (255/2000).
+                    "    return (c.x*256.0+c.y)*0.1275;\n" + // scale the output: multiply by 0.1275 (255/2000).
                     "}\n\n" +
                     "void main()\n" +
                     "{\n" +

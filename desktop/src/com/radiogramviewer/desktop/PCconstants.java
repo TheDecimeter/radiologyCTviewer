@@ -134,10 +134,10 @@ public class PCconstants implements Constants {
                     P.d("slide 6  (8 bit winFull)");
                 }
                 else{
-                SubViewer.setSlideMode(7, -1);
-                ShaderManager.setShader("customPassKey3");
-                P.d("slide 7  (8 bit win2000)");
-            }
+                    SubViewer.setSlideMode(7, -1);
+                    ShaderManager.setShader("customPassKey3");
+                    P.d("slide 7  (8 bit win2000)");
+                }
                 break;
             case Input.Keys.NUM_2:
                 ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray16(.5f,1));

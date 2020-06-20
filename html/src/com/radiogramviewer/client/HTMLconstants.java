@@ -212,6 +212,7 @@ public class HTMLconstants implements Constants {
     public static void setDragDistance(int distance){
         Controls.setDragDist(distance);
     }
+    public static void setHoldTime(float seconds) { SlideManager.holdFor=seconds;}
     public static void setScrollMax(int max){
         Controls.setScrollMax(max);
     }
@@ -409,9 +410,12 @@ public class HTMLconstants implements Constants {
                 }
                 break;
             case Input.Keys.NUM_2:
-                addWindowShaderGray16("customPassKey1",.5f,1,true);
-                addWindowShaderGrayFull("customPassKey2",.5f,1,true);
-                addWindowShaderGray("customPassKey3",.5f,1,true);
+//                addWindowShaderGray16("customPassKey1",.5f,1,true);
+//                addWindowShaderGrayFull("customPassKey2",.5f,1,true);
+//                addWindowShaderGray("customPassKey3",.5f,1,true);
+                ShaderManager.addShader("customPassKey1", WindowingShaders.windowGray16(.5f,1));
+                ShaderManager.addShader("customPassKey2", WindowingShaders.windowGrayFull(.5f,1));
+                ShaderManager.addShader("customPassKey3", WindowingShaders.windowGray(.5f,1));
                 break;
             case Input.Keys.NUM_3:
                 ShaderManager.setShader("customPassKey1");
@@ -595,6 +599,7 @@ public class HTMLconstants implements Constants {
        $wnd.viewerGetTextureInfo = $entry(@com.radiogramviewer.client.HTMLconstants::getTextureInfoPacket());
 
        $wnd.viewerSetDragDistance = $entry(@com.radiogramviewer.client.HTMLconstants::setDragDistance(I));
+       $wnd.viewerSetButtonTime = $entry(@com.radiogramviewer.client.HTMLconstants::setHoldTime(F));
        $wnd.viewerSetScrollLimit = $entry(@com.radiogramviewer.client.HTMLconstants::setScrollMax(I));
        $wnd.viewerSetScrollSensitivity = $entry(@com.radiogramviewer.client.HTMLconstants::setScrollSensitivity(F));
        $wnd.viewerPipeInput = $entry(@com.radiogramviewer.client.HTMLconstants::pipeInput(II));

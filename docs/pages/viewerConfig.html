@@ -74,12 +74,12 @@
                     <li> <q>image</q> (Effected by Shaders)
                         <ol>
                             <li>image slice</li>
-                            <li>shape defined in <q>shapes.txt</q> and invoked with <a href="viewerControl.html#viewerAddShapeToImage"><c>viewerAddShapeToImage</c></a></li>
+                            <li>shape defined in <q>shapes.txt</q> and invoked with <a href="viewerControl.html#viewerAddShapeToImage"><code>viewerAddShapeToImage</code></a></li>
                         </ol>
                     </li>
                     <li> <q>UI</q> (NOT effected by Shaders)
                         <ol start="3">
-                            <li>shape defined in <q>shapes.txt</q> and invoked with <a href="viewerControl.html#viewerAddShapeToUI"><c>viewerAddShapeToUI</c></a></li>
+                            <li>shape defined in <q>shapes.txt</q> and invoked with <a href="viewerControl.html#viewerAddShapeToUI"><code>viewerAddShapeToUI</code></a></li>
                             <li>clicks</li>
                             <li>highlights</li>
                         </ol>
@@ -119,7 +119,7 @@
                                 This is not an exact guarentee. The viewer processes an entire slide, and only checks <q>yield</q> time between
                                 each task. It is therefore almost guarenteed that the viewer will work longer than specified
                                 here. Firefox by default gives a script 10 seconds to yield control before telling the user it is slow.
-                                This is also the interval at which <a href="viewerEvents.html#viewerListenerProcessing"><c>window.viewerListenerProcessing</c></a> events are fired. The larger this value
+                                This is also the interval at which <a href="viewerEvents.html#viewerListenerProcessing"><code>window.viewerListenerProcessing</code></a> events are fired. The larger this value
                                 the faster the viewer will finish its work, but the progress updates will be less frequent. This only matters on
                                 older computers / mobile devices.
                             </li>
@@ -128,7 +128,7 @@
                     <li id="window">window:
                         <ul>
                             <li><q>height</q>: The viewer height, if using <q>fakeDensity</q> or specifying a custom width with 
-                                <a href="viewerEvents.html#viewerStatsWidth"><c>window.viewerStatsWidth()</c></a>
+                                <a href="viewerEvents.html#viewerStatsWidth"><code>window.viewerStatsWidth()</code></a>
                                 then this value won't represent the true viewer height, however, it is still used to specify the aspect ratio. All coordinates
                                 provided to and received from the viewer will have their y value expressed in relation to this value.</li>
                             <li><q>width</q>: Same as <q>height</q> above.</li>
@@ -147,11 +147,11 @@
                             <li><q>highlightRadius</q>: The radius of the ring marking highlights clicks</li>
                             <li><q>highlightThickness</q>: The thickness of the ring marking highlights</li>
                             <li><q>highlightColor</q>: The color of the highlight</li>
-                            <li id="overwriteLastClick"><q>overwriteLastClick</q>: refers to <a href="viewerControl.html#viewerGetLastClick"><c>viewerGetLastClick()</c></a>, not click logging.
+                            <li id="overwriteLastClick"><q>overwriteLastClick</q>: refers to <a href="viewerControl.html#viewerGetLastClick"><code>viewerGetLastClick()</code></a>, not click logging.
                                 <ul>
-                                    <li>if true, <a href="viewerControl.html#viewerGetLastClick"><c>viewerGetLastClick()</c></a> will always return the last click.</li>
-                                    <li>if false, <a href="viewerControl.html#viewerGetLastClick"><c>viewerGetLastClick()</c></a> will return the first click after 
-                                        <a href="viewerControl.html#viewerResetLastClick"><c>viewerResetLastClick()</c></a>, any clicks after this click will be discarded.</li>
+                                    <li>if true, <a href="viewerControl.html#viewerGetLastClick"><code>viewerGetLastClick()</code></a> will always return the last click.</li>
+                                    <li>if false, <a href="viewerControl.html#viewerGetLastClick"><code>viewerGetLastClick()</code></a> will return the first click after 
+                                        <a href="viewerControl.html#viewerResetLastClick"><code>viewerResetLastClick()</code></a>, any clicks after this click will be discarded.</li>
                                 </ul>
                             </li>
                         </ul>
@@ -168,7 +168,7 @@
                                 <ul>
                                     <li>Some systems (typically with trackpads) give enormous values per scroll.
                                         this caps them. Most systems don't have a magnitude greater than 1.</li>
-                                    <li>Custom client scroll limits can be set with <a href="viewerControl.html#viewerSetScrollLimit"><c>viewerSetScrollLimit</c></a></li>
+                                    <li>Custom client scroll limits can be set with <a href="viewerControl.html#viewerSetScrollLimit"><code>viewerSetScrollLimit</code></a></li>
                                 </ul>
                             </li>
                             <li id="scrollSensitivity"><q>scrollSensitivity</q>: how sensitive each scroll is. A value of 1 will not augment the scroll value provided by the OS.
@@ -177,7 +177,7 @@
                                         will be stored until they make a whole value.</li>
                                     <li>eg a value of 0.2 means the scroll wheel will <q>click</q> 4 times with no effect, then on the 5<sup>th</sup> it will advance the slide.</li>
                                     <li>a negative scroll value will invert the scroll wheel direction.</li>
-                                    <li>Custom client scroll sensitivity can be set with <a href="viewerControl.html#viewerSetScrollSensitivity"><c>viewerSetScrollSensitivity</c></a></li>
+                                    <li>Custom client scroll sensitivity can be set with <a href="viewerControl.html#viewerSetScrollSensitivity"><code>viewerSetScrollSensitivity</code></a></li>
                                 </ul>
                             </li>
                             <li><q>arrows</q>: whether or not the arrow keys are used to move through the image</li>
@@ -241,8 +241,8 @@
             <li class="li2"> The <q>shapes.txt</q> file is found in the <q>assets</q> folder.</li>
             <li class="li2"> Meanings of each value (eg <q>mark,30,30,4,8,t,ring,FFF</q>), in order:
                 <ol>
-                    <li><q>mark</q> - The name of the shape to use when it is invoked with <a href="viewerControl.html#viewerAddShapeToImage"><c>viewerAddShapeToImage</c></a>
-                         and <a href="viewerControl.html#viewerAddShapeToUI"><c>viewerAddShapeToUI</c></a></li>
+                    <li><q>mark</q> - The name of the shape to use when it is invoked with <a href="viewerControl.html#viewerAddShapeToImage"><code>viewerAddShapeToImage</code></a>
+                         and <a href="viewerControl.html#viewerAddShapeToUI"><code>viewerAddShapeToUI</code></a></li>
                     <li><q>30</q> - The height of the shape.</li>
                     <li><q>30</q> - The width, of the shape, height and width should be the same unless the shape is a <q>square</q>.</li>
                     <li><q>4</q> - The depth of the shape (how many slices in front and behind the image to show)</li>

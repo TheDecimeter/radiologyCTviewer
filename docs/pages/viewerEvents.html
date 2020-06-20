@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html->
 <html>
 <head>
     <title>
@@ -7,11 +7,21 @@
     <link rel="shortcut icon" href="../favicon.ico">
     <link href="../styles.css" rel="stylesheet" type="text/css">
     <link href="styles.css" rel="stylesheet" type="text/css">
+    <script>
+        class ViewerEventElemL extends HTMLElement {}
+        class ViewerEventElemV extends HTMLElement {}
+        class ViewerEventElemF extends HTMLElement {}
+        class ViewerEventElemO extends HTMLElement {}
+        customElements.define('l-', ViewerEventElemL);
+        customElements.define('v-', ViewerEventElemV);
+        customElements.define('f-', ViewerEventElemF);
+        customElements.define('o-', ViewerEventElemO);
+    </script>
     <style>
-        l{color:chocolate;}
-        v{color:lightskyblue;}
-        f{color:beige;}
-        o{color:lightblue}
+        l-{color:chocolate;}
+        v-{color:lightskyblue;}
+        f-{color:beige;}
+        o-{color:lightblue}
     </style>
 </head>
 <body>
@@ -41,63 +51,63 @@
     <br><br>
     A function added to the window anonymously:
     <br>
-    <c><o>window</o>.<v>sayHi</v> = <f>function</f>(<v>x</v>){ <o>console</o>.<f>log</f>(<l><q>Hello World, I saw an</q></l> + <v>x</v>);}</c>
+    <code><o->window</o->.<v->sayHi</v-> = <f->function</f->(<v->x</v->){ <o->console</o->.<f->log</f->(<l-><q>Hello World, I saw an</q></l-> + <v->x</v->);}</code>
     <br><br>
     Or you can define a function elsewhere and attach it separately.
     <br>
-    <c>
-        <f>function</f> <v>hidy</v>(<v>x</v>){ <o>console</o>.<f>log</f>(<l><q>Hello World, I saw an</q></l> + <v>x</v>);
+    <code>
+        <f->function</f-> <v->hidy</v->(<v->x</v->){ <o->console</o->.<f->log</f->(<l-><q>Hello World, I saw an</q></l-> + <v->x</v->);
         <br>
-        <o>window</o>.<v>sayHi</v> = <v>hidy</v>;
-    </c>
+        <o->window</o->.<v->sayHi</v-> = <v->hidy</v->;
+    </code>
     <ul class="li1">
         <li class="li2"> Preloader functions:
             <ul>
-                <li id="viewerLoadingBarAdvance"><c>window.viewerLoadingBarAdvance = function(percent){}</c>: Called every time the preloading bar advances with the <c>percent</c> loaded from 0 to 1.</li>
-                <li id="viewerCustomLoadingBar"><c>window.viewerCustomLoadingBar = function(panel){}</c>: Called once when the preloader is created. <c>panel</c> is the root object of the preloader
-                    you can attach things to. If you use this function, be sure to use <c>window.viewerLoadingBarAdvance</c> as well, otherwise the preloader will try to
+                <li id="viewerLoadingBarAdvance"><code>window.viewerLoadingBarAdvance = function(percent){}</code>: Called every time the preloading bar advances with the <code>percent</code> loaded from 0 to 1.</li>
+                <li id="viewerCustomLoadingBar"><code>window.viewerCustomLoadingBar = function(panel){}</code>: Called once when the preloader is created. <code>panel</code> is the root object of the preloader
+                    you can attach things to. If you use this function, be sure to use <code>window.viewerLoadingBarAdvance</code> as well, otherwise the preloader will try to
                     advance a loading bar which may not exist.</li>
             </ul>
         </li>
         <li class="li2"> Initial functions:
             <ul>
-                <li id="viewerStatsWidth"><c>window.viewerStatsWidth = function(){ return 700; }</c>: Called when the viewer first starts. This function should return
+                <li id="viewerStatsWidth"><code>window.viewerStatsWidth = function(){ return 700; }</code>: Called when the viewer first starts. This function should return
                     the desired width in pixels if you are setting it dynamicly.</li>
-                <li id="viewerEventResetFinished"><c>window.viewerEventResetFinished = function(){}</c>: Not called when the viewer first initilaizes, but called after a
-                    resizing task is complete (The <a href="viewerControl.html#viewerResetSize"><c>viewerResetSize</c></a> function triggers a reset).</li>
-                <li id="viewerListenerProcessing"><c>window.viewerListenerProcessing = function(remaining,progress){}</c>: Called between image processing tasks. This will generally not be
-                    called more often than the <q>yield</q> time in <q>config.ini</q>. The function informs you of the number of tasks <c>remaining</c>,
-                    as well as the <c>progress</c> on the current task (a number between 0 and 1). When all processing is complete (even if there was none
-                    to do in the first place, this function will be called with 0 <c>remaining</c> tasks with the current progress at 1.</li>
-                <li id="viewerListenerLoadingStateChanged"><c>window.viewerListenerLoadingStateChanged = function(state){}</c>: This function informs you when a loading state changes.
+                <li id="viewerEventResetFinished"><code>window.viewerEventResetFinished = function(){}</code>: Not called when the viewer first initilaizes, but called after a
+                    resizing task is complete (The <a href="viewerControl.html#viewerResetSize"><code>viewerResetSize</code></a> function triggers a reset).</li>
+                <li id="viewerListenerProcessing"><code>window.viewerListenerProcessing = function(remaining,progress){}</code>: Called between image processing tasks. This will generally not be
+                    called more often than the <q>yield</q> time in <q>config.ini</q>. The function informs you of the number of tasks <code>remaining</code>,
+                    as well as the <code>progress</code> on the current task (a number between 0 and 1). When all processing is complete (even if there was none
+                    to do in the first place, this function will be called with 0 <code>remaining</code> tasks with the current progress at 1.</li>
+                <li id="viewerListenerLoadingStateChanged"><code>window.viewerListenerLoadingStateChanged = function(state){}</code>: This function informs you when a loading state changes.
                     The state is a numeric flag:
                     <ul>
-                        <li id="FLAGviewerReady"><c>FLAGviewerReady</c>: Indicates everything loaded properly and every image is processed and in the GPU.</li>
-                        <li id="FLAGviewerLoaded"><c>FLAGviewerLoaded</c>: Indicates everything loaded properly, but there may still be images to be processed.</li>
-                        <li id="FLAGviewerFailedLoad"><c>FLAGviewerFailedLoad</c>: Indicates an error the viewer can't recover from (usually if the server goes down).</li>
+                        <li id="FLAGviewerReady"><code>FLAGviewerReady</code>: Indicates everything loaded properly and every image is processed and in the GPU.</li>
+                        <li id="FLAGviewerLoaded"><code>FLAGviewerLoaded</code>: Indicates everything loaded properly, but there may still be images to be processed.</li>
+                        <li id="FLAGviewerFailedLoad"><code>FLAGviewerFailedLoad</code>: Indicates an error the viewer can't recover from (usually if the server goes down).</li>
                     </ul>
                 </li>
             </ul>
         </li>
         <li class="li2"> Runtime functions:
             <ul>
-                <li id="viewerListenerInput"><c>window.viewerListenerInput = function(){}</c>: Called when any known input occurs.</li>
-                <li id="viewerListenerClickAdded"><c>window.viewerListenerClickAdded = function( click ){}</c>: Called when a click is added to the viewer. </li>
-                <li id="viewerListenerClickRemoved"><c>window.viewerListenerClickRemoved = function( click ){}</c>: Called when a click is removed from the viewer. The <c>click</c> is a string
+                <li id="viewerListenerInput"><code>window.viewerListenerInput = function(){}</code>: Called when any known input occurs.</li>
+                <li id="viewerListenerClickAdded"><code>window.viewerListenerClickAdded = function( click ){}</code>: Called when a click is added to the viewer. </li>
+                <li id="code>"><code>window.code> = function( click ){}</code>: Called when a click is removed from the viewer. The <code>click</code> is a string
                     with <i>x</i>,<i>y</i>,<i>z</i>,<i>time</i> separated by commas. Note that the coordinates are scaled to the dimensions specified in
                     <q>config.ini</q>. It represents the position of the click when it was added, not the click that removed it (it is guaranteed to be 
-                    the same values as provided in <c>window.viewerListenerClickAdded</c> above, even if the viewer has been resized between events).</li>
-                <li id="viewerListenerScrollSuccess"><c>window.viewerListenerScrollSuccess = function(slideIndex){}</c>: Called when the viewer scrolls to a new slide. Provides the
-                    <c>slideIndex</c> of the current slide.</li>
-                <li id="viewerListenerScrollFail"><c>window.viewerListenerScrollFail = function(slideIndex){}</c>: Called when the viewer tries to scroll to a new slide but fails
-                    because it is either at the first or last available slide. Provides the <c>slideIndex</c> of the current slide.</li>
-                <li id="viewerCoroutine"><c>window.viewerCoroutine = function(){}</c>: Called everytime the screen renders before any changes or updates occur
+                    the same values as provided in <code>window.viewerListenerClickAdded</code> above, even if the viewer has been resized between events).</li>
+                <li id="viewerListenerScrollSuccess"><code>window.viewerListenerScrollSuccess = function(slideIndex){}</code>: Called when the viewer scrolls to a new slide. Provides the
+                    <code>slideIndex</code> of the current slide.</li>
+                <li id="viewerListenerScrollFail"><code>window.viewerListenerScrollFail = function(slideIndex){}</code>: Called when the viewer tries to scroll to a new slide but fails
+                    because it is either at the first or last available slide. Provides the <code>slideIndex</code> of the current slide.</li>
+                <li id="viewerCoroutine"><code>window.viewerCoroutine = function(){}</code>: Called everytime the screen renders before any changes or updates occur
                     (after drawing and updating). This will not run if the viewer image is set to 0.</li>
             </ul>
         </li>
         <li class="li2"> System:
             <ul>
-                <li id="viewerConsoleOut"><c>window.viewerConsoleOut = function(msg){}</c>: called anytime the viewer would output to the console. Note that the output
+                <li id="viewerConsoleOut"><code>window.viewerConsoleOut = function(msg){}</code>: called anytime the viewer would output to the console. Note that the output
                 from your own JavaScript (and errors created there) will not output through this function. This can be used if you want to send
                 all of your log output back from each client for debugging (not generally recommended) or you can use this to create a console
                 in mobile browsers if you are targeting that platform.</li>
