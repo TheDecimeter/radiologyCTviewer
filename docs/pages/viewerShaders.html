@@ -76,6 +76,13 @@
             </ul>
         </li>
     </ul>
+    <br><br>
+    <div style="text-align:center;">
+        <img class="center" style="width:60%;" src="images/histAll.jpg" alt="ct slice with histogram only showing values in the lower percentile">
+        <br>
+        This image had a window width encompassing the full 12 bit dicom,<br>notice how the upper values are mostly unused.
+    </div>
+    <br>
     <ul>
         <li class="li2" id="windowing">Shader Creation
             <ul>
@@ -104,8 +111,8 @@
                     <ul>
                         <li><b>It is <u>strongly</u> recommended that, for windowing purposes, you use only these <q>zeroed</q> shaders.</b></li>
                         <li>These shaders expect source images rendered at 8 bits per color with level at 0HU and width at 2000HU</li>
-                        <li>This seems to be common in CT viewers. Applying windows with the following functions appear to match
-                            the output of Microdicom (the viewer I used to check my output against)</li>
+                        <li>As seen in the image above, humans are quite squishy, even Vin Diesel. Almost all values in our bodies are in the lower half of
+                            what is available in a typical dicom image (less than 1048HU).</li>
                         <li>If you don't know your bits per color, but are outputing dicoms to png or jpg, it's safe to assume they are 8 bit.</li>
                     <ul>
                     <li id="viewerAddWindowingShaderGray"><code>viewerAddWindowingShaderGray( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
@@ -244,7 +251,8 @@
     The 8 bit windowing shaders which come with the viewer expect the source image to be rendered with a window preapplied.
     This can either be from <a href="#viewerAddWindowingShaderGray">-1000 to 1000</a>, or from <a href="#viewerAddWindowingShaderGrayFull">-1000 to 3095</a>.
     <br><br>
-    However there if you need to render your source images with a different window this is fine. The <a href="#zeroedWindow"><q>Zeroed</q> window shaders</a> can handle this, but you do have to offset your values to mimmic HU.
+    However there if you need to render your source images with a different window this is fine. The <a href="#zeroedWindow"><q>Zeroed</q> window shaders</a>
+    can handle this, but you do have to offset your values to mimmic HU.
     <br>
     <div id="customSourceWindow">
         <ol>
@@ -394,22 +402,68 @@
     which is huge and easily encompasses 256 available values, has to have a lower color depth because it stretches below the available data
     (this is why lung windows don't show pure blacks).
     <br><br>
+    Notice that the 2000 wide window I suggest doesn't cover the entire range of a dicom image. This means any windows
+    which go over 1000 HU will not be correct (I doubt anyone will notice though). This is mostly the Bone and
+    Full Dynamic Windows. In these cases the values under 1000 will be the expected shade, however some values at 1000 will be
+    dimmer than in a dicom viewer, and there will be no pure whites (while Full Dynamic is supposed to guarentee pure
+    whites). This is because the 2000 wide window drops everything above 1000  to 1000. So if the bone window topped out
+    at 1300, there will no longer be any values which meet this threshold.
+    <br><br>
 
     <br><br>
-    <img style="width:48%;" src="images/histDicom.jpg" alt="ct slice with smooth histogram">
-    <img style="width:48%;" src="images/histOnline.jpg" alt="ct slice with jagged histogram">
+    <img style="width:48%;" src="images/hist8f.jpg" alt="ct slice with very wide jagged histogram">
+    <img style="width:48%;" src="images/hist8z.jpg" alt="ct slice with wide jagged histogram">
     <br>
-    Both of these images had an abdominal window applied.
-    <br><br>
-    The first was rendered in a dicom viewer straight from a dicom image, notice how there were enough values in the source
-    image to fill the entire spectrum.
-    <br><br>
-    The second was rendered in the online CT viewer which used an 8 bit jpg. Notice its
-    spikes in its values where it chose 32 values (Color depth: 256 &times; Window width: 0.125) from the source
-    and stretched them across the entire gray spectrum.
-    <br><br>
-    Although the histogram makes the image appear quite different, the main visual difference is due to
+    <img style="width:48%;" src="images/histDC.jpg" alt="ct slice with smooth histogram with 5 missing values">
+    <img style="width:48%;" src="images/hist16.jpg" alt="ct slice with smooth histogram with 5 missing values">
+    <br>
+    All of these images have the same abdomen window applied. Going Clockwise from top left:
+    <q>Full</q> 4096 wide 8 bit png, <q>Zeroed</q> 2000 wide 8 bit png, Full 16 bit png, Original dicom rendered
+    with Amide (Not displayed in this online ct viewer.
 
+    <br><br>
+    Notice the holes in the histogram in the bottom 2 images. We used a window that was 250 HU wide,
+    so 5 values are missing (the last image has the missing values lining up really well with GIMP's unit
+    markings).
+    <br><br>
+    A few things to note:
+    <ul class="li1">
+        <li class="li2">The missing values in my 16 bit image aren't the same as the values in the real dicom viewer (and the
+            histograms are slightly different for what would be expected in a "lossless" conversion).
+            <ul>
+                <li>I think this is due to a scaling factor I apply to keep all my window values consistant,
+                this makes numbers round off slightly differently. Otherwise, I think the data is the same (but
+                unfortunately can't say for sure).</li>
+            </ul>
+        </li>
+        <li class="li2">The images all look incredibly similar despite ranging from 17 to 251 values.
+            <ul>
+                <li>I was surprised by this too, maybe marketing departments are lying to us when it
+                    comes to needing higher color definition :)</li>
+                <li>Really the biggest constraint when it comes to the narrowness of your window is how
+                    heavily you apply jpg's compression. This should definitly be varried according to
+                    what window widths you offer.</li>
+            </ul>
+        </li>
+        <li class="li2">Some of the images are slightly brighter even though the window is the same.
+            <ul>
+                <li>This depends on the width of the holes in the histogram.
+                    <ul>
+                        <li>If a hole is wide, there is a larger range a window's level can be moved
+                            without the window changing.</li>
+                        <li>This means a window can be at the edge of this <q>range</q> which
+                            will cause it to be brighter or darker.</li>
+                    </ul>
+                </li>
+                <li>Generally, this will never be noticed because the brightness of images
+                varies wildly.</li>
+            </ul>
+        </li>
+    </ul>
+    <br><br>
+    If you take a closer look at any of these images, please be aware of the zoom level of the straight dicom
+    image. It was rendered smaller, so I had to scale it up slightly to match the others in GIMP which
+    gives it a hint of antialiasing.
 
 
     <br><br><br>
