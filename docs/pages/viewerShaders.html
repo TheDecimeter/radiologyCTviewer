@@ -100,9 +100,9 @@
                     </ul></ul>
                     <br><br>
                 </li>
-                <li>8 bit <q>Zeroed</q> Window Shader Creation (Recommended for CT images):
+                <li id="zeroedWindow">8 bit <q>Zeroed</q> Window Shader Creation (Recommended for CT images):
                     <ul>
-                        <li><b>It is <u>strongly</u> recommended that, for windowing purposes, you use only the default shaders.</b></li>
+                        <li><b>It is <u>strongly</u> recommended that, for windowing purposes, you use only these <q>zeroed</q> shaders.</b></li>
                         <li>These shaders expect source images rendered at 8 bits per color with level at 0HU and width at 2000HU</li>
                         <li>This seems to be common in CT viewers. Applying windows with the following functions appear to match
                             the output of Microdicom (the viewer I used to check my output against)</li>
@@ -118,15 +118,15 @@
                     </ul></ul>
                 </li>
 
-                <li>8 bit Full Depth Window Width Shader Creation:
+                <li id="fullWindow">8 bit Full Depth Window Width Shader Creation:
                     <ul>
                         <li>These shaders expect source images rendered with level at 1048HU and width at 4096HU (full 12 bit range)</li>
                         <li>Dicoms tend to store data in 12 or 16 bits. This shader works with that range, but reduces
                             the depth to 8 bits (so data is lost, but these images still work like regular images).</li>
                         <li>Normally human bodies don't need to show any variety above 1000HU so it is generally advised
-                            to prepare your source images to work with the default shaders above.</li>
+                            to prepare your source images to work with the zeroed shaders above.</li>
                         <li>Because the usual contrast is roughly halved, the pixel values are expanded in these shaders to match
-                            the look of the default shader.</li>
+                            the HU conversions for the zeroed shader.</li>
                         <li>If you don't know your bits per color, but are outputing dicoms to png or jpg, it's safe to assume they are 8 bit.</li>
                     <ul>
                         <li id="viewerAddWindowingShaderGrayFull"><code>viewerAddWindowingShaderGrayFull( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
@@ -138,20 +138,19 @@
                             this is better for non grayscale images.<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
                     </ul></ul>
                 </li>
-                <li>16 bit Full Depth Color Window Shader Creation:
+                <li id="16bitWindow">16 bit Full Depth Color Window Shader Creation:
                     <ul>
                         <li><b><u>Never</u> use this shader unless you know exactly why you need it</b><br>
                             I am only including it as a means to test contrast correctness for different windowing levels.
-                            If your trials need higher color depth, this viewer is probably not the right choice for you.
+                            If your trials need higher color depth, either use several files with their own prerendered window, or use a CPU based viewer (not this one).
                             If you don't know whether or not you need higher color depth, you don't.</li>
                         <li>This shader expects images rendered as pngs with the highest 8 bits stored in the red component, and the lowest
                             8 bits stored in the green.</li>
                         <li>This shader combines 8 bits from the red and green components at runtime to show a 16 bit grayscale image.</li>
                         <li>Because this contrast is 16 times higher, the pixel values are reduced in this shader to match
-                            the look of the default shader (the high contrast is still there, but it will never be noticable unless very
-                            narrow windows are used.</li>
+                            the HU conversions of the 8 bit shaders</li>
                         <li>No stand alone program will do these fairly specific conversions, you will have to rely on
-                            custom solutions.</li>
+                            custom solutions (<a href="files/dcm2png.zip">my asc2png16.py script creates these images from ascii files</a>).</li>
                     <ul>
                     <li id="viewerAddWindowingShaderGray16"><code>viewerAddWindowingShaderGray16( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
                         window <code>level</code> and <code>width</code>. This creates a grayscale shader which expects the red pixel to equal high bits, and green pixels to equal low bits
@@ -172,8 +171,9 @@
     <br>
 
     <div id="windowingUnits">
-        *Windowing levels and widths are specified in decimal values which linearly progress along the gray/value scale from 0 (black) to 1 (white). However you will likely encounter
-        <a href="https://radiopaedia.org/articles/hounsfield-unit">Hounsfield Units (HU)</a>. Commonly, in CT scans, these values range from -1000 (black) to 1000 (white).
+        *Windowing levels and widths are specified in decimal values which linearly progress from 0 (black) to 1 (white). However you will likely encounter
+        <a href="https://radiopaedia.org/articles/hounsfield-unit">Hounsfield Units (HU)</a>. These specify density, not color. Our bodies typically range from -1000 HU (air) to
+        1000-ish HU (bone).
         <br><br>
         Conversion:
         <table style="margin-left: 1em;">
@@ -227,10 +227,10 @@
 
     <br><br>
     <h2 id="advanced"><b>Advanced Windowing</b></h2>
-    This viewer offloads windowing to the GPU for speed. This requires images which have 8 bits per color.
+    For easy transmission of images over the Internet as well as a uniformly smooth runtime experience, this viewer requires images which have 8 bits per color.
     Dicoms, on the other hand, often store 12 bits per color allowing them to show a much greater change in contrast. Because these
     images are grayscale, where all colors are equal, we can store half of the bits in one color, and half
-    in another. The default way of doing this for the viewer is to store the top half of the bits as red, and
+    in another. The supplied way of doing this for the viewer is to store the top half of the bits as red, and
     the bottom half as green (blue is unused).
     <br><br>
     Unfortunately, this means the images will have to be stored losslessly (as a png), and will be harder
@@ -240,6 +240,105 @@
     If you do need a higher bit depth, it is recommended that you use a viewer designed for that,
     spread your <q>windows</q> across multiple images, or
     possibly make your own glsl shader which works better with jpeg's compression.
+    <br><br>
+    The 8 bit windowing shaders which come with the viewer expect the source image to be rendered with a window preapplied.
+    This can either be from <a href="#viewerAddWindowingShaderGray">-1000 to 1000</a>, or from <a href="#viewerAddWindowingShaderGrayFull">-1000 to 3095</a>.
+    <br><br>
+    However there if you need to render your source images with a different window this is fine. The <a href="#zeroedWindow"><q>Zeroed</q> window shaders</a> can handle this, but you do have to offset your values to mimmic HU.
+    <br>
+    <div id="customSourceWindow">
+        <ol>
+            <li>Determine what window the image is rendered in.</li>
+            <li>Determine what window you want to apply in the viewer.</li>
+        </ol>
+        Conversion:
+        <style>
+            .mckTbl{
+               display: table-cell;
+               height:3em;
+               vertical-align: middle;
+            }
+        </style>
+        <table style="margin-left: 1em;">
+            <tr>
+                <td>
+                    &nbsp;<br>&nbsp;<br><div style="height:0.25em;"></div>
+                    <div class="mckTbl">Level:</div><div></div>
+                    <div class="mckTbl" style="height:3em;">Width:</div>
+                </td>
+                <td style="width:.25em;"></td>
+                <td>
+                    <div>
+                        Source Image<br>Rendered At:<br><div style="height:0.25em;"></div>
+                        <div class="mckTbl"><input type="number" oninput="customSourceWindow();" style="width:4em;" id="customSourceWindowLsource"> HU</div><div></div>
+                        <div class="mckTbl"><input type="number" oninput="customSourceWindow();" style="width:4em;" id="customSourceWindowWsource"> HU</div>
+                    </div>
+                </td>
+                <td style="width:.5em;"></td>
+                <td>
+                    <div>
+                        Desired Window<br>For CT Viewer:<br><div style="height:0.25em;"></div>
+                        <div class="mckTbl"><input type="number" oninput="customSourceWindow();" style="width:4em;" id="customSourceWindowLnew"> HU</div><div></div>
+                        <div class="mckTbl"><input type="number" oninput="customSourceWindow();" style="width:4em;" id="customSourceWindowWnew"> HU</div>
+                    </div>
+                </td>
+                <td style="width:.25em;"></td>
+                <td>
+                    <div>
+                        New Window<br>With Offset<br><div style="height:0.25em;"></div>
+                        <div id="customSourceWindowLans" class="mckTbl">- viewer unit(s)</div><div></div>
+                        <div id="customSourceWindowWans" class="mckTbl">- viewer unit(s)</div>
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+
+        <a href="https://www.desmos.com/calculator/rsdpiaz1no">see formulas here</a>
+
+        <script>
+            function customSourceWindow(){
+                customSourceWindowL($('customSourceWindowLnew'));
+                customSourceWindowW($('customSourceWindowWnew'));
+            }
+            function customSourceWindowL(e){
+                let sl=Number($('customSourceWindowLsource').value);
+                let sw=Number($('customSourceWindowWsource').value);
+
+                if(Number.isNaN(sl) || Number.isNaN(sw) || sw==0){
+                    $('customSourceWindowLans').innerHTML='- viewer unit(s)';
+                    return;
+                }
+
+                let n=Number(e.value);
+                if(Number.isNaN(n)){
+                    $('customSourceWindowLans').innerHTML='- viewer unit(s)';
+                    return;
+                }
+
+                let offset=((sw/2)+(n-sl));
+
+                $('customSourceWindowLans').innerHTML=offset/sw +" viewer unit(s)";
+            }
+            function customSourceWindowW(e){
+                let sw=Number($('customSourceWindowWsource').value);
+
+                if(Number.isNaN(sw) || sw==0){
+                    $('customSourceWindowWans').innerHTML='- viewer unit(s)';
+                    return;
+                }
+
+                let n=Number(e.value);
+                if(Number.isNaN(n)){
+                    $('customSourceWindowWans').innerHTML='- viewer unit(s)';
+                    return;
+                }
+
+                $('customSourceWindowWans').innerHTML=n/sw+" viewer unit(s)";
+            }
+
+        </script>
+    </div>
     <br><br>
     These are roughly the steps to go through to make high bit images to work in the the included
     16 bit shader. This is loose guidance only, it is expected that if you go this route, you have your own means of
@@ -270,14 +369,47 @@
     <h2 id="lostData"><b>The Lost Information</b></h2>
     <br>
     These two images both use a window where level is 0 and width is 2000. Which one is correct?<br>
-    <img src="images/noIntercept.png" alt="ct image slice">
-    <img src="images/withIntercept.png" alt="ct image slice">
+    <img src="images/noIntercept.png" alt="ct image slice, slightly brighter">
+    <img src="images/withIntercept.png" alt="ct image slice, slightly darker">
     <br>
-    I'm pretty sure it's the one on the right. Dicoms typically store 24 values that are less dense then air.
+    I'm pretty sure it's the second one. Dicoms typically store 24 values that are less dense then air.
     I think that means the proper way to render them is by making all of these values black.
     So the "full" window expects these values to blend together (even in the "lossless" 16 bit
-    version). If you want to keep this data around, you can set your window to start 24 values below
-    air, but your image will be slightly brighter (the image on the left).
+    version). If you want to keep this data around, you can either set your window to start 24 values below
+    air or ignore the <q>intercept</q>value in the dicom file, but this will result in a slightly brighter image (the first one).
+    <br><br>
+
+    <br><br>
+    <img style="width:100%;" src="images/windowingLoss.jpg" alt="bars showing the difference in size between 256, 2000, and 4096">
+    <br>
+    As mentioned in the advanced windowing section, the ct viewer stores its data in common image formats.
+    So the available data in the 4096 value (dicom) format is heavily reduced to fit in only 256 values (png/jpg).
+    <br><br>
+    In any experiments without windoing, this isn't really an issue. The dicom is often shown in only 256 shades
+    of gray because of the monitor and/or graphics card.<br>
+    When a window is applied in a normal dicom viewer, there is usually plenty of range in values to fill the available
+    256. It is often safe to say that the value range used in an window are the smaller of either the window width, and the color
+    depth of your monitor (usually 256). Two examples where 256 values aren't achieved: the liver window above is too narrow to show 256 values,
+    and the lung window,
+    which is huge and easily encompasses 256 available values, has to have a lower color depth because it stretches below the available data
+    (this is why lung windows don't show pure blacks).
+    <br><br>
+
+    <br><br>
+    <img style="width:48%;" src="images/histDicom.jpg" alt="ct slice with smooth histogram">
+    <img style="width:48%;" src="images/histOnline.jpg" alt="ct slice with jagged histogram">
+    <br>
+    Both of these images had an abdominal window applied.
+    <br><br>
+    The first was rendered in a dicom viewer straight from a dicom image, notice how there were enough values in the source
+    image to fill the entire spectrum.
+    <br><br>
+    The second was rendered in the online CT viewer which used an 8 bit jpg. Notice its
+    spikes in its values where it chose 32 values (Color depth: 256 &times; Window width: 0.125) from the source
+    and stretched them across the entire gray spectrum.
+    <br><br>
+    Although the histogram makes the image appear quite different, the main visual difference is due to
+
 
 
     <br><br><br>
