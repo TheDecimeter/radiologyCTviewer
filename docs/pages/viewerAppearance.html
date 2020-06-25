@@ -32,7 +32,7 @@
             <br>
             <ul class="li2">
                 <li>If you intend on using windowing, export the image with the spectrum: HU level: 0, width 2000.</li>
-                <li>Try to export the image into something lossless like PNG because you will have to tile them later.</li>
+                <li>Try to export the image into something lossless like PNG because you will have to <a href="#tileImage">tile them</a> later.</li>
             </ul>
             <br><br>
             If you don't have a pipeline for converting dicoms to png, here are 2 free ways:
@@ -56,13 +56,14 @@
                         <li>Open a terminal here</li>
                         <li>(Optional) If you still want to use your own dicom viewer
                             <ul>
+                                <li>Move the sort scripts out of the sortOnlyScripts folder and into the folder with the dicoms.</li>
                                 <li>run <code>$ ./sortdcm.sh</code></li>
                                 <li>this will copy sorted dicoms into the <q>sort</q> folder, you can now ignore the rest of these steps and use your own viewer with sorted dicoms.</li>
                             </ul>
                         </li>
                         <li>Convert the dicoms to ascii files
                             <ul>
-                                <li><code>$ ./dcm2asc.sh</code></li>
+                                <li>run <code>$ ./dcm2asc.sh</code></li>
                             </ul>
                         </li>
                         <li>When it finishes, look at the final values:
@@ -84,24 +85,33 @@
                                         <li>The scripts come set to a window from -1000 to 1000</li>
                                     </ul>
                                 </li>
-                                <li><code>$ python3 asc2png8.py</code></li>
+                                <li>run <code>$ python3 asc2png8.py</code>
+                                    <ul>
+                                        <li><a href="https://pypi.org/project/Pillow/2.2.1/#installation">This script requires pillow</a> (maybe: <code>$ pip install pillow</code>).</li>
+                                    </ul>
+                                </li>
                                 <li>This will take a while</li>
                             </ul>
                         </li>
                         <li>The pngs will now be in the <q>png8</q> folder</li>
                     </ul>
                 </li>
-                <li class="li2">Option 2: Using Microdicom (with manual labor)
+                <li class="li2">Option 2: Using Microdicom
                     <ul>
                         <li>Make sure you are in Windows</li>
                         <li>Optional: Use sortdcm.py to presort your dicoms.
                             <ul>
                                 <li><a href="files/dcm2png.zip">First download my scripts here.</a></li>
-                                <li>Get sortdcm.py out of the <q>sortOnlyScripts</q> folder</li>
-                                <li><a href="https://pydicom.github.io/pydicom/stable/tutorials/installation.html">Add the pydicom module to your python environment.</a></li>
+                                <li>Get sortdcm.py out of the <q>sortOnlyScripts</q> folder, and place it with your dicom files</li>
+                                <li>
+                                    <a href="https://pydicom.github.io/pydicom/stable/tutorials/installation.html">Add the pydicom module to your python environment.</a>
+                                    <ul>
+                                        <li>maybe: <code>$ python -m pip install pydicom</code></li>
+                                    </ul>
+                                </li>
                                 <li>Make a backup copy of your dicoms.</li>
-                                <li>Put the sortdcm.py script in the folder with your dicoms and run it.</li>
-                                <li>The dicoms should now be renamed in order</li>
+                                <li>Run sortdcm.py (<code>$ python3 sortdcm.py</code>).</li>
+                                <li>The dicoms should now be renamed in order, but you won't know for sure till you convert them.</li>
                             </ul>
                         </li>
                         <li><a href="https://www.microdicom.com/downloads.html">Install Microdicom</a></li>
@@ -119,7 +129,7 @@
             </ul>
 
             <br><br>
-            <h2><b>Tile your images</b></h2>
+            <h2 id="tileImage"><b>Tile your images</b></h2>
             Again, the exact process will depend on what software you use. I am sure there are many options. I will cover 2 free ones here.
             <br>
             <ul class="li1">
@@ -155,7 +165,7 @@
                                 <li><a href="https://www.gimp.org/">Install Gimp (2.8 or above)</a></li>
                                 <li><a href="files/fuseLayersGimp.zip">Download this plugin for turning layers into a sprite sheet here</a>
                                     <ul>
-                                        <li>This plugin was created by Eduardo Hern&agrave;ndez, I am only hosting it here because GIMP doesn't
+                                        <li>This plugin was created by Eduardo Hern&agrave;ndez, I am only hosting it here because Gimp doesn't
                                             have the best repo for plugins.</li>
                                     </ul>
                                 </li>
@@ -193,7 +203,9 @@
                                                 <li>
                                                     Combine
                                                     <ul>
-                                                        <li>Make sure there is an option: <q>Fuse Layers</q>, but don't use it yet.</li>
+                                                        <li>Make sure there is an option: <q>Fuse Layers</q>, but don't use it yet.<br>
+                                                            If this option isn't here, make sure the plugin was extracted into teh correct folder,<br>
+                                                            and make sure Gimp was restarted.</li>
                                                     </ul>
                                                 </li>
                                             </ul>
@@ -229,7 +241,14 @@
                                 </li>
                                 <li>A dialog will appear asking you How many <q>Layers on the X axis</q>?</li>
                                 <li>Set this to the floor of the square root of your slice count</li>
-                                <li>Click <q>OK</q>, this might take a while.</li>
+                                <li>Click <q>OK</q>, this will take a LONG time, some images have taken over an hour.
+                                    <ul>
+                                        <li>The feed back isn't helpful in gaging how close the image is to completion.</li>
+                                        <li>Gimp will appear to be not responding from time to time, don't panic, this is fine.</li>
+                                        <li>If you do feel something has gone wrong, you will have to force close Gimp to stop the script.<br>
+                                            &nbsp;But honestly, I have never had the script not finish an image (it just takes forever).</li>
+                                    </ul>
+                                </li>
                                 <li>A new image will appear with all the slices in one</li>
                             </ol>
                         </li>
@@ -243,7 +262,7 @@
             <h2><b>Final compression</b></h2>
             Again, the process depends on your image editing program.
             <ul class="li2">
-               <li>Load the complete collage into an editor (if you went the GIMP route above, you are already here)</li>
+               <li>Load the complete collage into an editor (if you went the Gimp route above, you are already here)</li>
                 <li>You can usually save a little space by makeing sure the image mode is in grayscale.
                 <ul>
                     In Gimp, go to Image > Mode > Grayscale
