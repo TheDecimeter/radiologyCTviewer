@@ -358,11 +358,28 @@
         <li>A text editor you like, preferably with syntax highlighting for bash and python (<a href="https://code.visualstudio.com/">The one used in the example</a>)</li>
         <li>A means of converting dicoms into the correct sequence of images. The software used in the example:
             <ul>
-                <li>Linux/Bash - calls the converter on each image, and turns the meta data into a useful, ordered, file name</li>
-                <li><a href="https://xmedcon.sourceforge.io/">XMedCon</a> - reads image metadata to get spatial location for ordering and converts dicom to ascii</li>
-                <li>Python - simple script to read values stored in ascii file and turn them into an image</li>
-                <li><a href="https://imagemagick.org/index.php">Image Magick</a> - to turn the final pngs into a grid of images</li>
-                <li><a href="https://www.gimp.org/">Gimp</a> - Not needed in the example, but sometimes nice for error correction</li>
+                <li>Python - simple script to read values stored in ascii file and turn them into an image
+                <li>You will also need the <q><a href="https://pypi.org/project/Pillow/2.2.1/#installation">pillow</a></q> module for creating the 16bit images.</li>
+                </li>
+                <li>Either:
+                    <ul>
+                        <li>Linux (used in the example):
+                            <ul>
+                                <li><a href="https://xmedcon.sourceforge.io/">XMedCon</a> - reads image metadata to get spatial location for ordering and converts dicom to ascii</li>
+                                <li><a href="https://imagemagick.org/index.php">Image Magick</a>  or <a href="files/fuseLayersGimp.zip">the gimp fuse images script</a>
+                                    - to turn the final pngs into a grid of images.</li>
+                            </ul>
+                        </li>
+                        <li>Windows:
+                            <ul>
+                                <li><a href="https://pydicom.github.io/pydicom/stable/tutorials/installation.html">pydicom</a>
+                                    and <a href="https://numpy.org/install/">numpy</a> - to convert dicoms to ascii.</li>
+                                <li><a href="files/fuseLayersGimp.zip">The gimp fuse images script</a> - to turn our final pngs into a grid of images.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="https://www.gimp.org/">Gimp</a> - Used for error correction as well as checking value distribution.</li>
                 <li><a href="files/dcm2png.zip">My Scripts</a> - Output dicoms to ascii files and then to various png formats</li>
             </ul>
         </li>
@@ -423,7 +440,7 @@
 
     <br><br>
     Notice the holes in the histogram in the bottom 2 images. We used a window that was 250 HU wide,
-    so 5 values are missing (the last image has the missing values lining up really well with GIMP's unit
+    so 5 values are missing (the left image has the missing values lining up really well with GIMP's unit
     markings).
     <br><br>
     A few things to note:

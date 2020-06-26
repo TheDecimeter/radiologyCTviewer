@@ -44,7 +44,11 @@
 
     <br>
     <h2><b>Creating an event</b></h2>
-    Events are functions that the viewer calls when something potentially important happens.
+    These aren't acutally events. True events can have multiple listeners added to them, this is not the case here.
+    The following functions are only functions, if you make two with the same name, the last one to be created
+    is the only one to be used.
+    <br><br>
+    These functions are called when potentially important updates happen in the viewer.
     <br><br>
     If an important event occurs, the viewer looks for a function attached to the window (the parent object of everything
     that both your JavaScript and the viewer can see), if it finds one it runs it, otherwise nothing happens.
@@ -56,7 +60,7 @@
     Or you can define a function elsewhere and attach it separately.
     <br>
     <code>
-        <f->function</f-> <v->hidy</v->(<v->x</v->){ <o->console</o->.<f->log</f->(<l-><q>Hello World, I saw an</q></l-> + <v->x</v->);
+        <f->function</f-> <v->hidy</v->(<v->x</v->){ <o->console</o->.<f->log</f->(<l-><q>Hello World, I saw an</q></l-> + <v->x</v->);}
         <br>
         <o->window</o->.<v->sayHi</v-> = <v->hidy</v->;
     </code>
@@ -84,7 +88,8 @@
                     <ul>
                         <li id="FLAGviewerReady"><code>FLAGviewerReady</code>: Indicates everything loaded properly and every image is processed and in the GPU.</li>
                         <li id="FLAGviewerLoaded"><code>FLAGviewerLoaded</code>: Indicates everything loaded properly, but there may still be images to be processed.</li>
-                        <li id="FLAGviewerFailedLoad"><code>FLAGviewerFailedLoad</code>: Indicates an error the viewer can't recover from (usually if the server goes down).</li>
+                        <li id="FLAGviewerFailedLoad"><code>FLAGviewerFailedLoad</code>: Indicates an error the viewer can't recover from (usually if the server goes down before
+                            the loading process completes).</li>
                     </ul>
                 </li>
             </ul>
