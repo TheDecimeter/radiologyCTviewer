@@ -307,6 +307,11 @@ function createShaders(){
     viewerAddCustomShader('sq','d',squareFragment,false);
     viewerAddCustomShader('rt','d',sqrtFragment,false);
 
+    /* hot metal dynamic windowed shaders (defined below) */
+    viewerAddCustomShader('hotFull','d',generateHotMetalShader('z','0.0','1.0'),false);
+    viewerAddCustomShader('hotLung','d',generateHotMetalShader('z','-0.1','0.8'),false);
+    viewerAddCustomShader('hotAb','d',generateHotMetalShader('z','0.405','0.2'),false);
+
     /* common windowing levels according to values on microdicom
     Note that very small windows will amplify jpg's compression defects*/
     viewerAddWindowingShaderGray('fullDynamic',.5285,1.0815,false);
@@ -319,6 +324,7 @@ function createShaders(){
     viewerAddWindowingShaderGray('postmyelo',.6,.5,false);
     viewerAddWindowingShaderGray('felsenbein',.75,2,false);
     viewerAddWindowingShaderGray('user1',.5,-1,false);
+
 
     //instead of logging the creation of each message to send back to the server, just make an initial statement with and ID to easily find what the shaders were.
     viewerLogShaderMessage("added initial 4JUN2020");
@@ -389,6 +395,66 @@ void main()\n\
     vec4 c = texture2D(u_texture, v_texCoords).rgba;\n\
     gl_FragColor = vec4(bl(c.rgb), c.a);\n\
 }";
+
+
+let hot2= "#ifdef GL_ES\n\
+#define LOWP lowp\n\
+    precision mediump float;\n\
+#else\n\
+    #define LOWP\n\
+#endif\n\
+varying LOWP vec4 v_color;\n\
+varying vec2 v_texCoords;\n\
+uniform sampler2D u_texture;\n\
+\n\
+float R(float c) {\n\
+    return 1.4117556*c; \n\
+}\n\
+\n\
+float G(float c) {\n\
+    return 2.74*c-1.36541176471; \n\
+}\n\
+\n\
+float B(float c) {\n\
+    return 3.89285714284*c-2.92170868346; \n\
+}\n\
+\n\
+vec3 h(float c) {\n\
+    return vec3(R(c),G(c),B(c)); \n\
+}\n\
+\n\
+float C(vec2 c) {\n\
+    return (c.r*256.0+c.g)*0.1275; \n\
+}\n\
+\n\
+float O(float c) {\n\
+    return c*2.0475; \n\
+}\n\
+\n\
+float W(float c) {\n\
+    return (c-(";
+
+let hot3="))/";
+
+let hot4="; \n\
+}\n\
+\n\
+void main()\n\
+{\n\
+    vec4 c = texture2D(u_texture, v_texCoords).rgba;\n\
+    gl_FragColor = vec4(h(W(";
+
+let hot5=")), c.a);\n\
+}";
+
+function generateHotMetalShader(t,lo, width){
+    if(t=='z')
+        return hot2+lo+hot3+width+hot4+"c.r"+hot5;
+    if(t=='f')
+        return hot2+lo+hot3+width+hot4+"O(c.r)"+hot5;
+    if(t=='h')
+        return hot2+lo+hot3+width+hot4+"C(c.rg)"+hot5;
+}
 
 /* ______________________ post trial rewards ________________________________________________________________________ */
 function reward(){

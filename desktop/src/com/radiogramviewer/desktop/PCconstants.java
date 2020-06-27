@@ -28,7 +28,7 @@ public class PCconstants implements Constants {
 
     @Override
     public int getMode() {
-        return 3;
+        return 1;
     }
 
 
@@ -94,8 +94,8 @@ public class PCconstants implements Constants {
     @Override
     public float getScale(int originalWidth) {
         //desired width/original width, for now, always return 1
-        return 1;
-        //return width/originalWidth;
+        //return 1;
+        return width/originalWidth;
     }
 
     @Override

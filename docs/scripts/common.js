@@ -165,9 +165,7 @@
 				 e.id=arguments[i].id+errorMessageID;
 				 e.className="errorMsg";
 				 e.style.display="inline";
-				 e.appendChild(document.createElement('BR'));
-				 let t=document.createTextNode(errorMessage);
-				 e.appendChild(t);
+				e.innerHTML="<br>"+errorMessage;
 				 $(arguments[i]).appendChild(e);
 			 }
 		 }

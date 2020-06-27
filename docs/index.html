@@ -49,6 +49,7 @@
                                                  <td>
                                                         <div id="viewerWindow" style="display:none;">
                                                                <div id="embed-html"></div><!--viewer area-->
+                                                               <script type="text/javascript" src="html/html.nocache.js"></script>
                                                         </div>
                                                  </td>
                                                  <td class="formOuter">
@@ -249,6 +250,9 @@
                                                                                                   <option value="bl">Blue</option>
                                                                                                   <option value="sq">Square</option>
                                                                                                   <option value="rt">Square Root</option>
+                                                                                                  <option value="hotFull">Hot</option>
+                                                                                                  <option value="hotAb">Hot Abdomen</option>
+                                                                                                  <option value="hotLung">Hot Lung</option>
                                                                                            </optgroup>
                                                                                            <optgroup label="Other">
                                                                                                   <option value="user1">Extra Slot</option>
@@ -368,21 +372,18 @@
                                                                                                   <br>
                                                                                            </span>
                                                                                     </span>
-                                                                                    <span>
-                                                                                           <span id="pSmpTrlAbOther" class="formCheckBox">
-                                                                                                         <label> Other
-                                                                                                                <input type="checkbox" id="pSmpTrlAb4" name="pSmpTrlAb4" value="Other" onclick="clearChecks('pSmpTrlAb',5,5);isValidOther('pSmpTrlAb4','pSmpTrlAbOtherTxt',false);">
-                                                                                                                <span class="checkmark"></span>
-                                                                                                         </label>
+                                                                                    <span id="pSmpTrlAbOther" class="formCheckBox">
+                                                                                                  <label> Other
+                                                                                                         <input type="checkbox" id="pSmpTrlAb4" name="pSmpTrlAb4" value="Other" onclick="clearChecks('pSmpTrlAb',5,5);isValidOther('pSmpTrlAb4','pSmpTrlAbOtherTxt',false);">
+                                                                                                         <span class="checkmark"></span>
+                                                                                                  </label>
 
-                                                                                                         <input type="text" id="pSmpTrlAbOtherTxt" name="pSmpTrlAbOtherTxt" 
-                                                                                                                oninput="if(updateCheckOther(this,'pSmpTrlAb4'))clearChecks('pSmpTrlAb',5,5);isValidOther('pSmpTrlAb4','pSmpTrlAbOtherTxt');"
-                                                                                                                onfocus="useWASD=false;"
-                                                                                                                onblur="useWASD=true;">
-                                                                                                  
-                                                                                           </span>
-                                                                                           <br>
-                                                                                    </span>
+                                                                                                  <input type="text" id="pSmpTrlAbOtherTxt" name="pSmpTrlAbOtherTxt"
+                                                                                                         oninput="if(updateCheckOther(this,'pSmpTrlAb4'))clearChecks('pSmpTrlAb',5,5);isValidOther('pSmpTrlAb4','pSmpTrlAbOtherTxt');"
+                                                                                                         onfocus="useWASD=false;"
+                                                                                                         onblur="useWASD=true;">
+
+                                                                                    </span><br>
                                                                                     <span class="formCheckBox">
                                                                                            <label> None
                                                                                                   <input type="checkbox" id="pSmpTrlAb5" name="pSmpTrlAb5" value="None" onclick="clearChecks('pSmpTrlAb',1,4);">
@@ -514,7 +515,6 @@
                      </tr>
               </table>
 
-              <script type="text/javascript" src="html/html.nocache.js"></script>
        </body>
 
        <script>

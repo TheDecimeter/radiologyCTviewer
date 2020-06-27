@@ -107,7 +107,7 @@
                 <li id="viewerListenerScrollFail"><code>window.viewerListenerScrollFail = function(slideIndex){}</code>: Called when the viewer tries to scroll to a new slide but fails
                     because it is either at the first or last available slide. Provides the <code>slideIndex</code> of the current slide.</li>
                 <li id="viewerCoroutine"><code>window.viewerCoroutine = function(){}</code>: Called everytime the screen renders before any changes or updates occur
-                    (after drawing and updating). This will not run if the viewer image is set to 0.</li>
+                    (after drawing and updating). This will always run every <q>frame</q>, even if the viewer image set is 0.</li>
             </ul>
         </li>
         <li class="li2"> System:

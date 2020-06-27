@@ -164,9 +164,8 @@ public class SubViewer {
             if (totalSlides > 1 && !SlideManager.scrollLock)
                 scroll.draw(slideBatch);                    //draw scroll bar, if more than 1 slide
             slideBatch.end();
-
-            coroutineRunner.run(); //note that in pc this will only run when responding to input
         }
+        coroutineRunner.run(); //note that in pc this will only run when responding to input
     }
     public void dispose(){
         windowBatch.dispose();
