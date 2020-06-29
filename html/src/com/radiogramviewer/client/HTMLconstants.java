@@ -25,6 +25,9 @@ public class HTMLconstants implements Constants {
     private static Controls controller;
     private static StringBuilder packet;
 
+    public static String getViewerVersion() {return "v3";}
+
+
     public HTMLconstants(){
         exportStaticMethods();
         exportStaticVariables(Relay.ready, Relay.loaded, Relay.pending, Relay.error, keyScrollDown,keyScrollUp, keyPressDown, keyPressUp);
@@ -592,6 +595,7 @@ public class HTMLconstants implements Constants {
             }-*/;
 
     public static native void exportStaticMethods() /*-{
+       $wnd.viewerGetVersion = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerVersion());
        $wnd.viewerGetViewerDensityFactor = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerDensityFactor());
        $wnd.viewerGetWidth = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerWidth());
        $wnd.viewerGetWidthInches = $entry(@com.radiogramviewer.client.HTMLconstants::getViewerWidthInches());
