@@ -7,14 +7,20 @@
     <link rel="shortcut icon" href="../favicon.ico">
     <link href="../styles.css" rel="stylesheet" type="text/css">
     <link href="styles.css" rel="stylesheet" type="text/css">
-    <script src="../scripts/common.js"></script>
     <script>
-            function H(x){setTimeout(function() {$(x).className="disclaimHighlight";}, 600);}
-        </script>
+        class ViewerEventElemL extends HTMLElement {}
+        class ViewerEventElemV extends HTMLElement {}
+        customElements.define('l-', ViewerEventElemL);
+        customElements.define('v-', ViewerEventElemV);
+    </script>
+    <style>
+        l-{color:chocolate;}
+        v-{color:lightskyblue;}
+    </style>
 </head>
 <body>
 <table style="width:100%;"><tr><td class="dispPad"></td><td class="dispMain">
-    <h1>Randomizing variables.</h1>
+    <h1>Using Fireworks.</h1>
     <br><br>
     <a href="contents.html">Back to Contents</a>
     <br><br><br><br>
@@ -26,10 +32,40 @@
     <br><br>
     (as of June 2020)
     <br><br>
-    <h2>You will learn:</h2>
-    <ol>
-        <li>How to add a simple firework and auto scroller to the viewer</li>
-    </ol>
+    This isn't a true tutorial, just pointers:
+    <br>
+    Look in <q>scripts/firework.js</q> for a simple firework particle effect.
+
+    <br><br>
+    Firework:
+    <ul>
+        <li>
+            Launch multiple with <code>launchRandomFireworks(<l->minCount,maxCount</l->,<v->minThrust,maxThrust</v->,<l->minAlt,maxAlt</l->,<v->minX,maxX</v->,<l->spawn</l->,<v->gravity</v->,<l->millisPerFrame</l->,<v->timeToLive</v->,<l->finalLaunchTime</l->, <v->optional fireworkStopEvent</v->)</code>
+            <br>where:
+            <ul>
+                <li><code><l->minCount,maxCount</l-></code> are the potential number of fireworks to use (inclusive)</li>
+                <li><code><v->minThrust,maxThrust</v-></code> are the potential speeds of the fireworks (pixels per <q>frame</q>.</li>
+                <li><code><l->minAlt,maxAlt</l-></code> are the potential heights before the fireworks explode.</li>
+                <li><code><v->minX,maxX</v->,</code> are the range of potential X coordinates the firework may launch from.</li>
+                <li><code><l->spawn</l-></code> is how many particles spawn off of a single firework</li>
+                <li><code><v->gravity</v-></code> is the pull of gravity per frame</li>
+                <li><code><l->millisPerFrame</l-></code> is the length between each update interval, Note that almost all of these values depend on this update interval.</li>
+                <li><code><v->timeToLive</v-></code>is how long the fireworks exist before being cleared</li>
+                <li><code><l->finalLaunchTime</l-></code> is the longest time to wait before a firework can be launched. The first firework always launches immediately.</li>
+                <li><code><v->optional fireworkStopEvent</v-></code>A function to call when the fireworks are considered <q>stopped</q></li>
+            </ul>
+        </li>
+        <li>
+            Stop the fireworks with <code>cancelFireworks()</code>.
+        </li>
+    </ul>
+
+    <br><br><br>
+    Auto Scroller:
+    <ul>
+        <li>Start with <code>rewardAutoScrollStart();</code></li>
+        <li>Stop with <code>rewardAutoScrollStop();</code> If tying this in with fireworks, call this with <code>fireworkStopEvent</code> above.</li>
+    </ul>
 
 
 

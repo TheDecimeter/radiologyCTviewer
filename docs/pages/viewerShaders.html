@@ -436,7 +436,7 @@
     <br>
     All of these images have the same abdomen window applied. Going Clockwise from top left:
     <q>Full</q> 4096 wide 8 bit png, <q>Zeroed</q> 2000 wide 8 bit png, Full 16 bit png, Original dicom rendered
-    with Amide (Not displayed in this online ct viewer.
+    with Amide (So not displayed with this online ct viewer).
 
     <br><br>
     Notice the holes in the histogram in the bottom 2 images. We used a window that was 250 HU wide,
@@ -446,11 +446,13 @@
     A few things to note:
     <ul class="li1">
         <li class="li2">The missing values in my 16 bit image aren't the same as the values in the real dicom viewer (and the
-            histograms are slightly different for what would be expected in a "lossless" conversion).
+            histograms are slightly different for what would be expected in a "lossless" conversion). There are many possible reasons for this:
             <ul>
-                <li>I think this is due to a scaling factor I apply to keep all my window values consistant,
-                this makes numbers round off slightly differently. Otherwise, I think the data is the same (but
-                unfortunately can't say for sure).</li>
+                <li>I apply a scaling factor to keep all my window values consistant,
+                this possibly makes numbers round off slightly differently.</li>
+                <li>The broswer's rendering method and Amide's are different, producing slightly different colors.</li>
+                <li>Amide chooses to have their last hole at pure white, which means the intervals are evenly distributed from there, whereas
+                my formulas center the holes evenly between each other and pure white and black.</li>
             </ul>
         </li>
         <li class="li2">The images all look incredibly similar despite ranging from 17 to 251 values.

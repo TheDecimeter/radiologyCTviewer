@@ -14,7 +14,7 @@
 </head>
 <body>
 <table style="width:100%;"><tr><td class="dispPad"></td><td class="dispMain">
-    <h1>Randomizing variables.</h1>
+    <h1>Using the Ruler.</h1>
     <br><br>
     <a href="contents.html">Back to Contents</a>
     <br><br><br><br>
@@ -26,10 +26,26 @@
     <br><br>
     (as of June 2020)
     <br><br>
-    <h2>You will learn:</h2>
-    <ol>
-        <li>How to add a simple ruler to the viewer</li>
-    </ol>
+    This isn't a true tutorial, just pointers:
+    <br>
+    Look in <q>scripts/ruler.js</q> for a simple 2D ruler.
+    <br><br>
+    Call <code>rulerStart( consoleID, start, optional widthInInches)</code> where:
+    <ul>
+        <li> <code>consoleID</code> is the id of an html element you wish to print ruler information to</li>
+        <li> <code>start</code> is a true or false value stating whether you are turning the ruler on or off</li>
+        <li> <code>widthInInches</code> is the width of the image in inches (this can be gotten from a dicom viewer). The default value is 14.</li>
+    </ul>
+
+    <br><br>
+    You will need to add <code>rulerClick()</code> to your <a href="viewerEvents.html#viewerListenerInput"><code>window.viewerListenerInput</code></a>
+    so that the ruler knows when to place a marker.
+
+    <br><br>
+    You can check whether the ruler is active at any time with <code>rulerInactive()</code>.
+
+    <br><br>
+    make sure to turn the ruler off (<code>rulerStart(consoleID, false);</code>) when you leave a page, otherwise the ruler stays active.
 
 
 
