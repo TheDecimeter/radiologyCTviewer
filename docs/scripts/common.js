@@ -359,9 +359,13 @@
 		 }
 		 return undefined;
 	 });
+	 $(formID).reset();
  };
  window.onresize = function(){ //resizing the viewe recreates all click/highlight/shape images and rescales their positions
-	 setFeed('Resize Viewer? <button onclick="viewerResetSize();" type="button">Yes</button><button onclick="setFeed(\'\');" type="button">No</button>');
+	 if(viewerAvailable())
+         setFeed('Resize Viewer? <button onclick="viewerResetSize();" type="button">Yes</button><button onclick="setFeed(\'\');" type="button">No</button>');
+    else
+        setSizes(.9,.66,512);
  }
  
  
