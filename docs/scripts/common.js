@@ -441,7 +441,7 @@
 	 form=getAllData(formID);
 	 let fullStr=dataString(form);
 	 setLink(fullStr);
-	 $(mutlifailDataBoxID).innerHTML=minStr;
+	 $(mutlifailDataBoxID).innerHTML=fullStr;
 	 goToPage(pageID);
  }
  
@@ -491,10 +491,10 @@
 	 body=encodeURIComponent(body);
 	 let e=mailTo;
 	 let s='Data'
-	 let textFull=$(multifailReturnAddressFullID).innerHTML;
+	 //let textFull=$(multifailReturnAddressFullID).innerHTML;
 	 let textAddr=$(multifailReturnAddressID).innerHTML;
 	 $(multifailReturnAddressID).innerHTML="<a href=\"mailto:"+e+"\">"+textAddr+"</a>";
-	 $(multifailReturnAddressFullID).innerHTML="<a href=\"mailto:"+e+"?subject="+s+"&body="+body+"\">"+textFull+"</a>";
+	 //$(multifailReturnAddressFullID).innerHTML="<a href=\"mailto:"+e+"?subject="+s+"&body="+body+"\">"+textFull+"</a>";
  }
  
  

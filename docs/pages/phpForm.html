@@ -29,11 +29,77 @@
     <br><br>
     <h2>You will learn:</h2>
     <ol>
-        <li>Alternate between page orders rather than using pure randomization.</li>
-        <li>Making the page display a specific page order.</li>
+        <li>How to alternate between page orders rather than using pure randomization.</li>
+        <li>How to Make the page display a specific page order.</li>
     </ol>
 
+    <br><br>
+    Unlike previous tutorials, this one has 3 flavors:
+    <ol class="li1">
+        <li>Alternate your trial order based on how much data was saved
+            <ul>
+                <li>Pros:
+                    <ul>
+                        <li>Easiest to write</li>
+                        <li>Doesn't rely on a single file which can only be used by one user at a time</li>
+                        <li>If a user doesn't complete an experiment, it doesn't throw off the cycle</li>
+                    </ul>
+                </li>
+                <li>Cons:
+                    <ul>
+                        <li>Forcing a specific order still effects the cycle</li>
+                        <li>If multiple users start, they will all have the same order</li>
+                    </ul>
+                </li>
+                <li>Good for experiments with a slow hit rate</li>
+                <li><a href="edits/06a_distributeBySubmission.zip">The changed files for this step can be found here</a>.</li>
+            </ul>
+        </li>
+        <li>Alternate your trial order based on a file saved at the beginning.
+            <ul>
+                <li>Pros:
+                    <ul>
+                        <li>Allows users to start before others finish without throwing off the cycle</li>
+                        <li>Forcing a specific order doesn't effect the cycle</li>
+                    </ul>
+                </li>
+                <li>Cons:
+                    <ul>
+                        <li>A little harder to write because it relies on file reading/writing</li>
+                        <li>If a user loads the page and drops out, the cycle is thrown off.</li>
+                        <li>Relies on a central file which only one user can access at a time.</li>
+                    </ul>
+                </li>
+                <li>Good for experiments where many participants start simultaneously, but few leave without completing the experiment.</li>
+                <li><a href="edits/06b_distributeByCounter.zip">The changed files for this step can be found here</a>.</li>
+            </ul>
+        </li>
+        <li>Alternate your trial order based on a file saved after a specific page.
+            <ul>
+                <li>Pros:
+                    <ul>
+                        <li>Allows users to start before others finish without throwing off the cycle</li>
+                        <li>Forcing a specific order doesn't effect the cycle</li>
+                        <li>Users can leave before a certain point without throwing off the cycle.</li>
+                    </ul>
+                </li>
+                <li>Cons:
+                    <ul>
+                        <li>Much harder to write because it relies on a third call to the server</li>
+                        <li>Relies on a central file which only one user can access at a time.</li>
+                    </ul>
+                </li>
+                <li>Good for experiments where many participants start simultaneously</li>
+                <li><a href="edits/06c_distributeDelayCounter.zip">The changed files for this step can be found here</a>.</li>
+            </ul>
+        </li>
+    </ol>
 
+    <br><br>
+    Note:
+    <ol>
+        <li>The files will be slightly different from the tutorials (all versions can have a user ID and force shuffle)</li>
+    </ol>
 
     <br><br><br>
 </td><td class="dispPad"></td></tr></table>

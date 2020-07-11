@@ -30,6 +30,34 @@
     <h2>You will learn:</h2>
     <ol>
         <li>How to make simple text entry boxes, check boxes, and radio buttons</li>
+        <li>How to create inputs which control the viewer's windowing</li>
+        <li>How to integrate your forms dynamically with the viewer.</li>
+    </ol>
+
+    <br><br><br>
+    <h2>Resources</h2>
+    <br>
+    <a href="edits/02dumbForm.zip">The changed files for this step can be found here</a>.
+    <br><br>
+    Notes:
+    <ol>
+        <li>I only casually carry over windows from the demo. If you want to set your own windows
+            see how on the <a href="viewerShaders.html#zeroedWindow">shader page</a>.</li>
+        <li>If you are making new files in MS Windows, it is probably best to set their line endings to Unix (to prevent potential compatibility issues
+            later when you move your experiment to a remote server).</li>
+        <li>I am using click events to dynamically create text boxes. It is the dynamic nature of the form which creates
+            all of the complexity in this tutorial (as well as complexity in the validation and data transmission tutorials).
+            <br>
+            If you only want to see where a user clicks, this is very simple with either the viewer specific function:
+            <a href="viewerControl.html#viewerGetClicksFor"><code>viewerGetClicksFor</code></a>,
+            or the function in common.js <code>addClickData</code> which allows you to grab click data the same way you get scroll times.</li>
+        <li>The changed files above are slightly different from the tutorial
+            <ol>
+                <li>The gender question includes an <q>Other</q> option.</li>
+                <li>The text box id has the suffix <q>Field</q> appended to it rather than having <q>outer</q>
+                    appended to its parent div.</li>
+            </ol>
+        </li>
     </ol>
 
 

@@ -110,8 +110,8 @@
                                                                              <script>
                                                                                     class FakeRequest{
                                                                                            constructor(){
-                                                                                                  this.status="0"
-                                                                                                  this.statusText="i guess it's broke"
+                                                                                                  this.status="0";
+                                                                                                  this.statusText="i guess it's broke";
                                                                                            }
                                                                                     }
                                                                                     function sendData(){goToPage('fakeSubmit');}//overwrite the send data function to come here
@@ -132,11 +132,10 @@
                                                                              this demo, you can simulate success or failure.
                                                                              <br><br>
                                                                              If you want to see your data, I recommend simulating failure 3 times. This will take you to a page which provides the
-                                                                             users with their data and an email address to send it to. The data in the text box (that you can see) is only a
-                                                                             minimal portion of the data, if you click the link to load all of the data into your email client, you will
-                                                                             get all of the data (even scroll data).
-                                                                             Be aware that this is formated in JSON, which is less human readable than the php formatting you would do
-                                                                             in an actual experiment.
+                                                                             users with their data and an email address to send it to (this is a real page in the experiment to provide a backup
+                                                                             means of getting data if the server goes down mid experiment). The data will be in the text box. Be aware, however that this data
+                                                                             is not formated in a way you can expect in a typical experiment. Successful transmission generates CSVs for each
+                                                                             participant which can easily be merged into a single master spreadsheet.
                                                                              <br>
                                                                              After viewing your data, simulate success to view the debriefing.
                                                                              <br><br>
@@ -301,7 +300,7 @@
                                                                              <br><br>
                                                                              <div id="winTrlInst" class="formQst" style="text-align:center;line-height:1.5em;">
                                                                                     Either<br>
-                                                                                    <b>Click on an abnormality<br>to diagnose it</b><br>
+                                                                                    <b>Click on an abnormality<br>and diagnose it</b><br>
                                                                                     or<br> <b>Click:</b> 
                                                                                     <span class="formCheckBox">
                                                                                            <label> <b>None Found</b>
@@ -455,8 +454,6 @@
                                                                              <label>Data:<br>
                                                                                     <textarea readonly rows="10" id="pMultiFailData" style="width:100%"></textarea>
                                                                              </label>
-                                                                             <br><br>
-                                                                             <span id="pMultiFailReturnFull">You may also click here to load all the data into your email client.</span>
 
                                                                              <br><br>
                                                                              Attempts: <span id="pMultiFailAttempts"></span>

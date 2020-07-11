@@ -29,29 +29,33 @@
     <br><br><br><br>
     You will be deleting files, so it is recommended that you make a copy before continuing.
     <br><br>
-    <ol>
-        <li>Remove any debug buttons from the viewer page (like that button on the first one or two pages).</li>
-        <li>Delete any files you aren't using.
+    <ol class="li1">
+        <li class="li2">Remove any debug buttons from the viewer page (like that button on the first one or two pages).</li>
+        <li class="li2">Delete any files you aren't using.
             <ul>
                 <li>Viewer Version (viewer.php, viewerOnly.html)</li>
                 <li>the readme</li>
                 <li>custom.js if it is unused</li>
             </ul>
         </li>
-        <li>Set <q>quickKeys</q> and <q>fakeGPU</q> in the debug section of assets/config.ini to false.</li>
-        <li>Check slidedim.txt. Make sure no lines have a file number (second number) which isn't their own index number (first number) if that
+        <li class="li2">Set <q>quickKeys</q> and <q>fakeGPU</q> in the debug section of assets/config.ini to false.</li>
+        <li class="li2">Check slidedim.txt. Make sure no lines have a file number (second number) which isn't their own index number (first number) if that
             index number isn't used. If that happens, set the file number to match the index number and rename the file in the slides folder.</li>
-        <li>Delete any slide files you aren't using from the slides folder</li>
-        <li>Edit assets.txt
+        <li class="li2">Delete any slide files you aren't using from the slides folder</li>
+        <li class="li2">Edit assets.txt
             <ul>
                 <li>Remove the slide files you just deleted from assets.txt</li>
                 <li>Check the file sizes of slidedim.txt, shapes.txt, and config.ini, make sure these
                     are accurate in assets.txt</li>
             </ul>
         </li>
-        <li>If you ever set the forms to not reset, make sure they reset again (the tutorials never
+        <li class="li2">If you ever set the forms to not reset, make sure they reset again (the tutorials never
             directed you to remove resetting, so you would know if you need to reenable this.</li>
-        <li>Run the ct viewer
+        <li class="li2">If using MS Windows, make sure your line endings on any new files you created are Unix, not DOS
+            (LF vs CRLF). Note, if using visual studio code to convert these, for me, when I click on the
+            line ending symbol at the bottom of the window, the "drop down" for changing the option appears
+            at the top.</li>
+        <li class="li2">Run the ct viewer
             <ul>
                 <li>Make sure nothing important was deleted.</li>
                 <li>Keep the console open, are all the console messages you print out still necessary.</li>
@@ -59,7 +63,7 @@
                     ask the lab to run tests on the viewer (so that you can get better feedback from them).</li>
             </ul>
         </li>
-        <li>You may wish to remove index.html, or make it a dead page with no link to your trial.
+        <li class="li2">You may wish to remove index.html, or make it a dead page with no link to your trial.
             <ul>
                 <li>You will be distributing the trial with a link directly to it, the homepage is unneeded.
                 and might be an easier way for people (who may give you meaningless data) to find your experiment.</li>
@@ -67,7 +71,7 @@
                     (Some free hosts worry about becoming file servers, so web pages are required to be linked together).</li>
             </ul>
         </li>
-        <li>When you are happy with how everything is running, clean out your data folders.</li>
+        <li class="li2">When you are happy with how everything is running, clean out your data folders.</li>
     </ol>
 
 
@@ -83,7 +87,7 @@
     When you credit them, you have a chance of exposing their fraud.
     <br><br>
     This viewer is powered by the LibGDX graphics engine. They're <a href="https://www.badlogicgames.com/forum/viewtopic.php?f=11&t=13531">super easy going</a> about getting credit,
-    but it would still be nice. Normally I include this to the HTML:
+    but it would still be nice. Normally I include this in the HTML:
     <div style="margin-left:1em; margin-top:1em;background-color:#AAF4;padding:1em;border-radius:1em;">
     <code>
         Powered by libGDX (&lt;a href="https://libgdx.badlogicgames.com/">https://libgdx.badlogicgames.com/&lt;/a>)&lt;br><br>
