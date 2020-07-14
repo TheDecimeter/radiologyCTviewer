@@ -34,18 +34,23 @@
         <li>Providing error feedback</li>
     </ol>
     <br><br>
-    Be aware that the video tutorial shows an older version of the build. The sample page used has
-    input fields which share an ID with their surrounding div. This is a mistake and has been
-    corrected in the current build (so yours will look slightly different from the tutorial).
+    Be aware that no amount of client side validation can be trusted. If a user wants to send you
+    empty/nonsensical data, they always can (try calling <code>sendData()</code> from the console as soon as the viewer loads, it's not so hard).
+    Fortunately most users have little incentive to screw up your data so this client side validation is the best solution for you.
+    However, if you open your experiment to anyone on the internet and have an autopayment option upon completion, validate input when the server receives it
+    (not explicitly covered in these tutorials).
     <br><br>
-    <a href="edits/07dataCSV.zip">The changed files for this step can be found here</a>.
+    <a href="edits/03validForm.zip">The changed files for this step can be found here</a>.
+    <br><br>
     Note:
     <ol>
-        <li>In the tutorial I use the wrong name of the <q>other</q> value for trial 1, this is fixed in the above files.</li>
-        <li>The files include a version number for the processing script itself.</li>
+        <li>In the first JavaScript tutorial I recommended you make a single trial page and duplicate them
+            after you finish this step.</li>
     </ol>
 
 
+    <br><br>
+    <a href="javaScriptDynamic.html">Proceed to learn how to randomize your trial pages</a>
 
     <br><br><br>
 </td><td class="dispPad"></td></tr></table>

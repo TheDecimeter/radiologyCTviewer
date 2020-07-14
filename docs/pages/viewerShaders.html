@@ -11,6 +11,14 @@
     <script>
             function H(x){setTimeout(function() {$(x).className="disclaimHighlight";}, 600);}
         </script>
+
+    <style>
+            .mckTbl{
+               display: table-cell;
+               height:3em;
+               vertical-align: middle;
+            }
+        </style>
 </head>
 <body>
 <table style="width:100%;"><tr><td class="dispPad"></td><td class="dispMain">
@@ -96,15 +104,19 @@
                             active, the new shader will become active.<br><br><br></li>
                     </ul>
                 </li>
-                <li>Custom Shader Creation:
+                <li id="customShader">Custom Shader Creation:
                     <ul>
-                        <li>Custom shaders are written in the WebGL varient of <a href="https://en.wikipedia.org/wiki/OpenGL_Shading_Language">glsl</a></li>
+                        <li>Custom shaders are written in the WebGL varient of <a href="https://en.wikipedia.org/wiki/OpenGL_Shading_Language">glsl</a>
+                            an <a href="#customShaderExample">example can be made at the bottom of the page.</a></li>
                         <li>When referring to the pixel components in glsl, the values range from 0 to 1, not 0 to 255</li>
-                        <ul>
-                        <li id="viewerAddCustomShader"><code>viewerAddCustomShader( name, vertexShader, fragmentShader, <i>optional</i> log )</code>: Add a shader named <code>name</code> with the shader components defined
-                            as strings. You can set the <code>vertexShader</code> to <q>d</q> if you want to use a simple default vertex shader. However you always have to
-                            specify the <code>fragmentShader</code>. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
-                    </ul></ul>
+                        <li>Function:
+                            <ul>
+                                <li id="viewerAddCustomShader"><code>viewerAddCustomShader( name, vertexShader, fragmentShader, <i>optional</i> log )</code>: Add a shader named <code>name</code> with the shader components defined
+                                    as strings. You can set the <code>vertexShader</code> to <q>d</q> if you want to use a simple default vertex shader. However you always have to
+                                    specify the <code>fragmentShader</code>. <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                            </ul>
+                        </li>
+                    </ul>
                     <br><br>
                 </li>
                 <li id="zeroedWindow">8 bit <q>Zeroed</q> Window Shader Creation (Recommended for CT images):
@@ -114,15 +126,18 @@
                         <li>As seen in the image above, humans are quite squishy, even Vin Diesel. Almost all values in our bodies are in the lower half of
                             what is available in a typical dicom image (less than 1048HU).</li>
                         <li>If you don't know your bits per color, but are outputing dicoms to png or jpg, it's safe to assume they are 8 bit.</li>
-                    <ul>
-                    <li id="viewerAddWindowingShaderGray"><code>viewerAddWindowingShaderGray( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
-                        window <code>level</code> and <code>width</code>. This creates a grayscale shader which expects every pixel to have
-                        red = green = blue. If this is not the case, use value shading below (obviously you don't have to check every pixel, it won't break anything if this is
-                        off a little, CT images are grayscale).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
-                    <li id="viewerAddWindowingShaderValue"><code>viewerAddWindowingShaderValue( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
-                        window <code>level</code> and <code>width</code>. This converts the pixel values to HSV, and only windows the <code>Value</code> component.
-                        This is better for non grayscale images.<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
-                    </ul></ul>
+                    <li>Functions:
+                        <ul>
+                            <li id="viewerAddWindowingShaderGray"><code>viewerAddWindowingShaderGray( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
+                                window <code>level</code> and <code>width</code>. This creates a grayscale shader which expects every pixel to have
+                                red = green = blue. If this is not the case, use value shading below (obviously you don't have to check every pixel, it won't break anything if this is
+                                off a little, CT images are grayscale).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                            <li id="viewerAddWindowingShaderValue"><code>viewerAddWindowingShaderValue( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
+                                window <code>level</code> and <code>width</code>. This converts the pixel values to HSV, and only windows the <code>Value</code> component.
+                                This is better for non grayscale images.<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                        </ul>
+                    </li>
+                    </ul>
                 </li>
 
                 <li id="fullWindow">8 bit Full Depth Window Width Shader Creation:
@@ -135,15 +150,18 @@
                         <li>Because the usual contrast is roughly halved, the pixel values are expanded in these shaders to match
                             the HU conversions for the zeroed shader.</li>
                         <li>If you don't know your bits per color, but are outputing dicoms to png or jpg, it's safe to assume they are 8 bit.</li>
-                    <ul>
-                        <li id="viewerAddWindowingShaderGrayFull"><code>viewerAddWindowingShaderGrayFull( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
-                            window <code>level</code> and <code>width</code>. This creates a grayscale shader which expects every pixel to have
-                            red = green = blue. If this is not the case, use value shading below (obviously you don't have to check every pixel, it won't break anything if this is
-                            off a little, CT images are grayscale).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
-                        <li id="viewerAddWindowingShaderValueFull"><code>viewerAddWindowingShaderValueFull( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
-                            window <code>level</code> and <code>width</code>. This converts the pixel values to HSV, and only windows the <code>Value</code> component
-                            this is better for non grayscale images.<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
-                    </ul></ul>
+                        <li>Functions:
+                            <ul>
+                                <li id="viewerAddWindowingShaderGrayFull"><code>viewerAddWindowingShaderGrayFull( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
+                                    window <code>level</code> and <code>width</code>. This creates a grayscale shader which expects every pixel to have
+                                    red = green = blue. If this is not the case, use value shading below (obviously you don't have to check every pixel, it won't break anything if this is
+                                    off a little, CT images are grayscale).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                                <li id="viewerAddWindowingShaderValueFull"><code>viewerAddWindowingShaderValueFull( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
+                                    window <code>level</code> and <code>width</code>. This converts the pixel values to HSV, and only windows the <code>Value</code> component
+                                    this is better for non grayscale images.<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </li>
                 <li id="16bitWindow">16 bit Full Depth Color Window Shader Creation:
                     <ul>
@@ -158,11 +176,14 @@
                             the HU conversions of the 8 bit shaders</li>
                         <li>No stand alone program will do these fairly specific conversions, you will have to rely on
                             custom solutions (<a href="files/dcm2png.zip">my asc2png16.py script creates these images from ascii files</a>).</li>
-                    <ul>
-                    <li id="viewerAddWindowingShaderGray16"><code>viewerAddWindowingShaderGray16( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
-                        window <code>level</code> and <code>width</code>. This creates a grayscale shader which expects the red pixel to equal high bits, and green pixels to equal low bits
-                        (blue is ignored).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
-                    </ul></ul>
+                        <li> Function:
+                            <ul>
+                                <li id="viewerAddWindowingShaderGray16"><code>viewerAddWindowingShaderGray16( name, level, width, <i>optional</i> log )</code>: Create a windowing shader named <code>name</code> with the specified
+                                    window <code>level</code> and <code>width</code>. This creates a grayscale shader which expects the red pixel to equal high bits, and green pixels to equal low bits
+                                    (blue is ignored).<a href="#windowingUnits" onclick="H('windowingUnits');">*</a> <a href="#returnSuccess" onclick="H('returnSuccess');"><sup>1</sup></a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </li>
@@ -260,13 +281,6 @@
             <li>Determine what window you want to apply in the viewer.</li>
         </ol>
         Conversion:
-        <style>
-            .mckTbl{
-               display: table-cell;
-               height:3em;
-               vertical-align: middle;
-            }
-        </style>
         <table style="margin-left: 1em;">
             <tr>
                 <td>
@@ -360,7 +374,6 @@
             <ul>
                 <li>Python - simple script to read values stored in ascii file and turn them into an image
                 <li>You will also need the <q><a href="https://pypi.org/project/Pillow/2.2.1/#installation">pillow</a></q> module for creating the 16bit images.</li>
-                </li>
                 <li>Either:
                     <ul>
                         <li>Linux (used in the example):
@@ -485,6 +498,37 @@
     gives it a hint of antialiasing.
 
 
+
+
+    <br><br>
+    <div id="customShaderExample">
+        <br>
+        <h2>Custom Shaders</h2>
+        This viewer uses shaders for windowing, it is therefore possible to create any sort of effects which
+        can be written with WebGL's GLSL variant.
+        <br><br>
+        Some CT viewers employ other color spectra, these can be added through the use of custom shaders.
+        Hopefully a simple conversion formula can be found to turn the value level (which grayscale images
+        use) into a specific color. If that fails, you can always plot the value to color manually to make your
+        own formula.
+        <br><br>
+        This tutorial will first walk you through simple custom shader creation. It will then
+        cover the plotting/conversion of grayscale to RGB in a <q>Hot Metal</q> spectrum. Finally
+        it will add the new color spectrum to the viewer.
+        <br><br><br>
+        First, make sure you have:
+        <ul class="li2">
+            <li><a href="viewerStart.html">A working build of the viewer</a></li>
+            <li>A text editor you like, preferably with syntax highlighting for JavaScript, however only a
+                little JavaScript will actually be used (<a href="https://code.visualstudio.com/">The one used in the example</a>)</li>
+            <li>A viewer set up with the images you wish to use. This tutorial will cover the typical
+                8 bit zeroed, 8 bit full, and 16 bit type images.
+            </li>
+        </ul>
+        <br>
+        <a href="edits/hotMetalShader.zip">A cleaned up form of the code for the hot metal shader can be found here.</a>
+    </div>
+    <br><br><br>
     <br><br><br>
 </td><td class="dispPad"></td></tr></table>
 </body>
