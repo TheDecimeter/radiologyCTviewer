@@ -39,7 +39,30 @@
     <h2>Resources</h2>
     <br>
     <a href="edits/04randomTrials.zip">The changed files for this step can be found here</a>.
-
+    <br><br>
+    Note:
+    <ol>
+        <li>Most of this tutorial is writing the objects in charge of trial order. You can just download the code, and skip
+            to the experiment specific parts in the video
+            <ul>
+                <li>Adding trials to the TrialOrder object constructor (also increase the size of the order array to match your trial array)</li>
+                <li>Adding the TrialOrder object to v.html</li>
+                <li>Changing button code to go to trials in the proper order</li>
+                <li>Reworking v.html to have areas for the trial order object to add text</li>
+            </ul>
+        </li>
+        <li>The trial order object goes to the comment page when the last trial finishes. If you want to show
+            every trial's end page,
+            you can go to the last page at the beginning of the startNext() function instead of end.</li>
+        <li>If you have trial specific code you wish to run at the start/end of a trial, functions can be added
+            just like the debug method, and called from the start/end functions in the Trial object.</li>
+        <li>If you waited till now to check your duplicated trial pages, you can use:
+            <br>
+            <code>trialOrder.rearrange([ </code>whatever trial index you want first<code> , </code>next<code> , </code>next<code> , </code>etc<code> ]);</code>
+            <br>
+            at the bottom of v.html to go to a specific trial with the debug button.
+        </li>
+    </ol>
 
     <br><br>
     <a href="javaScriptAjax.html">Proceed to learn how to collect data from your remote clients.</a>

@@ -7,10 +7,55 @@
     <link rel="shortcut icon" href="../favicon.ico">
     <link href="../styles.css" rel="stylesheet" type="text/css">
     <link href="styles.css" rel="stylesheet" type="text/css">
-    <script src="../scripts/common.js"></script>
     <script>
-            function H(x){setTimeout(function() {$(x).className="disclaimHighlight";}, 600);}
-        </script>
+        function $(x){if(typeof x === "string") return document.getElementById(x); return x;} //Get dom element by id or itself
+        function H(x){setTimeout(function() {$(x).className="disclaimHighlight";}, 600);}
+        function tz() 
+        { 
+            return /\((.*)\)/.exec(new Date().toString())[1];
+        }
+        function convertDate(val){
+            val=Number(val);
+            if(val==0){
+                $('dateOutLoc').innerHTML="_";
+                $('dateOutUTC').innerHTML="_";
+                $('dateOutLocTZ').innerHTML="_";
+                return;
+            }
+            let conv=new Date(Number(val));
+            console.log(conv.toTimeString() +" Something: "+conv.toLocaleString("en-US")+" UTC: "+conv.toLocaleString("en-US", {timeZone: "UTC"}));
+            $('dateOutLoc').innerHTML=conv.toLocaleString("en-US");
+            $('dateOutUTC').innerHTML=conv.toLocaleString("en-US", {timeZone: "UTC"});
+            $('dateOutLocTZ').innerHTML=tz();
+        }
+        function convertDateTZ(time,timezone){
+            let t=Number($(time).value);
+            if(Number.isNaN(t)){
+                console.log("invallid time");
+                $('dateTzConsole').innerHTML="invalid time";
+                $('dateOutTz').innerHTML="";
+                return;
+            }
+               
+            let tz=$(timezone).value
+            if(tz.length==0){
+                $('dateTzConsole').innerHTML="Specify Timezone";
+                $('dateOutTz').innerHTML="";
+                return;
+            }
+            
+            let conv=new Date(t);
+            try{
+                $('dateOutTz').innerHTML=conv.toLocaleString("en-US", {timeZone: tz});
+                $('dateTzConsole').innerHTML="";
+            }
+            catch(e){
+                console.log("error "+e);
+                $('dateOutTz').innerHTML="";
+                $('dateTzConsole').innerHTML=e;
+            }
+        }
+    </script>
 </head>
 <body>
 <table style="width:100%;"><tr><td class="dispPad"></td><td class="dispMain">
@@ -38,6 +83,60 @@
         <li>How to warn users of unsaved data</li>
         <li>How to make a better debriefing page</li>
     </ol>
+    <br><br>
+    <ul>
+        <li><a href="viewerControl.html#viewerGetWidth">Be aware that viewer inches and pixels are occasionally inaccurate if the user zooms the page</a></li>
+        <li><a href="viewerControl.html#viewerGetScrollTimesFor">Click here to see how to read the scroll log</a></li>
+        <li><a href="viewerControl.html#viewerGetClicksFor">Click here to see how to read the click log (unused in the tutorial)</a></li>
+        <li><a href="viewerShaders.html#viewerGetShaderLog">Click here to see how to read the shader log</a></li>
+        <li>The long time numbers are gotten with Date.now(), this is the milliseconds since 1-JAN-1970 (UTC),
+            <br>if you are using this in 'merican, try:<br>
+            <div style="background-color: #FFF2; border-radius: 1em; padding: .5em; padding-left: 2em; padding-right: 2em; display:inline-block">
+                <input id="dateIn" type="number" oninput="convertDate(this.value);" placeholder="1594925461728">
+                <br> &nbsp; <span id="dateOutLoc">_</span> - Your Local Time ( <span id="dateOutLocTZ">_</span> )
+                <br> &nbsp; <span id="dateOutUTC">_</span> - UTC
+            </div>
+        </li>
+        <li>The smaller time numbers are typically just milliseconds, log enteries and trial times are counting up from the viewer start time.</li>
+        <li><a href="https://tools.keycdn.com/geo">IP addresses aren't always accurate locations, but you can typically get an idea of a user's location from them with
+            a lookup service like this.</a>
+            <ul>
+                <li>If you wish, you can add their timezone (in the page linked above, it is reported with the <q>time</q> value). This will give you an idea of what time 
+                    of day they tried your experiment (eg, are they likely to be a night shift or day shift). Again though, this isn't always accurate.
+                    <br>
+                    <div style="background-color: #FFF2; border-radius: 1em; padding: .5em; padding-left: 2em; padding-right: 2em; display:inline-block">
+                        <input id="dateTzInT" type="number" oninput="convertDateTZ('dateTzInT','dateTzInTz');" placeholder="1594925461728"> 
+                        <input id="dateTzInTz" type="text" oninput="convertDateTZ('dateTzInT','dateTzInTz');$('dateTzOp').value='off';" placeholder="America/Los_Angeles">
+
+                        <select id="dateTzOp" oninput="$('dateTzInTz').value=this.value;convertDateTZ('dateTzInT','dateTzInTz');">
+                            <optgroup label="United States">
+                                <option value='HST'>Hawaii/Alaska</option>
+                                <option value='America/Los_Angeles'>Pacific</option>
+                                <option value='America/Denver'>Mountain</option>
+                                <option value='America/Chicago'>Central</option>
+                                <option value='America/New_York'>Eastern</option>
+                                <option value='Canada/Atlantic'>Puerto Rico</option>
+                            </optgroup>
+                            <optgroup label="International Corner">
+                                <option value='Europe/London'>London/Iceland</option>
+                                <option value='Europe/Warsaw'>Europe Central Standard</option>
+                                <option value='Europe/Moscow'>Moscow</option>
+                                <option value='Asia/Hong_Kong'>China</option>
+                                <option value='Asia/Seoul'>Korea/Japan</option>
+                            </optgroup>
+                                   <option value="off" selected="selected" disabled>None</option>
+                     </select> 
+                        <br> &nbsp; <span id="dateOutTz">_</span> <span id="dateTzConsole"></span>
+                        <br> &nbsp;  &nbsp;  &nbsp; <span style="font-size:70%;">This may not work on all browsers<br>
+                            &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp; And the drop down is just there for ideas, you should always enter your timezones manually.<br>
+                            &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp; If you have trouble, I found <a href="https://github.com/moment/moment-timezone/issues/331">this list</a> to work nicely.</span>
+                        
+                    </div>
+
+                </li>
+            </ul>
+        </li>
+    </ul>
 
     <br><br>
     For these code heavy tutorials, it is recommended to full screen the video and watch at 720p

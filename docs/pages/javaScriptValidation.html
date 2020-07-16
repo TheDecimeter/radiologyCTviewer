@@ -51,7 +51,40 @@
     Note:
     <ol>
         <li>In the first JavaScript tutorial I recommended you make a single trial page and duplicate them
-            after you finish this step.</li>
+            after you finish this step.
+            <ul>
+                <li>It is recommended that you duplicate one trial completely first and write down
+                    all the steps for duplicating that trial in your specific experiment, then duplicate the rest. This is only
+                    a partial checklist, there is no way to know what every experiment needs.</li>
+                <li>Duplicate trial pages in v.html
+                    <ul>
+                        <li>The actual trial page</li>
+                        <li>The trial end page (if used)</li>
+                        <li>The debug page for each trial (if used)</li>
+                        <li>Be sure to find/replace IDs on your old trial page with the new trial ID</li>
+                    </ul>
+                </li>
+                <li>Duplicate validation functions in customValid.js</li>
+                <li>Add validation/dynamic form work in customUtil.js
+                    <ul>
+                        <li>addDiagBox (if used)</li>
+                        <li>removeDiagBox (if used)</li>
+                        <li>scrollSuccess (if used)</li>
+                    </ul>
+                </li>
+                <li>Add each trial's windowing dropdown to sync in applyShader (if windowing is used).</li>
+                <li>Do a keyword search for <q>Trial1</q> or whatever id was used on your original trial's
+                    page to ensure you didn't miss any IDs</li>
+                <li>(This can wait until after the next tutorial)<br>
+                    It is recommended that you test each new trial page to ensure it validates correctly
+                    (you can set the debug button to go straight to whatever trial you're wanting to test)
+                    <br>
+                    You don't have to link up each page's next button because we'll be changing this
+                    in the next tutorial. However, having some code in the onclick
+                    telling you whether or not it would have let your proceed is nice.
+                </li>
+            </ul>
+        </li>
     </ol>
 
 

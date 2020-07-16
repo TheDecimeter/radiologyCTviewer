@@ -34,14 +34,14 @@
                 <li><a href="https://www.php.net/manual/en/install.php">PHP's general instruction's for each OS</a> For what we're doing, there's a lot you can skip.</li>
                 <li>Steps I took in <b>Ubuntu Linux</b> 
                     <ol class="li2">
-                        <li>Install: <q>sudo apt-get install php</q></li>
-                        <li>Verify it installed correctly: <q>php -v</q> should output some version information.</li>
+                        <li>Install: <code>sudo apt-get install php</code></li>
+                        <li>Verify it installed correctly: <code>php -v</code> should output some version information.</li>
                         <li>Download and Unzip the CT viewer <a href="https://github.com/TheDecimeter/radiologyCTviewer/releases">release</a> somewhere.</li>
                         <li>Right click and open a terminal in that new folder's location (where there is a file called <q>index.html</q>)</li>
                         <li>Start the server with the terminal
                             <ul>
-                                <li>If you are testing with a browser on the same computer (likely) type: <q>php -S localhost:8000</q></li>
-                                <li>If you are testing with a browser on a different computer type: <q>php -S 0.0.0.0:8000</q></li>
+                                <li>If you are testing with a browser on the same computer (likely) type: <code>php -S localhost:8000</code></li>
+                                <li>If you are testing with a browser on a different computer type: <code>php -S 0.0.0.0:8000</code></li>
                             </ul>
                         </li>
                         <li>The terminal should now say <q>Development Server Started</q> or something similar</li>
@@ -61,10 +61,10 @@
                         <li>Open a terminal (you can type <q>cmd</q> into the search bar in your start menu).</li>
                         <li>Navigate in the terminal to your newly created folder.
                             <ol>
-                                <li>You will likely want to use <q>cd ../</q> until your prompt says you are in the root of the C drive.</li>
+                                <li>You will likely want to use <code>cd ../</code> until your prompt says you are in the root of the C drive.</li>
                                 <li>Using <q>dir</q> should now show you the <q>testFolder</q> we created.</li>
-                                <li>Use <q>cd testFolder</q> to enter the folder you created.</li>
-                                <li>Using <q>dir</q> should now show you <q>php.exe</q> as well as <q>build01</q>.</li>
+                                <li>Use <code>cd testFolder</code> to enter the folder you created.</li>
+                                <li>Using <code>dir</code> should now show you <q>php.exe</q> as well as <q>build01</q>.</li>
                             </ol>
                             <ul>
                                 <li><q>dir</q> shows you a list of the files and folders in your current directory.</li>
@@ -72,11 +72,13 @@
                                 <li><q>cd ../</q> will take you to your parent directry (the direction of the slash doesn't matter).</li>
                             </ul>
                         </li>
-                        <li>Verify php installed correctly: <q>php.exe -v</q> should output some version information.</li>
+                        <li>Verify php installed correctly: <code>php.exe -v</code> should output some version information.</li>
                         <li>Start the server with the terminal
                             <ul>
-                                <li>If you are testing with a browser on the same computer (likely) type: <q>php.exe -S localhost:8000 -t build01/</q> (direction of slash doesn't matter)</li>
-                                <li>If you are testing with a browser on a different computer type: type: <q>php.exe -S 0.0.0.0:8000 -t build01/</q> (direction of slash doesn't matter) Note that your firewall might request permission.</li>
+                                <li>If you are testing with a browser on the same computer (likely) type: <code>php.exe -S localhost:8000 -t build01/</code> (direction of slash doesn't matter)</li>
+                                <li>If you are testing with a browser on a different computer type: type: <code>php.exe -S 0.0.0.0:8000 -t build01/</code> (direction of slash doesn't matter) Note that your firewall might request permission.</li>
+                                <li>If you are using powershell (click the window to focus, then shift right click for the option) instead of the command prompt<br>
+                                    use <code>./php.exe</code>&hellip; instead.</li>
                             </ul>
                         </li>
                         <li>The terminal should now say <q>Development Server Started</q> or something similar</li>

@@ -7,6 +7,12 @@
         <link rel="shortcut icon" href="../favicon.ico">
         <link href="../styles.css" rel="stylesheet" type="text/css">
         <link href="styles.css" rel="stylesheet" type="text/css">
+        <script>
+            function $(x){if(typeof x === "string") return document.getElementById(x); return x;} //Get dom element by id or itself
+            function flrSqt(id){
+                $('flrSqtOut'+id).innerHTML=Math.floor(Math.sqrt($('flrSqtIn'+id).value));
+            }
+        </script>
     </head>
     <body>
         <table style="width:100%;"><tr><td class="dispPad"></td><td class="dispMain">
@@ -172,7 +178,10 @@
                                 <li>Open a terminal there and run: <code>$ montage -mode concatenate -tile 8x *.png out.png</code>
                                     <ul>
                                         <li>The <q><code>8x</code></q> means: Tile the new image <q>8 by whatever</q>, so the second dimension will be whatever it needs to be
-                                            to fit all of the slices. Change the 8 to be the floor of the square root of your image count.</li>
+                                            to fit all of the slices. Change the 8 to be the floor of the square root of your image count.
+                                            <br>Input Total Slices:
+                                            <input type="number" id="flrSqtIn1" oninput="flrSqt(1);"> <code><span id="flrSqtOut1">8</span>x</code>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li>Note that for even slightly thin slices you will have to <a href="https://www.imagemagick.org/script/resources.php">
@@ -260,7 +269,10 @@
                                     </ul>
                                 </li>
                                 <li>A dialog will appear asking you How many <q>Layers on the X axis</q>?</li>
-                                <li>Set this to the floor of the square root of your slice count</li>
+                                <li>Set this to the floor of the square root of your slice count
+                                    <br>Input Total Slices:
+                                    <input type="number" id="flrSqtIn2" oninput="flrSqt(2);"> <q><span id="flrSqtOut2">-</span> Layers on the X axis</q>
+                                </li>
                                 <li>Click <q>OK</q>, this will take a LONG time, some images have taken over an hour.
                                     <ul>
                                         <li>The feed back isn't helpful in gaging how close the image is to completion.</li>
