@@ -24,10 +24,9 @@
             </ul>
             <br><br>
             (as of June 2020)
-            <br>
-            
-            <br>
+            <br><br>
             <h2><b>Convert the slices to a common image format</b></h2>
+
             I mostly assume you have a way of doing this already. However, there may be 2 steps which differ from what you are used to:
             <br>
             <ul class="li2">
@@ -36,34 +35,39 @@
             </ul>
             <br><br>
             If you don't have a pipeline for converting dicoms to png, here are 2 free ways:
+            <h3>Windows Tutorial Video:</h3>
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/eTjtcP66XGw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <br><br>
+            <h3>Linux Tutorial Video:</h3>
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/dPdraGu-6lQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <br><br>
             <ul class="li1">
                 <li class="li2" id="UsingMyScripts">Option 1: Using my scripts
                     <ul>
-                        <li>Make sure you are using Linux</li>
                         <li><a href="files/dcm2png.zip">First download them here</a></li>
-                        <li>Install medcon
+                        <li>Install python3 (if you don't already have it)
                             <ul>
-                                <li><code>$ sudo apt-get install xmedcon</code></li>
-                            </ul>
-                        </li>
-                        <li>Install python3 (This is not necessary if you intend on using your own Dicom viewer)
-                            <ul>
-                                <li><code>$ sudo apt-get install python3</code></li>
+                                <li>(Linux) <code>$ sudo apt-get install python3</code></li>
+                                <li>(Windows) use the Microsoft Store.</li>
                             </ul>
                         </li>
                         <li>Go to the folder with your dicom (.dcm) files</li>
-                        <li>Extract the scripts here (so that the script files are directly in the folder with the dicoms</li>
+                        <li>Extract the scripts here (so that the script files are directly in the folder with the dicoms)</li>
                         <li>Open a terminal here</li>
-                        <li>(Optional) If you still want to use your own dicom viewer
-                            <ul>
-                                <li>Move the sort scripts out of the sortOnlyScripts folder and into the folder with the dicoms.</li>
-                                <li>run <code>$ ./sortdcm.sh</code></li>
-                                <li>this will copy sorted dicoms into the <q>sort</q> folder, you can now ignore the rest of these steps and use your own viewer with sorted dicoms.</li>
-                            </ul>
-                        </li>
                         <li>Convert the dicoms to ascii files
                             <ul>
-                                <li>run <code>$ ./dcm2asc.sh</code></li>
+                                <li>If using python, you will need the pydicom module installed
+                                    <ul>
+                                        <li>maybe: <code>$ python -m pip install pydicom</code></li>
+                                        <li>or just: <code>$ pip install pydicom</code></li>
+                                    </ul>
+                                </li>
+                                <li>Otherwise if using xmedcon, you'll need that
+                                    <ul>
+                                        <li>Linux only <code>$ sudo apt-get install xmedcon</code></li>
+                                    </ul>
+                                </li>
+                                <li>Run <code>$ ./dcm2asc.sh</code> (Linux with xmedcon) or <code>python3 dcm2asc.py</code></li>
                             </ul>
                         </li>
                         <li>When it finishes, look at the final values:
@@ -74,7 +78,7 @@
                                         <li>If not, edit the slope and intercept values in asc2png8.py to match</li>
                                     </ul>
                                 </li>
-                                <li>Ensure the values are in HU, if not, these scripts won't work. You will have to use a proper dicom viewer (you can still use the sort script mentioned above though).</li>
+                                <li>Ensure the values are in HU, if not, these scripts won't work. You will have to use a proper dicom viewer (you can probably still use the sort script mentioned above though).</li>
                             </ul>
                         </li>
                         <li>Convert the ascii files to png
@@ -87,7 +91,12 @@
                                 </li>
                                 <li>run <code>$ python3 asc2png8.py</code>
                                     <ul>
-                                        <li><a href="https://pypi.org/project/Pillow/2.2.1/#installation">This script requires pillow</a> (maybe: <code>$ pip install pillow</code>).</li>
+                                        <li><a href="https://pypi.org/project/Pillow/2.2.1/#installation">This script requires pillow</a>
+                                            <ul>
+                                                <li>maybe: <code>$ python -m pip install pillow</code></li>
+                                                <li>or just: <code>$ pip install pillow</code></li>
+                                            </ul>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li>This will take a while</li>
@@ -99,7 +108,7 @@
                 <li class="li2">Option 2: Using Microdicom
                     <ul>
                         <li>Make sure you are in Windows</li>
-                        <li>Optional: Use sortdcm.py to presort your dicoms.
+                        <li>Optional (but only if you like menial labor): Use sortdcm.py to presort your dicoms.
                             <ul>
                                 <li><a href="files/dcm2png.zip">First download my scripts here.</a></li>
                                 <li>Get sortdcm.py out of the <q>sortOnlyScripts</q> folder, and place it with your dicom files</li>
@@ -123,6 +132,7 @@
                         <li>Go to File > Export > To a picture file</li>
                         <li>Select a folder for your destination</li>
                         <li>As mentioned above, select PNG</li>
+                        <li>Make sure there isn't any meta data set to burn into your images.</li>
                         <li>If you didn't presort your dicoms, you may have to order them by hand now.</li>
                     </ul>
                 </li>
@@ -131,9 +141,19 @@
             <br><br>
             <h2 id="tileImage"><b>Tile your images</b></h2>
             Again, the exact process will depend on what software you use. I am sure there are many options. I will cover 2 free ones here.
+
             <br>
+            <h3>Windows Tutorial Video:</h3>
+            Be aware the the gimp solution in this video is very slow, if you have a large slice count (depends on your computer, but probably greater than 150), set this to run overnight.
+            <br>
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/lIw7hUr4Rzc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <br><br>
+            <h3>Linux Tutorial Video:</h3>
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/rtgsET62xwA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <br><br>
+            Steps:
             <ul class="li1">
-                <li class="li2">Make the final image collage as close to square as possible eg:
+                <li class="li2">First, know that the end products should be as square as possible eg:
                     <ul>
                         <li>7 x 7 if there are between 43 - 49 slices </li>
                         <li>7 x 8 if there are between 50 - 56 slices </li>
@@ -160,7 +180,7 @@
                                     (the <q>-6</q> will change as this page gets dated)</li>
                             </ol>
                         </li>
-                        <li>Option 2: Gimp
+                        <li>Option 2: Gimp (SLOW if slice count is > 150, consider running the Fuse layer step, 16, overnight).
                             <ol>
                                 <li><a href="https://www.gimp.org/">Install Gimp (2.8 or above)</a></li>
                                 <li><a href="files/fuseLayersGimp.zip">Download this plugin for turning layers into a sprite sheet here</a>
@@ -294,6 +314,16 @@
 
             <br><br>
             <h2><b>Add your image to the viewer</b></h2>
+
+            <br>
+            <h3>Windows Tutorial Video:</h3>
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/KMb3kxL1mfg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <br><br>
+            <h3>Linux Tutorial Video:</h3>
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/mVRWeB3nD88" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <br><br>
+
+            Steps:
             <ul class="li2">
                <li>Let's replace the simple trial's image with yours</li>
                <li>Go to the build01 folder where you have your <q>index.html</q></li>
@@ -348,6 +378,19 @@
                    </ol>
                </li>
             </ul>
+
+            <br><br><br><br><br>
+            <a href="javaScriptStart.html">
+                <b>Everything below is cosmetic</b>, if you wish
+                <br>
+                you may proceed to learn how block out your experiment.
+            </a>
+            <br><br><br>
+            <h1>Other Appearance Options</h1>
+            The first half of this video also covers adding an image to the CT viewer, however the above tutorials
+            are profoundly better. The last half covers changing colors/etc of the viewer itself.
+            <br>
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/IvRHH1vCEHw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
             <br><br>
             <h2><b>Change the look of the click and highlight</b></h2>
