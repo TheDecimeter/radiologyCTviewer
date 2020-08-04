@@ -41,7 +41,7 @@
 </head>
 <body>
 <table style="width:100%;"><tr><td class="dispPad"></td><td class="dispMain">
-    <h1>Remove unnecessary files.</h1>
+    <h1>Remove unnecessary files, Final style considerations</h1>
     <br><br>
     <a href="contents.html">Back to Contents</a>
     <br><br><br><br>
@@ -90,8 +90,10 @@
                 line ending symbol at the bottom of the window, the "drop down" for changing the option appears
                 at the top.</li>
             <li class="li2"><input type="checkbox" id="a13">If you are sharing the experiment through social media, make a dummy page
-                at the top of your form which is never used in the experiment with an image you would like an auto parser to use. The source for a simple
-                X ray like image can be found at <code>src="html/logo.png"</code> if you wish to use that.</li>
+                at the top of your form which is never used in the experiment with an image you would like an auto parser to use. A tag for a simple
+                X ray like image can be found at <code><img src="html/logo.png" ></code> if you wish to use that. This will use the loading image
+                for the ct viewer itself, so if you changed this (eg to your lab logo) that will display instead. You may wish to look into meta data
+                tags social media sites would like you to add.</li>
             <li class="li2"><input type="checkbox" id="a9" disabled><span class="ind">Run the ct viewer</span>
                 <ul>
                     <li><input type="checkbox" id="a91">Make sure nothing important was deleted.</li>
