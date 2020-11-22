@@ -98,7 +98,7 @@
             <ul>
                 <li id="viewerListenerInput"><code>window.viewerListenerInput = function(){}</code>: Called when any known input occurs.</li>
                 <li id="viewerListenerClickAdded"><code>window.viewerListenerClickAdded = function( click ){}</code>: Called when a click is added to the viewer. </li>
-                <li id="code>"><code>window.code> = function( click ){}</code>: Called when a click is removed from the viewer. The <code>click</code> is a string
+                <li id="viewerListenerClickRemoved"><code>window.viewerListenerClickRemoved = function( click ){}</code>: Called when a click is removed from the viewer. The <code>click</code> is a string
                     with <i>x</i>,<i>y</i>,<i>z</i>,<i>time</i> separated by commas. Note that the coordinates are scaled to the dimensions specified in
                     <q>config.ini</q>. It represents the position of the click when it was added, not the click that removed it (it is guaranteed to be 
                     the same values as provided in <code>window.viewerListenerClickAdded</code> above, even if the viewer has been resized between events).</li>
