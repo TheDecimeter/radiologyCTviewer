@@ -142,14 +142,22 @@ public class Controls implements InputProcessor {
     }
 
     @Override
-    public boolean scrolled(int amount) {
-
+    public boolean scrolled(float amountX, float amountY) {
         if(c.input.wheel && SubViewer.getSlideMode()!=SubViewer.none)
-            slides.advanceSlide(throttle(amount), ScrollFollower.scrollWheel);
+            slides.advanceSlide(throttle(amountY), ScrollFollower.scrollWheel);
         return false;
     }
 
-    private int throttle(int amount){
+    //OLD VERSION
+//    @Override
+//    public boolean scrolled(int amount) {
+//
+//        if(c.input.wheel && SubViewer.getSlideMode()!=SubViewer.none)
+//            slides.advanceSlide(throttle(amount), ScrollFollower.scrollWheel);
+//        return false;
+//    }
+
+    private int throttle(float amount){
         if(amount==0)
             return 0;
         float sign=Math.signum(amount);

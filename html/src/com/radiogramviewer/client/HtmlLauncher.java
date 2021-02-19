@@ -25,7 +25,7 @@ public class HtmlLauncher extends GwtApplication {
         @Override
         public GwtApplicationConfiguration getConfig () {
                 GwtApplicationConfiguration config= new GwtApplicationConfiguration(256, 256);
-                config.preferFlash=false;
+                //config.preferFlash=false;
                 return config;
         }
         // END CODE FOR FIXED SIZE APPLICATION
