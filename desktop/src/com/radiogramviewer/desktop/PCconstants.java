@@ -185,6 +185,17 @@ public class PCconstants implements Constants {
             case Input.Keys.NUM_9:
                 SlideManager.scrollLock=!SlideManager.scrollLock;
                 break;
+
+            case Input.Keys.NUMPAD_1:
+                Relay.addFont("testKeyFont0",15,"F00", .4f, "FFF8",
+                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ !?.,'\":1234567890()+-*&$#@abcdefghijklmnopqrstuvwxyz");
+                break;
+            case Input.Keys.NUMPAD_2:
+                Relay.addText("text1", "testKeyFont0", "hi\nI'm Dan^iel", 400,200,true);
+                break;
+            case Input.Keys.NUMPAD_3:
+                Relay.removeText("text1");
+                break;
         }
     }
 

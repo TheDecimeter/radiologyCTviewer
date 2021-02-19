@@ -6,9 +6,13 @@ import com.radiogramviewer.relay.Relay;
 
 /**
  * Simple class for holding and displaying click information
- * Takes coordinates in screen pixel dimensions, stores them
+ * Takes coordinates in SCREEN PIXEL dimensions, stores them
  * as floats between 0 and 1, prints them according to the dimensions
  * specified in the config file.
+ *
+ * IMPORTANT: notice that this cares about screen dimension based input, not dimensions
+ * specified in the config file. This is because it expects the values to come in through
+ * input, rather than function calls by whoever is setting up the experiment.
  */
 public class ClickNode implements Comparable<ClickNode>, LogNode{
 

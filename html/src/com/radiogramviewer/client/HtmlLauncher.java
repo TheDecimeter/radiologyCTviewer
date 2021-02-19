@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 import com.badlogic.gdx.backends.gwt.preloader.Preloader;
+import com.badlogic.gdx.graphics.g2d.freetype.gwt.FreetypeInjector;
+import com.badlogic.gdx.graphics.g2d.freetype.gwt.inject.OnCompletion;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
@@ -28,6 +30,19 @@ public class HtmlLauncher extends GwtApplication {
                 //config.preferFlash=false;
                 return config;
         }
+
+
+        @Override
+        public void onModuleLoad () {
+                FreetypeInjector.inject(new OnCompletion() {
+                        public void run () {
+                                // Replace HtmlLauncher with the class name
+                                // If your class is called FooBar.java than the line should be FooBar.super.onModuleLoad();
+                                HtmlLauncher.super.onModuleLoad();
+                        }
+                });
+        }
+
         // END CODE FOR FIXED SIZE APPLICATION
 
         // UNCOMMENT THIS CODE FOR A RESIZABLE APPLICATION

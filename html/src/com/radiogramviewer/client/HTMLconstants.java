@@ -78,6 +78,15 @@ public class HTMLconstants implements Constants {
     public static void addInputMessage(int slideSet, String msg){
         Relay.addInputMessage(slideSet-1,msg);
     }
+
+    /**
+     * Access point to add highlight from JavaScript. Note that the expected x and y
+     * are based on the dimensions in the config file.
+     * @param slideSet - what "image" to add the highlight to
+     * @param x - the centered x coordinate of the highlight
+     * @param y - the centered y coordinate of the highlight
+     * @param slide - the image slice to apply the highlight to (slice indices start at 1)
+     */
     public static void addHighlight(int slideSet, int x, int y, int slide){
         if(!validSlide(slide))return;
         float scale=1/SubViewer.getConfig().global.scale;
@@ -341,6 +350,18 @@ public class HTMLconstants implements Constants {
         ShaderLogger.log=true;
     }
 
+
+    public static boolean addFont(String fontName, int fontSizePx, String fontColor, float borderWidth, String borderColor, String characters){
+        return Relay.addFont(fontName,fontSizePx,fontColor,borderWidth,borderColor, optional(characters,null));
+    }
+    public static boolean addText(String textName, String fontName, String msg, int x, int y, boolean leftAlign){
+        return  Relay.addText(textName,fontName,msg,x,y,leftAlign);
+    }
+    public static boolean removeText(String textName){
+        return Relay.removeText(optional(textName, null));
+    }
+
+
     public static void scrollLock(boolean lock){
         SlideManager.scrollLock=lock;
     }
@@ -466,6 +487,17 @@ public class HTMLconstants implements Constants {
                 resetClicksFor(getCurrentMode());
                 P.d("finished keypress");
                 break;
+
+            case Input.Keys.NUMPAD_1:
+                Relay.addFont("testKeyFont0",15,"F00", .4f, "FFF8",
+                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ !?.,'\":1234567890()+-*&$#@abcdefghijklmnopqrstuvwxyz");
+                break;
+            case Input.Keys.NUMPAD_2:
+                Relay.addText("text1", "testKeyFont0", "hi\nI'm Dan^iel", 400,200,true);
+                break;
+            case Input.Keys.NUMPAD_3:
+                Relay.removeText("text1");
+                break;
         }
     }
 
@@ -479,6 +511,13 @@ public class HTMLconstants implements Constants {
         //TODO
     }
 
+    private static native String optional(String b, String d)/*-{
+            if (typeof b === "undefined" || b==null){
+                return d;
+            }
+            else
+                return b;
+            }-*/;
     private static native boolean optional(boolean b, boolean d)/*-{
             if (typeof b === "undefined" || b==null){
                 return d;
@@ -646,5 +685,10 @@ public class HTMLconstants implements Constants {
        $wnd.viewerAddWindowingShaderValueFull = $entry(@com.radiogramviewer.client.HTMLconstants::addWindowShaderValueFull(Ljava/lang/String;FFZ));
        $wnd.viewerRemoveShader = $entry(@com.radiogramviewer.client.HTMLconstants::removeShader(Ljava/lang/String;Z));
        $wnd.viewerSetShader = $entry(@com.radiogramviewer.client.HTMLconstants::setShader(Ljava/lang/String;Z));
+
+       $wnd.viewerAddFont = $entry(@com.radiogramviewer.client.HTMLconstants::addFont(Ljava/lang/String;ILjava/lang/String;FLjava/lang/String;Ljava/lang/String;));
+       $wnd.viewerAddText = $entry(@com.radiogramviewer.client.HTMLconstants::addText(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIZ));
+       $wnd.viewerRemoveText = $entry(@com.radiogramviewer.client.HTMLconstants::removeText(Ljava/lang/String;));
+
     }-*/;
 }

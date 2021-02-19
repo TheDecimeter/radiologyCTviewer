@@ -1,9 +1,13 @@
 package com.radiogramviewer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.utils.Align;
 import com.radiogramviewer.config.Config;
 import com.radiogramviewer.config.ShapeMaker;
 import com.radiogramviewer.config.SlideDimensions;
@@ -12,6 +16,7 @@ import com.radiogramviewer.coroutine.CoroutineRunner;
 import com.radiogramviewer.graphics.Bar;
 import com.radiogramviewer.graphics.DrawShape;
 import com.radiogramviewer.graphics.SlideManager;
+import com.radiogramviewer.graphics.TextManager;
 import com.radiogramviewer.graphics.shaders.ShaderManager;
 import com.radiogramviewer.logging.ClickFollower;
 import com.radiogramviewer.logging.ScrollFollower;
@@ -28,7 +33,8 @@ public class SubViewer {
 
 
 
-    private static SpriteBatch windowBatch,slideBatch;
+    private static SpriteBatch slideBatch;
+    private static TextManager textManager;
     private SlideManager slideManager;
     private ArrayList<SlideManager> slideManagers;
     private CoroutineRunner slideProcessor;
@@ -51,12 +57,16 @@ public class SubViewer {
     private static ClickFollower slideClick; //the current slide's click follower
     private ShapeMaker shapes;
 
+
     private static ArrayList<ScrollFollower> scrollTimes; //all scroll trackers
 
     public SubViewer(Constants constants){
         coroutineRunner=new CoroutineConstantRunner(constants);
         P.init(constants);
         this.constants=constants;
+
+
+
 
         try {
             //Gdx.graphics.setContinuousRendering(false); //this keeps the processor from constantly cycling on PC, does nothing in HTML
@@ -85,7 +95,6 @@ public class SubViewer {
             Gdx.input.setInputProcessor(controller);
 
             Gdx.graphics.setWindowedMode(width, height);
-            windowBatch = new SpriteBatch();
             slideBatch=new SpriteBatch();
 
             //Generate the images for indicating clicks and scroll bar
@@ -96,12 +105,20 @@ public class SubViewer {
 
             slideManagers = new ArrayList<SlideManager>(20);
             setupSlideManagers(c);
-            Relay.initLogs(click,scrollTimes,shapes);
+
+            if(textManager==null)
+                textManager=new TextManager(c);
+            else
+                textManager=new TextManager(c, textManager);
+
+            Relay.initLogs(click, scrollTimes, shapes, textManager);
 
             updateSlides = true;
             updateSlideMode();
 
             ShaderManager.init(slideBatch);
+
+
 
             Relay.changeLoadingState(Relay.loaded);
 
@@ -163,12 +180,14 @@ public class SubViewer {
             slideClick.drawHighlights(slideBatch, currentSlide);    //draw any highlightedAreas
             if (totalSlides > 1 && !SlideManager.scrollLock)
                 scroll.draw(slideBatch);                    //draw scroll bar, if more than 1 slide
+
+            textManager.draw(slideBatch);
+
             slideBatch.end();
         }
         coroutineRunner.run(); //note that in pc this will only run when responding to input
     }
     public void dispose(){
-        windowBatch.dispose();
         slideBatch.dispose();
 
         if(SlideMode!=none)
@@ -181,11 +200,13 @@ public class SubViewer {
         clickImg.dispose();
         clickHighlightImg.dispose();
         shapes.dispose();
+
     }
 
     public void disposeCompletely(){
         SlideManager.disposeCompletely();
         ShaderManager.dispose();
+        textManager.dispose();
     }
 
 

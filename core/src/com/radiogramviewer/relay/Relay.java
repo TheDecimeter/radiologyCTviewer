@@ -4,6 +4,7 @@ import com.radiogramviewer.MainViewer;
 import com.radiogramviewer.SubViewer;
 import com.radiogramviewer.config.ShapeMaker;
 import com.radiogramviewer.graphics.SlideManager;
+import com.radiogramviewer.graphics.TextManager;
 import com.radiogramviewer.logging.ClickFollower;
 import com.radiogramviewer.logging.ScrollFollower;
 
@@ -16,6 +17,7 @@ public class Relay {
 
     private static List<ClickFollower> click;
     private static List<ScrollFollower> scrollTimes;
+    private static TextManager textManager;
     private static Constants constants;
     private static ShapeMaker shapes;
 
@@ -27,10 +29,11 @@ public class Relay {
         Relay.viewWidth=width;
         Relay.viewHeight=height;
     }
-    public static void initLogs(List<ClickFollower> click, List<ScrollFollower> scrollTimes, ShapeMaker shapes){
+    public static void initLogs(List<ClickFollower> click, List<ScrollFollower> scrollTimes, ShapeMaker shapes, TextManager textManager){
         Relay.click=click;
         Relay.scrollTimes=scrollTimes;
         Relay.shapes=shapes;
+        Relay.textManager=textManager;
     }
 
     public static String getClicksAt(int at, String compDiv, String itemDiv){
@@ -117,6 +120,16 @@ public class Relay {
     public static int getWidth(){return viewWidth;}
     public static int getHeight(){return viewHeight;}
     public static Constants getConstants(){return constants;}
+
+    public static boolean addFont(String fontName, int fontSizePx, String fontColor, float borderWidth, String borderColor, String characters){
+        return textManager.addFont(fontName,fontSizePx,fontColor,borderWidth,borderColor,characters);
+    }
+    public static boolean addText(String textName, String fontName, String msg, int x, int y, boolean leftAlign){
+        return  textManager.addText(textName,fontName,msg,x,y,leftAlign);
+    }
+    public static boolean removeText(String textName){
+        return textManager.removeText(textName);
+    }
 
     private static boolean at(int at){
         if(at<0 ||at>19) {

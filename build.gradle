@@ -31,6 +31,7 @@ allprojects {
         ashleyVersion = '1.7.3'
         aiVersion = '1.8.2'
         gdxControllersVersion = '2.0.1'
+        gwtFreeTypeVersion = '1.9.10.1'
     }
 
     repositories {
@@ -105,6 +106,8 @@ project(":html") {
     dependencies {
         implementation project(":core")
         api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
+        api "com.github.intrigus.gdx-freetype-gwt:gdx-freetype-gwt:$gwtFreeTypeVersion"
+        api "com.github.intrigus.gdx-freetype-gwt:gdx-freetype-gwt:$gwtFreeTypeVersion:sources"
         api "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
         api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
         

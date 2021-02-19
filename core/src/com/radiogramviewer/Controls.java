@@ -157,6 +157,12 @@ public class Controls implements InputProcessor {
 //        return false;
 //    }
 
+    /**
+     * Keep scroll wheels from flying through an image by scaling
+     * values and clipping extremes
+     * @param amount - how much the user scrolled
+     * @return scaled value of users scroll
+     */
     private int throttle(float amount){
         if(amount==0)
             return 0;
