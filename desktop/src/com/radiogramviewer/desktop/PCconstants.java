@@ -187,11 +187,12 @@ public class PCconstants implements Constants {
                 break;
 
             case Input.Keys.NUMPAD_1:
-                Relay.addFont("testKeyFont0",15,"F00", .4f, "FFF8",
+                Relay.addFont("testKeyFont0",80,"F00",  .5f, "0F0",
                         "ABCDEFGHIJKLMNOPQRSTUVWXYZ !?.,'\":1234567890()+-*&$#@abcdefghijklmnopqrstuvwxyz");
                 break;
             case Input.Keys.NUMPAD_2:
-                Relay.addText("text1", "testKeyFont0", "hi\nI'm Dan^iel", 400,200,true);
+                //Relay.addText("text1", "testKeyFont0", "hi\nI'm Dan^iel", 400,200,true);
+                Relay.addText("text2", "testKeyFont0", "hi\nI'm Daniel\nLove", 800,800,false);
                 break;
             case Input.Keys.NUMPAD_3:
                 Relay.removeText("text1");

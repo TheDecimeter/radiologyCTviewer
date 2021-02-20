@@ -88,9 +88,9 @@ public class TextManager {
 
     private void resetDimensions(){
         for(TextNode n : text.values())
-            n.reset();
+            n.reset(c);
         for(FontNode n : fonts.values())
-            n.reset();
+            n.reset(c);
     }
 
     public void dispose(){
@@ -115,14 +115,14 @@ public class TextManager {
                 this.align= Align.left;
             else
                 this.align=Align.right;
-            reset();
+            reset(c);
         }
 
         void draw(SpriteBatch batch){
             font.font.draw(batch,text,screenPos.x, screenPos.y, 0, align, false);
         }
 
-        void reset(){
+        void reset(Config c){
             screenPos=new Vector2(unitPos.x*c.window.width, unitPos.y*c.window.height);
         }
     }
@@ -146,14 +146,15 @@ public class TextManager {
             this.unitHeight=pixelHeight;
             this.textColor=Config.parseColor(textColor);
             this.characters=characters;
-            reset();
+            reset(c);
         }
 
-        void reset(){
+        void reset(Config c){
             if(font!=null)
                 font.dispose();
-            float borderWidth=unitBorderWidth*c.global.scale;
-            int pixelHeight=(int)Math.ceil(unitHeight*c.global.scale);
+            float scale=1/c.global.scale;
+            float borderWidth=unitBorderWidth*scale;
+            int pixelHeight=(int)Math.ceil(unitHeight*scale);
 
             try{
                 FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));

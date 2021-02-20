@@ -157,17 +157,14 @@ public class ClickFollower {
      * Add a highlight
      * @param x The position of the click
      * @param y The position of the click
-     * @param slide The slide on which the click occured
+     * @param slide The slide on which to highlight
      */
     public void addHighlight(int x, int y, int slide){
-//        x-=highlightRadius;
-//        y-=highlightRadius;
         if(slide<0||slide>=highlights.size()){
             P.e("Highlight index out of range "+slide+", max size "+highlights.size());
             return;
         }
         Node n=new Node(x,y,slide,0);
-        n.reset(c.click.highlightRadius,c.click.highlightRadius);
         n.reset(c.click.highlightRadius,c.click.highlightRadius);
         highlights.get(slide).add(n);
     }
